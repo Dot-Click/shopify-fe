@@ -13,6 +13,7 @@ import { AheadSection } from "../components/home/aheadsection";
 import { WhySection } from "../components/home/whysection";
 import { TestimonialsSection } from "../components/home/testimonialsection";
 import { Footer } from "../components/home/footer";
+import { HowItWorksOverlap } from "../components/home/footerthumbnail";
 // import bgSection from "/images/bg_section.png";
 // import bgCard from "/images/imageCard.png";
 
@@ -75,7 +76,12 @@ export const Home = () => {
       <HowItWorksSection />
       <AheadSection />
       <WhySection />
-      <TestimonialsSection />
+
+      <div className="bg-gray-50">
+        <TestimonialsSection />
+        <HowItWorksOverlap />
+      </div>
+
       <Footer />
     </Box>
   );

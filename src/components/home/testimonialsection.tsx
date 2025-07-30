@@ -95,7 +95,8 @@ const TestimonialCard = ({
 
 export const TestimonialsSection = () => {
   return (
-    <Box className="w-full bg-gray-50 py-24 pb-24">
+    // <Box className="w-full bg-gray-50 py-24 pb-24">
+    <Box className="w-full pt-24 pb-16">
       <Box className="container mx-auto px-6">
         {/* Section Header */}
         <Box className="mx-auto max-w-2xl text-center">
