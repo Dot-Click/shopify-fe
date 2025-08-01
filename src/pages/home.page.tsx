@@ -31,7 +31,7 @@ export const Home = () => {
 
       <main className="container relative z-10 mx-auto flex h-full items-center px-6">
         <Box className="flex w-full flex-col items-start lg:w-1/2">
-          <h1 className="text-5xl font-bold leading-tight md:text-6xl">
+          <h1 className="text-5xl font-bold leading-tight md:text-6xl max-sm:text-3xl">
             Stop-Parcel Fraud Before <br /> It Hits Your Bottom Line.
           </h1>
 

@@ -28,19 +28,16 @@ const features = [
 export const WhySection = () => {
   return (
     <Box className="relative w-full bg-white">
-      {/* 2. Low-opacity background layer */}
       <Box
         className="absolute inset-0 z-0 bg-cover bg-center opacity-40"
         style={{ backgroundImage: `url(${bgTexture})` }}
         aria-hidden="true"
       />
 
-      {/* 3. Content layer: Positioned on top of the background */}
       <Box className="container relative z-10 mx-auto px-6 py-24">
-        {/* Section Header */}
         <Box className="mx-auto max-w-3xl text-center">
           <h2 className="text-4xl font-bold text-gray-800">
-            Why{" "}
+            Why
             <span className="bg-blue-600 px-3 py-1 text-white">
               eComProtect
             </span>

@@ -1,15 +1,33 @@
-import { BrowserRouter, Route, Routes } from "react-router";
+import { BrowserRouter, Outlet, Route, Routes } from "react-router-dom";
 import { Signup } from "./pages/signup.page";
 import { Signin } from "./pages/signin.page";
 import { Home } from "./pages/home.page";
+import Dashboard from "./pages/dashboard.page";
+import Layout from "./layout/sidebar.layout";
+import UserManagement from "./pages/usermanagemeent.page";
+import StoreManagement from "./pages/storemanagement.page";
+import ReportAnalysis from "./pages/reportanalysis.page";
 
 export const Router = () => {
   return (
     <BrowserRouter>
       <Routes>
-        <Route element={<Home />} path="/" />
         <Route element={<Signin />} path="/signin" />
         <Route element={<Signup />} path="/signup" />
+        <Route element={<Home />} path="/" />
+
+        <Route
+          element={
+            <Layout>
+              <Outlet />
+            </Layout>
+          }
+        >
+          <Route element={<Dashboard />} path="/dashboard" />
+          <Route element={<UserManagement />} path="/user-management" />
+          <Route element={<StoreManagement />} path="/store-management" />
+          <Route element={<ReportAnalysis />} path="/report-analysis" />
+        </Route>
       </Routes>
     </BrowserRouter>
   );

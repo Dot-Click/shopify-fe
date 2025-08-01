@@ -36,7 +36,7 @@ export const HowItWorksSection = () => {
       <Box className="container mx-auto grid grid-cols-1 items-center gap-16 px-6 lg:grid-cols-2">
         {/* Left Column: Text Content */}
         <Box className="flex flex-col justify-center">
-          <h2 className="text-5xl font-bold leading-tight text-gray-800">
+          <h2 className="text-5xl font-bold leading-tight text-gray-800 max-sm:text-3xl">
             <span className="bg-blue-600 px-2 text-white">How</span> eComProtect
             <br />
             Protects Your Store

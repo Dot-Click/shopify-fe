@@ -76,13 +76,27 @@ const TableComponent: FC<
 
     return (
       <>
-        <Table className={cn(isLoading && "min-h-[50vh]")}>
-          <TableHeader className="bg-accent">
+        <Table
+          className={cn("overflow-hidden text-sm", isLoading && "min-h-[50vh]")}
+        >
+          <TableHeader className="bg-slate-50 text-slate-700 font-semibold text-sm">
             {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
+              <TableRow
+                key={headerGroup.id}
+                // data-state={headerGroup..getIsSelected() && "selected"}
+                className={cn(
+                  "border-b border-slate-200 last:border-b-0",
+                  "double-click-indicator single-click-indicator",
+                  (withDoubleClickIndication || withSingleClickIndication) &&
+                    "cursor-pointer"
+                )}
+              >
                 {headerGroup.headers.map((header) => {
                   return (
-                    <TableHead key={header.id}>
+                    <TableHead
+                      key={header.id}
+                      className="py-5 text-left tracking-wide px-5"
+                    >
                       {header.isPlaceholder
                         ? null
                         : flexRender(
@@ -103,6 +117,7 @@ const TableComponent: FC<
                   key={key}
                   data-state={row.getIsSelected() && "selected"}
                   className={cn(
+                    "border-b border-slate-200 last:border-b-0",
                     "double-click-indicator single-click-indicator",
                     (withDoubleClickIndication || withSingleClickIndication) &&
                       "cursor-pointer"
@@ -121,6 +136,7 @@ const TableComponent: FC<
                           onDoubleClickHandler?.(row);
                         }
                       }}
+                      className="py-5 text-slate-700 px-5 border-0"
                     >
                       {row.id === selectedRowId ? (
                         <Skeleton className="size-full h-10" />
@@ -137,9 +153,9 @@ const TableComponent: FC<
             ) : !isLoading ? (
               <TableRow>
                 <TableCell colSpan={8} className="h-24">
-                  <Flex className="bg-yellow-50/10 rounded-lg size-full p-5 justify-center text-yellow-700">
-                    <AlertCircleIcon />
-                    <p>Nothing to show</p>
+                  <Flex className="bg-yellow-50/70 rounded-lg p-6 justify-center text-yellow-800 text-sm">
+                    <AlertCircleIcon className="mr-2 h-5 w-5" />
+                    <p>No data available</p>
                   </Flex>
                 </TableCell>
               </TableRow>
@@ -148,7 +164,7 @@ const TableComponent: FC<
                 <TableRow key={i}>
                   {Array.from({ length: 8 }).map((_, j) => (
                     <TableCell key={j} className="h-5">
-                      <Skeleton className="size-full" />
+                      <Skeleton className="h-4 w-full rounded bg-slate-200" />
                     </TableCell>
                   ))}
                 </TableRow>
@@ -257,7 +273,7 @@ export const checkBoxProps = (
         ? params.row.toggleSelected()
         : params.table.toggleAllPageRowsSelected(),
     className:
-      "data-[state=checked]:bg-hollywood-500 data-[state=checked]:text-white data-[state=checked]:border-none",
+      "data-[state=checked]:bg-hollywood-500 data-[state=checked]:text-web-blue border-web-checkbox-grey data-[state=checked]:border-2",
   } as returnType;
 };
 

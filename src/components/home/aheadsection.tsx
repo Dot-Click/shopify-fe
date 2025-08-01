@@ -13,12 +13,12 @@ export const AheadSection = () => {
       <Box className="container mx-auto grid grid-cols-1 items-center gap-12 px-6 lg:grid-cols-2">
         {/* Left Column: Text Content */}
         <Box className="flex flex-col items-start">
-          <h2 className="text-5xl font-bold leading-tight">
+          <h2 className="text-5xl font-bold leading-tight max-sm:text-3xl">
             <span className="bg-gray-900 px-3 py-1">What's</span> Ahead
             <br />
             for eCommerce in 2025?
           </h2>
-          <p className="mt-6 max-w-lg text-lg text-gray-200">
+          <p className="mt-6 max-w-lg text-lg text-gray-200 max-sm:text-sm">
             The world of online retail is rapidly shifting — shaped by consumer
             habits, global economics, and evolving fraud tactics. Our latest
             Commerce in 2025 insight report reveals the biggest trends and

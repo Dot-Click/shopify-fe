@@ -12,12 +12,16 @@ export const Navbar = () => {
         <Box className="container flex items-center justify-between">
           {/* Left Side: Logo */}
           <Link to="/" className="flex items-center">
-            <img src={whiteLogo} alt="eComProtect Logo" className="h-14" />
+            <img
+              src={whiteLogo}
+              alt="eComProtect Logo"
+              className="h-14 md:h-12 max-sm:h-10"
+            />
           </Link>
 
           {/* Middle: Navigation Links */}
           {/* Using Box as the nav element */}
-          <Box className="hidden items-center space-x-10 md:flex">
+          <Box className="hidden items-center space-x-10 md:flex md:text-xs md:space-x-7">
             <Link to="/" className="text-md font-medium hover:text-gray-300">
               Home
             </Link>
