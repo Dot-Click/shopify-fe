@@ -8,13 +8,19 @@ import {
   CardTitle,
 } from "../../components/ui/card";
 import {
-  type ChartConfig,
+  // type ChartConfig,
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
 } from "../../components/ui/chart";
 import { Box } from "../ui/box";
-// import underline from "/images/underline.svg";
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
+import { CalendarIcon } from "lucide-react";
+import { Calendar } from "../ui/calendar";
+import { useState } from "react";
+import { cn } from "../../lib/utils";
+import { format } from "date-fns";
+import underline from "/images/underline_2.svg";
 
 const chartData = [
   { month: "Jan", incidents: 88 },
@@ -31,27 +37,53 @@ const chartData = [
   { month: "Dec", incidents: 40 },
 ];
 
-const chartConfig = {
+const incidentsConfig = {
   incidents: {
     label: "Incidents",
-    color: "hsl(var(--chart-1))",
+    color: "hsl(210, 89%, 60%)",
   },
-} satisfies ChartConfig;
+};
 
 export function IncidentsBarChart() {
+  const [date, setDate] = useState<Date | undefined>(new Date());
+
   return (
     <Card className="flex h-full flex-col border-0">
-      <CardHeader className="flex flex-row items-center justify-between">
-        <Box className="flex text-xl pb-2 gap-x-2">
-          <CardTitle>Analytic</CardTitle>
-          <CardDescription>(Flagged Incidents By Months)</CardDescription>
+      <CardHeader className="w-full">
+        <Box className="flex flex-row items-center justify-between">
+          <Box className="flex text-xl pb-2 gap-x-2">
+            <CardTitle>Analytic</CardTitle>
+            <CardDescription>(Flagged Incidents By Months)</CardDescription>
+          </Box>
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                variant="outline"
+                className={cn(
+                  "w-[150px] justify-start text-left font-normal",
+                  !date && "text-muted-foreground border-0"
+                )}
+              >
+                <CalendarIcon className="mr-2 h-4 w-4 " />
+                {date ? format(date, "LLL dd") : <span>Pick a date</span>}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0 border-0" align="end">
+              <Calendar
+                mode="single"
+                selected={date}
+                onSelect={setDate}
+                className={"bg-white border-web-grey"}
+                // initialFocus
+              />
+            </PopoverContent>
+          </Popover>
         </Box>
-        <Button variant="outline">2024 Year</Button>
-        {/* <img src={underline} /> */}
+        <img src={underline} />
       </CardHeader>
 
       <CardContent className="flex-1 h-[200px] w-full">
-        <ChartContainer config={chartConfig} className="h-full w-full">
+        <ChartContainer config={incidentsConfig} className="h-full w-full">
           <BarChart data={chartData} accessibilityLayer>
             <CartesianGrid vertical={false} />
             <XAxis

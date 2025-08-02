@@ -9,7 +9,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     <SidebarProvider>
       <AppSidebar />
       {/* The main content area */}
-      <div className="flex flex-1 flex-col p-4 bg-web-grey">
+      <div className="flex flex-1 flex-col p-4 bg-web-grey overflow-x-hidden">
         {/* 2. Add the Navbar here */}
         <header className="flex items-center justify-between">
           <SidebarTrigger />

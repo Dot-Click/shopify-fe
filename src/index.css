@@ -83,6 +83,8 @@
   --web-grey: oklch(0.9731 0 0);
   --web-dark-grey: oklch(0.4508 0.0215 209.47);
   --web-checkbox-grey: oklch(0.8297 0 0);
+  --web-dark-red: oklch(0.6741 0.2136 24.96);
+  --web-light-red: oklch(0.7632 0.1408 20.89);
 }
 
 .dark {
@@ -122,6 +124,8 @@
   --web-grey: oklch(0.9731 0 0);
   --web-dark-grey: oklch(0.4508 0.0215 209.47);
   --web-checkbox-grey: oklch(0.8297 0 0);
+  --web-dark-red: oklch(0.6741 0.2136 24.96);
+  --web-light-red: oklch(0.7632 0.1408 20.89);
 }
 
 @theme inline {
@@ -129,6 +133,8 @@
   --color-web-grey: var(--web-grey);
   --color-web-dark-grey: var(--web-dark-grey);
   --color-web-checkbox-grey: var(--web-checkbox-grey);
+  --color-web-dark-red: var(--web-dark-red);
+  --color-web-light-red: var(--web-light-red);
   /* --color-warning-foreground: var(--warning-foreground); */
 }
 

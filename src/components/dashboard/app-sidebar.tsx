@@ -38,12 +38,13 @@ const mainMenuItems = [
 const secondaryMenuItems = [
   {
     title: "Report & Analytics",
-    url: "report-analysis",
+    url: "/report-analysis",
     icon: AlertCircle,
+    // url: "/dashboard",
   },
   {
     title: "Settings",
-    url: "#",
+    url: "/settings",
     icon: Settings,
   },
 ];
@@ -100,8 +101,8 @@ export function AppSidebar() {
                 <SidebarMenuItem key={item.title} className="px-2">
                   <SidebarMenuButton
                     asChild
-                    className="hover:bg-blue-800"
                     isActive={pathname === item.url}
+                    className="data-[active=true]:bg-white data-[active=true]:text-blue-800 hover:bg-blue-800"
                   >
                     <Link to={item.url}>
                       <item.icon className="size-4" />
@@ -121,12 +122,12 @@ export function AppSidebar() {
           <SidebarMenuItem>
             <SidebarMenuButton
               asChild
-              className="bg-[#F87171] py-5 mb-4 text-white hover:bg-red-500"
+              className="bg-linear-to-r from-web-dark-red to-web-light-red py-5 mb-4 text-white hover:bg-red-500"
             >
-              <a href="/logout">
+              <Link to="/">
                 <IoMdLogOut />
                 <span>Logout</span>
-              </a>
+              </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>

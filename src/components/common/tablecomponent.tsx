@@ -30,6 +30,12 @@ import colors from "tailwindcss/colors";
 import { cn } from "../../lib/utils";
 import { Stack } from "../ui/stack";
 
+declare module "@tanstack/react-table" {
+  interface ColumnMeta<TData, TValue> {
+    mobileHeader?: string;
+  }
+}
+
 interface WithVirtualScroll {
   hasNextPage: boolean;
   fetchNextPage: any;

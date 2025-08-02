@@ -7,7 +7,7 @@ const testimonialsRow1 = [
       "Lorem ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.",
     name: "Jacob Hooper",
     title: "Student in Panadomte Christian College",
-    avatar: "/images/avatars/avatar1.png",
+    avatar: "https://randomuser.me/api/portraits/men/32.jpg", // Replaced path
     rating: 4,
   },
   {
@@ -15,7 +15,7 @@ const testimonialsRow1 = [
       "It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.",
     name: "Esther Howard",
     title: "CEO, Tech Solutions",
-    avatar: "/images/avatars/avatar2.png",
+    avatar: "https://randomuser.me/api/portraits/women/44.jpg", // Replaced path
     rating: 5,
   },
   {
@@ -23,18 +23,19 @@ const testimonialsRow1 = [
       "Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC.",
     name: "Maxi Williams",
     title: "Product Manager, Innovate Co.",
-    avatar: "/images/avatars/avatar3.png",
+    avatar: "https://randomuser.me/api/portraits/men/36.jpg", // Replaced path
     rating: 5,
   },
 ];
 
+// --- UPDATED with real image URLs ---
 const testimonialsRow2 = [
   {
     quote:
       "This is a fantastic tool that has saved us countless hours and prevented significant losses. Highly recommended for any Shopify merchant.",
     name: "Sarah Jenkins",
     title: "Owner, The Boutique Hub",
-    avatar: "/images/avatars/avatar5.png",
+    avatar: "https://randomuser.me/api/portraits/women/68.jpg", // Replaced path
     rating: 5,
   },
   {
@@ -42,7 +43,7 @@ const testimonialsRow2 = [
       "The accuracy is unmatched. We've tried other solutions, but eComProtect's cross-checking gives us the confidence we need.",
     name: "Michael Chen",
     title: "Operations Director, GadgetFlow",
-    avatar: "/images/avatars/avatar6.png",
+    avatar: "https://randomuser.me/api/portraits/men/75.jpg", // Replaced path
     rating: 5,
   },
   {
@@ -50,7 +51,7 @@ const testimonialsRow2 = [
       "The standard chunk of Lorem Ipsum used since the 1500s is reproduced below for those interested. A must have!",
     name: "Johnathan Doe",
     title: "Lead Developer, CodeCrafters",
-    avatar: "/images/avatars/avatar4.png",
+    avatar: "https://randomuser.me/api/portraits/men/9.jpg", // Replaced path
     rating: 4,
   },
 ];
@@ -95,7 +96,6 @@ const TestimonialCard = ({
 
 export const TestimonialsSection = () => {
   return (
-    // <Box className="w-full bg-gray-50 py-24 pb-24">
     <Box className="w-full pt-24 pb-16">
       <Box className="container mx-auto px-6">
         {/* Section Header */}

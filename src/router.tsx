@@ -7,6 +7,7 @@ import Layout from "./layout/sidebar.layout";
 import UserManagement from "./pages/usermanagemeent.page";
 import StoreManagement from "./pages/storemanagement.page";
 import ReportAnalysis from "./pages/reportanalysis.page";
+import { Settings } from "./pages/settings.page";
 
 export const Router = () => {
   return (
@@ -27,6 +28,7 @@ export const Router = () => {
           <Route element={<UserManagement />} path="/user-management" />
           <Route element={<StoreManagement />} path="/store-management" />
           <Route element={<ReportAnalysis />} path="/report-analysis" />
+          <Route element={<Settings />} path="/settings" />
         </Route>
       </Routes>
     </BrowserRouter>

@@ -21,7 +21,7 @@ export const Navbar = () => {
 
           {/* Middle: Navigation Links */}
           {/* Using Box as the nav element */}
-          <Box className="hidden items-center space-x-10 md:flex md:text-xs md:space-x-7">
+          <Box className="hidden items-center space-x-10 lg:text-sm md:flex md:text-xs md:space-x-7">
             <Link to="/" className="text-md font-medium hover:text-gray-300">
               Home
             </Link>
@@ -37,7 +37,7 @@ export const Navbar = () => {
           <Box className="hidden items-center space-x-4 md:flex">
             <Button
               variant="outline"
-              className="rounded-full border-white bg-[rgba(255,255,255,0.2)] py-5 px-6  text-white hover:text-blue-700"
+              className="rounded-full border-white bg-[rgba(255,255,255,0.2)] py-5 px-6  text-white hover:text-blue-200"
             >
               {/* This is a single child, so it's correct */}
               <Link to="/signin">Sign In</Link>

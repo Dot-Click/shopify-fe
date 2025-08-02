@@ -1,7 +1,7 @@
 import { AlertTriangle, CheckCircle2 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { cn } from "../../lib/utils";
-import underline from "/images/underline.svg";
+import underline from "/images/underline_2.svg";
 
 type ActivityItemProps = {
   icon: React.ElementType;
@@ -61,7 +61,7 @@ export function RecentActivitySection() {
 
       {/* 2. Recent Retailer Activity Card */}
       <Card className="border-0 bg-white">
-        <CardHeader>
+        <CardHeader className="w-full">
           <CardTitle className="text-lg">Recent Retailer Activity</CardTitle>
           <img src={underline} />
         </CardHeader>

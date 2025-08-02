@@ -17,6 +17,8 @@ import IPLogo from "/icons/ip.svg";
 import Store from "/icons/retailer.svg";
 import Hat from "/icons/hat.svg";
 import Flag from "/icons/flag.svg";
+import { useState } from "react";
+import { Box } from "../ui/box";
 // import { BiSolidFlagAlt } from "react-icons/bi";
 // import { FaHatCowboy } from "react-icons/fa";
 
@@ -48,19 +50,19 @@ StatCardProps) {
         alt=""
       />
 
-      <div className="flex-shrink-0 rounded-full bg-white p-3">
+      <Box className="flex-shrink-0 rounded-full bg-white p-3 ">
         <img src={Icon as string} className="h-6 w-6" alt={`${title} icon`} />
-      </div>
-      <div>
+      </Box>
+      <Box className="relative z-10">
         <p className="text-sm font-light">{title}</p>
         <p className="text-3xl font-bold">{value}</p>
-      </div>
+      </Box>
     </div>
   );
 }
 
 export function OverviewSection() {
-  const [date, setDate] = React.useState<Date | undefined>(new Date());
+  const [date, setDate] = useState<Date | undefined>(new Date());
 
   const overviewData: StatCardProps[] = [
     {
@@ -96,7 +98,7 @@ export function OverviewSection() {
   return (
     <Card className="border-0 bg-white">
       <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle>Overview</CardTitle>
+        <CardTitle className="text-lg">Overview</CardTitle>
 
         <Popover>
           <PopoverTrigger asChild>
@@ -104,19 +106,19 @@ export function OverviewSection() {
               variant="outline"
               className={cn(
                 "w-[150px] justify-start text-left font-normal",
-                !date && "text-muted-foreground"
+                !date && "text-muted-foreground border-0"
               )}
             >
-              <CalendarIcon className="mr-2 h-4 w-4" />
+              <CalendarIcon className="mr-2 h-4 w-4 " />
               {date ? format(date, "LLL dd") : <span>Pick a date</span>}
             </Button>
           </PopoverTrigger>
-          <PopoverContent className="w-auto p-0" align="end">
+          <PopoverContent className="w-auto p-0 border-0" align="end">
             <Calendar
               mode="single"
               selected={date}
               onSelect={setDate}
-              className={"bg-white "}
+              className={"bg-white border-web-grey"}
               // initialFocus
             />
           </PopoverContent>

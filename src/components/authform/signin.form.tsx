@@ -82,7 +82,7 @@ export const SigninForm = () => {
                       <Input
                         placeholder="Enter you email address"
                         {...field}
-                        className="py-6"
+                        className="border-0 py-6 rounded-xl"
                       />
                     </FormControl>
                     <FormMessage />
@@ -100,7 +100,8 @@ export const SigninForm = () => {
                         <Input
                           type={showPassword ? "text" : "password"}
                           placeholder="Enter your password"
-                          className="py-6 pr-10"
+                          // className="py-6 pr-10"
+                          className="border-0 py-6 rounded-xl"
                           {...field}
                           rightIcon={
                             <Button
@@ -153,7 +154,7 @@ export const SigninForm = () => {
               </div>
 
               <Button
-                className="w-full bg-blue-600 py-6 text-base hover:bg-blue-700"
+                className="w-full bg-blue-600 py-6 text-base hover:bg-blue-700 text-white"
                 type="submit"
               >
                 Sign In
@@ -162,22 +163,22 @@ export const SigninForm = () => {
           </Form>
 
           <div className="flex items-center gap-4">
-            <Separator className="flex-1" />
+            <Separator className="flex-1 bg-web-checkbox-grey" />
             <span className="text-sm text-gray-500">Or sign in with</span>
-            <Separator className="flex-1" />
+            <Separator className="flex-1 bg-web-checkbox-grey" />
           </div>
 
           <div className="space-y-3">
             <Button
               variant="outline"
-              className="w-full bg-[#2C2C2D] text-[#fff] py-5 rounded-lg"
+              className="w-full bg-[#2C2C2D] text-[#fff] py-6 rounded-lg"
             >
               <FcGoogle className="mr-2 h-6 w-6" />
               Google
             </Button>
             <Button
               variant="outline"
-              className="w-full bg-[#2C2C2D] text-[#fff] py-5 rounded-lg"
+              className="w-full bg-[#2C2C2D] text-[#fff] py-6 rounded-lg"
             >
               <img src={fbIcon} className="mr-2 h-4 w-4" />
               Facebook

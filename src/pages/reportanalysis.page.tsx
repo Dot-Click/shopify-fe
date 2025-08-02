@@ -43,6 +43,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "../components/ui/dropdown-menu";
+import underline from "/images/underline_2.svg";
 
 // --- Chart Component ---
 
@@ -74,24 +75,32 @@ const chartConfig = {
 
 function ReportOverviewChart() {
   return (
-    <Card className="border-0">
-      <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle>Overview</CardTitle>
-        <div className="flex items-center gap-6">
-          {Object.values(chartConfig).map((item) => (
-            <div key={item.label} className="flex items-center gap-2">
-              <div
-                className="h-3 w-3 rounded-sm"
-                style={{ backgroundColor: item.color }}
-              />
-              <span className="text-sm text-slate-500">{item.label}</span>
-            </div>
-          ))}
-        </div>
+    <Card className="border-0 shadow-none">
+      <CardHeader className="w-full">
+        <Box className="flex flex-row items-center justify-between">
+          <CardTitle className="text-lg">Overview</CardTitle>
+          <div className="flex items-center gap-6">
+            {Object.values(chartConfig).map((item) => (
+              <div key={item.label} className="flex items-center gap-2">
+                <div
+                  className="h-3 w-3 rounded-sm"
+                  style={{ backgroundColor: item.color }}
+                />
+                <span className="text-sm text-slate-500">{item.label}</span>
+              </div>
+            ))}
+          </div>
+        </Box>
+        <img src={underline} className="w-full" />
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig} className="h-64 w-full">
-          <BarChart data={chartData} accessibilityLayer>
+          <BarChart
+            data={chartData}
+            accessibilityLayer
+            width={300}
+            height={300}
+          >
             <CartesianGrid vertical={false} />
             <XAxis
               dataKey="month"
@@ -174,8 +183,6 @@ const storeData: StoreEntry[] = [
   },
 ];
 
-// --- Table Column Definitions ---
-
 const getRiskColor = (level: number) => {
   if (level > 75) return "bg-red-500";
   if (level > 40) return "bg-orange-500";
@@ -203,25 +210,40 @@ const customerColumns: ColumnDef<CustomerEntry>[] = [
   {
     accessorKey: "id",
     header: (info) => <SortedHeader header={info.header} label="User ID" />,
+    meta: {
+      mobileHeader: "USer Id",
+    },
   },
   {
     accessorKey: "name",
     header: (info) => <SortedHeader header={info.header} label="Name" />,
+    meta: {
+      mobileHeader: "Name",
+    },
   },
   {
     accessorKey: "email",
     header: (info) => <SortedHeader header={info.header} label="Email" />,
+    meta: {
+      mobileHeader: "Email",
+    },
   },
   {
     accessorKey: "riskLevel",
     header: "Risk Level",
     cell: ({ row }) => <RiskLevelIndicator level={row.original.riskLevel} />,
+    meta: {
+      mobileHeader: "Risk Level",
+    },
   },
   {
     accessorKey: "totalFraudReports",
     header: (info) => (
       <SortedHeader header={info.header} label="Total Fraud Reports" />
     ),
+    meta: {
+      mobileHeader: "Total Fraud Reports",
+    },
   },
   {
     id: "actions",
@@ -273,11 +295,9 @@ function ReportTable() {
   const [isLoading] = React.useState(false);
 
   const isCustomerView = activeTab === "customers";
-  //   const data = isCustomerView ? customerData : storeData;
-  //   const columns = isCustomerView ? customerColumns : storeColumns;
   return (
     <div className="mt-6">
-      <header className="flex flex-wrap items-center justify-between gap-4 px-5">
+      <header className="flex flex-wrap items-center justify-between gap-4 px-5 ">
         <div className="flex items-center gap-1 rounded-lg bg-slate-100 p-1">
           <Button
             size="sm"
@@ -348,9 +368,9 @@ function ReportTable() {
 
 function ReportAnalysis() {
   return (
-    <Box className="rounded-xl bg-white p-4 shadow-sm sm:p-6">
+    <Box className="rounded-xl bg-white pt-10">
       {/* Page Header */}
-      <header className="flex items-center justify-between px-2 pb-2">
+      <header className="flex items-center justify-between px-5 pb-2">
         <h1 className="text-2xl font-bold text-slate-800">
           Report & Analytics
         </h1>

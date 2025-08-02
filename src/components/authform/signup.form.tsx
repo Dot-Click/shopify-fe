@@ -80,7 +80,11 @@ export const SignupForm = () => {
                   <FormItem>
                     <FormLabel>User Name</FormLabel>
                     <FormControl>
-                      <Input placeholder="Enter user name" {...field} />
+                      <Input
+                        placeholder="Enter user name"
+                        {...field}
+                        className="border-0 py-6 rounded-xl"
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -93,7 +97,11 @@ export const SignupForm = () => {
                   <FormItem>
                     <FormLabel>Email</FormLabel>
                     <FormControl>
-                      <Input placeholder="Enter you email address" {...field} />
+                      <Input
+                        placeholder="Enter you email address"
+                        {...field}
+                        className="border-0 py-6 rounded-xl"
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -111,6 +119,7 @@ export const SignupForm = () => {
                           type={showPassword ? "text" : "password"}
                           placeholder="Enter your password"
                           {...field}
+                          className="border-0 py-6 rounded-xl"
                           rightIcon={
                             <Button
                               type="button"
@@ -134,7 +143,7 @@ export const SignupForm = () => {
                 )}
               />
               <Button
-                className="w-full bg-blue-600 hover:bg-blue-700"
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white py-6 rounded-xl"
                 type="submit"
               >
                 Sign Up
@@ -151,14 +160,14 @@ export const SignupForm = () => {
           <div className="space-y-3">
             <Button
               variant="outline"
-              className="w-full bg-[#2C2C2D] text-[#fff] py-5 rounded-lg"
+              className="w-full bg-[#2C2C2D] text-[#fff] py-6 rounded-lg"
             >
               <FcGoogle className="mr-2 h-6 w-6" />
               Google
             </Button>
             <Button
               variant="outline"
-              className="w-full bg-[#2C2C2D] text-[#fff] py-5 rounded-lg "
+              className="w-full bg-[#2C2C2D] text-[#fff] py-6 rounded-lg "
             >
               <img src={fbIcon} className="mr-2 h-4 w-4" />
               Facebook
