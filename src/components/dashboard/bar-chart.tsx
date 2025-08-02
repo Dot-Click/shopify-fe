@@ -100,7 +100,12 @@ export function IncidentsBarChart() {
             />
             <ChartTooltip
               cursor={false}
-              content={<ChartTooltipContent hideLabel />}
+              content={
+                <ChartTooltipContent
+                  hideLabel
+                  className="bg-white text-web-dark-grey p-2 rounded-lg border-0 shadow-lg"
+                />
+              }
             />
             <Bar dataKey="incidents" fill="var(--color-incidents)" radius={8} />
           </BarChart>

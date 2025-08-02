@@ -111,7 +111,12 @@ function ReportOverviewChart() {
             <YAxis tickLine={false} axisLine={false} tickMargin={10} />
             <ChartTooltip
               cursor={false}
-              content={<ChartTooltipContent indicator="dashed" />}
+              content={
+                <ChartTooltipContent
+                  indicator="dashed"
+                  className="bg-white text-web-dark-grey p-2 rounded-lg border-0 shadow-lg"
+                />
+              }
             />
             <Bar
               dataKey="fraudIncidents"

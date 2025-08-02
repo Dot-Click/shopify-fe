@@ -59,7 +59,12 @@ export function FlaggedReasonsChart() {
           <PieChart width={150} height={150}>
             <ChartTooltip
               cursor={false}
-              content={<ChartTooltipContent hideLabel />}
+              content={
+                <ChartTooltipContent
+                  hideLabel
+                  className="bg-white text-web-dark-grey p-2 rounded-lg border-0 shadow-lg"
+                />
+              }
             />
             <Pie
               data={chartData}

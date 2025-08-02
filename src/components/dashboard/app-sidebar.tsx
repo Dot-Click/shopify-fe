@@ -56,7 +56,7 @@ export function AppSidebar() {
     <Sidebar className="bg-[#1E40AF] text-white ">
       {/* Sidebar Header with Logo */}
       <SidebarHeader className="p-4">
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 px-4 mt-6">
           <img src={logo} />
         </div>
       </SidebarHeader>
