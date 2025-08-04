@@ -8,15 +8,20 @@ import UserManagement from "./pages/usermanagemeent.page";
 import StoreManagement from "./pages/storemanagement.page";
 import ReportAnalysis from "./pages/reportanalysis.page";
 import { Settings } from "./pages/settings.page";
+import { NotFoundPage } from "./pages/notfound.page";
+import CustomerManagement from "./pages/customermanagement.page";
+import NotificationsPage from "./pages/notification";
 
 export const Router = () => {
   return (
     <BrowserRouter>
       <Routes>
-        <Route element={<Signin />} path="/signin" />
-        <Route element={<Signup />} path="/signup" />
-        <Route element={<Home />} path="/" />
+        {/* Public Routes */}
+        <Route path="/signin" element={<Signin />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/" element={<Home />} />
 
+        {/* Protected Routes with Sidebar Layout */}
         <Route
           element={
             <Layout>
@@ -24,12 +29,20 @@ export const Router = () => {
             </Layout>
           }
         >
-          <Route element={<Dashboard />} path="/dashboard" />
-          <Route element={<UserManagement />} path="/user-management" />
-          <Route element={<StoreManagement />} path="/store-management" />
-          <Route element={<ReportAnalysis />} path="/report-analysis" />
-          <Route element={<Settings />} path="/settings" />
+          <Route path="/admin/dashboard" element={<Dashboard />} />
+          <Route path="/admin/user-management" element={<UserManagement />} />
+          <Route path="/admin/store-management" element={<StoreManagement />} />
+          <Route path="/admin/report-analysis" element={<ReportAnalysis />} />
+          <Route path="/admin/settings" element={<Settings />} />
+          <Route
+            path="/user/customer-management"
+            element={<CustomerManagement />}
+          />
+          <Route path="/user/notification" element={<NotificationsPage />} />
         </Route>
+
+        {/* Top-level Catch-all 404 Route */}
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </BrowserRouter>
   );
