@@ -35,7 +35,7 @@ const formSchema = z.object({
   }),
 });
 
-export const SigninForm = () => {
+export const AdminSigninForm = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [authChecked, _setAuthChecked] = useState(false);
 
@@ -59,22 +59,14 @@ export const SigninForm = () => {
     <Flex className=" h-full flex-col justify-center">
       {/* Removed padding from here to be controlled by the parent page */}
       <Flex className="flex-col items-center justify-center space-y-6">
-        <Box className="w-full max-w-md space-y-4">
+        <Box className="w-full space-y-4">
           <Box className="space-y-1">
-            <h1 className="text-3xl font-bold">Sign In</h1>
-            <p className="text-gray-500">
-              Don't have an account?{" "}
-              <Link
-                to="/signup" // Link to the signup page
-                className="font-semibold text-blue-600 hover:underline"
-              >
-                Sign Up
-              </Link>
-            </p>
+            <h1 className="text-3xl font-bold">Welcome Back!</h1>
+            <p>Enter your credential to access your account!</p>
           </Box>
         </Box>
 
-        <Box className="w-full max-w-md space-y-6">
+        <Box className="w-full space-y-6">
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
               <FormField
@@ -157,29 +149,7 @@ export const SigninForm = () => {
                   Forget password?
                 </Link>
               </Flex>
-              <Flex className="items-center justify-between">
-                <FormField
-                  control={form.control}
-                  name="authorisation"
-                  render={({ field }) => (
-                    <FormItem className="flex flex-row items-start space-x-2 space-y-0">
-                      <FormControl>
-                        <Checkbox
-                          checked={field.value}
-                          onCheckedChange={field.onChange}
-                        />
-                      </FormControl>
-                      <div className="leading-none">
-                        <FormLabel className="font-normal leading-4.5 text-web-dark-grey text-xs ">
-                          Unauthorised access is prohibited. Attempting to log
-                          in without proper authorisation may constitute a
-                          criminal offence under UK law
-                        </FormLabel>
-                      </div>
-                    </FormItem>
-                  )}
-                />
-              </Flex>
+              <Flex className="items-center justify-between"></Flex>
               <Button
                 className="w-full bg-blue-600 py-6 text-base hover:bg-blue-700 text-white"
                 type="submit"
@@ -189,29 +159,6 @@ export const SigninForm = () => {
               </Button>
             </form>
           </Form>
-          {/*
-          <div className="flex items-center gap-4">
-            <Separator className="flex-1 bg-web-checkbox-grey" />
-            <span className="text-sm text-gray-500">Or sign in with</span>
-            <Separator className="flex-1 bg-web-checkbox-grey" />
-          </div>
-
-          <div className="space-y-3">
-            <Button
-              variant="outline"
-              className="w-full bg-[#2C2C2D] text-[#fff] py-6 rounded-lg"
-            >
-              <FcGoogle className="mr-2 h-6 w-6" />
-              Google
-            </Button>
-            <Button
-              variant="outline"
-              className="w-full bg-[#2C2C2D] text-[#fff] py-6 rounded-lg"
-            >
-              <img src={fbIcon} className="mr-2 h-4 w-4" />
-              Facebook
-            </Button>
-          </div> */}
         </Box>
       </Flex>
     </Flex>

@@ -21,7 +21,11 @@ import { FaBell } from "react-icons/fa";
 
 const adminMainMenuItems = [
   { title: "Dashboard", url: "/admin/dashboard", icon: LayoutGrid },
-  { title: "Users Management", url: "/admin/user-management", icon: Users },
+  {
+    title: "Customer Management",
+    url: "/admin/customer-management",
+    icon: Users,
+  },
   { title: "Store Management", url: "/admin/store-management", icon: Store },
 ];
 
@@ -41,6 +45,9 @@ const userMenuItems = [
     icon: Users,
   },
   { title: "Notification", url: "/user/notification", icon: FaBell },
+];
+
+const userSecondaryMenuItems = [
   { title: "Settings", url: "/user/settings", icon: Settings },
 ];
 
@@ -102,14 +109,27 @@ export function AppSidebar({ role }: AppSidebarProps) {
             </SidebarGroup>
           </>
         ) : (
-          <SidebarGroup>
-            <SidebarGroupLabel className="px-4 text-xs font-normal text-blue-300">
-              Menu
-            </SidebarGroupLabel>
-            <SidebarGroupContent>
-              <SidebarMenu>{renderMenuItems(userMenuItems)}</SidebarMenu>
-            </SidebarGroupContent>
-          </SidebarGroup>
+          <>
+            <SidebarGroup>
+              <SidebarGroupLabel className="px-4 text-xs font-normal text-blue-300">
+                Menu
+              </SidebarGroupLabel>
+              <SidebarGroupContent>
+                <SidebarMenu>{renderMenuItems(userMenuItems)}</SidebarMenu>
+              </SidebarGroupContent>
+            </SidebarGroup>
+
+            <SidebarGroup>
+              <SidebarGroupLabel className="px-4 text-xs font-normal text-blue-300">
+                <PiDotsNineBold />
+              </SidebarGroupLabel>
+              <SidebarGroupContent>
+                <SidebarMenu>
+                  {renderMenuItems(userSecondaryMenuItems)}
+                </SidebarMenu>
+              </SidebarGroupContent>
+            </SidebarGroup>
+          </>
         )}
       </SidebarContent>
 

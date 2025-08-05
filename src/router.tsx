@@ -11,6 +11,9 @@ import { Settings } from "./pages/settings.page";
 import { NotFoundPage } from "./pages/notfound.page";
 import CustomerManagement from "./pages/customermanagement.page";
 import NotificationsPage from "./pages/notification";
+import { AdminSignin } from "./pages/adminsignin.page";
+import { PlansPage } from "./pages/plan.page";
+import { PostSignupFlowPage } from "./pages/signinflow.page";
 
 export const Router = () => {
   return (
@@ -18,8 +21,11 @@ export const Router = () => {
       <Routes>
         {/* Public Routes */}
         <Route path="/signin" element={<Signin />} />
+        <Route path="/admin-signin" element={<AdminSignin />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/" element={<Home />} />
+        <Route path="/select-plans" element={<PlansPage />} />
+        <Route path="/post-signup" element={<PostSignupFlowPage />} />
 
         {/* Protected Routes with Sidebar Layout */}
         <Route
@@ -30,7 +36,10 @@ export const Router = () => {
           }
         >
           <Route path="/admin/dashboard" element={<Dashboard />} />
-          <Route path="/admin/user-management" element={<UserManagement />} />
+          <Route
+            path="/admin/customer-management"
+            element={<UserManagement />}
+          />
           <Route path="/admin/store-management" element={<StoreManagement />} />
           <Route path="/admin/report-analysis" element={<ReportAnalysis />} />
           <Route path="/admin/settings" element={<Settings />} />

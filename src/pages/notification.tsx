@@ -155,9 +155,7 @@ const NotificationItem = ({ notification }: { notification: Notification }) => {
                 </span>
               </div>
             </Flex>
-            <Box className="pl-[52px]">
-              {" "}
-              {/* Indent to align with text above */}
+            <Box>
               <p className="text-base font-semibold text-slate-900">
                 {notification.description}
               </p>

@@ -1,4 +1,4 @@
-import { X, Circle } from "lucide-react";
+import { Circle } from "lucide-react";
 import { Button } from "../ui/button";
 import {
   DialogContent,
@@ -64,14 +64,10 @@ interface ReportSummaryModalProps {
 export function ReportSummaryModal({ user }: ReportSummaryModalProps) {
   return (
     <DialogContent className="sm:max-w-lg bg-white p-0 rounded-2xl shadow-lg border-none">
-      <DialogHeader className="p-6 bg-web-grey rounded-2xl">
+      <DialogHeader className="p-6 bg-web-grey rounded-t-2xl">
         <DialogTitle className="text-lg font-bold text-slate-800">
           eComProtect Report Summary
         </DialogTitle>
-        <DialogClose className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground">
-          <X className="h-5 w-5" />
-          <span className="sr-only">Close</span>
-        </DialogClose>
       </DialogHeader>
 
       <div className="p-6 pt-0">

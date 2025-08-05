@@ -167,7 +167,7 @@ function UserManagement() {
       {/* Page Header */}
       <header className="flex flex-wrap items-center justify-between gap-4 pt-5 px-7">
         <h1 className="text-2xl font-semibold text-slate-800  ">
-          Users Management
+          Customer Management
         </h1>
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2 text-sm">

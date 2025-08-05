@@ -1,11 +1,17 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
-// import { Label } from "../../components/ui/label"; // Keep Label for consistency if needed outside form
-import { Separator } from "../ui/separator";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
 import {
   Form,
   FormControl,
@@ -15,75 +21,97 @@ import {
   FormMessage,
 } from "../ui/form";
 import { Eye, EyeOff } from "lucide-react";
-import { FcGoogle } from "react-icons/fc";
-import fbIcon from "/images/fb_icon.png";
-import { Link } from "react-router-dom";
-import { useState } from "react";
+import { Box } from "../ui/box";
 
-// 1. Define your form schema with Zod
-const formSchema = z.object({
-  username: z.string().min(2, {
-    message: "Username must be at least 2 characters.",
-  }),
-  email: z.string().email({
-    message: "Please enter a valid email address.",
-  }),
-  password: z.string().min(8, {
-    message: "Password must be at least 8 characters.",
-  }),
-});
+// Form Schema
+const formSchema = z
+  .object({
+    firstName: z.string().min(2, "First name must be at least 2 characters."),
+    surname: z.string().min(2, "Surname must be at least 2 characters."),
+    email: z.string().email("Please enter a valid email address."),
+    mobilePhoneNumber: z.string(),
+    companyName: z.string().min(2, "Company name is required."),
+    companyRegistrationNumber: z
+      .string()
+      .min(1, "Registration number is required."),
+    averageOrdersPerMonth: z.string().min(1, "Please select an option."),
+    storeUrl: z.string().url("Please enter a valid store URL."),
+    password: z.string().min(8, "Password must be at least 8 characters."),
+    confirmPassword: z.string(),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords do not match.",
+    path: ["confirmPassword"],
+  });
+
+type FormData = z.infer<typeof formSchema>;
 
 export const SignupForm = () => {
+  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  // 2. Define your form using useForm hook
-  const form = useForm<z.infer<typeof formSchema>>({
+  const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      username: "",
-      email: "",
-      password: "",
+      /* your defaults */
     },
   });
 
-  // 3. Define a submit handler
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
-    alert("Form Submitted! Check the console for the data.");
+  function onSubmit(values: FormData) {
+    console.log("Account application submitted:", values);
+
+    // Determine the next step based on order volume
+    const nextStep =
+      values.averageOrdersPerMonth === "5000+"
+        ? "enterpriseReview"
+        : "packageSelection";
+
+    // Navigate to the post-signup page, passing data via router state
+    navigate("/post-signup", {
+      state: {
+        flowStep: nextStep,
+        formData: values,
+      },
+    });
   }
 
+  // The full JSX for the form component
   return (
-    <div className="flex h-full flex-col justify-center p-10">
-      <div className="flex flex-col items-center justify-center space-y-6">
-        <div className="w-full max-w-md space-y-4">
-          <div className="space-y-1">
-            <h1 className="text-3xl font-bold">Create an account</h1>
-            <p className="text-gray-500">
-              Already have an account?{" "}
-              <Link
-                to="/signin"
-                className="font-semibold text-blue-600 hover:underline"
-              >
-                Sign In
-              </Link>
-            </p>
-          </div>
+    <Box className="flex h-full flex-col mx-auto w-full max-w-xl justify-center py-12">
+      <Box className="w-full space-y-4">
+        <div className="space-y-1 text-center">
+          <h1 className="text-3xl font-bold">
+            Create a Customer Admin Account
+          </h1>
+          <p className="text-gray-500">
+            Already have an account?{" "}
+            <Link
+              to="/signin"
+              className="font-semibold text-blue-600 hover:underline"
+            >
+              Sign In
+            </Link>
+          </p>
         </div>
+      </Box>
 
-        <div className="w-full max-w-md space-y-6">
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+      <Box className="w-full space-y-6 mt-10">
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            {/* --- Personal Details Section --- */}
+            <Box className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <FormField
                 control={form.control}
-                name="username"
+                name="firstName"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>User Name</FormLabel>
+                    <FormLabel>First Name</FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="Enter user name"
+                        placeholder="John"
                         {...field}
-                        className="border-0 py-6 rounded-xl"
+                        className="border-gray-200 bg-gray-50 py-5"
                       />
                     </FormControl>
                     <FormMessage />
@@ -92,89 +120,218 @@ export const SignupForm = () => {
               />
               <FormField
                 control={form.control}
-                name="email"
+                name="surname"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Email</FormLabel>
+                    <FormLabel>Surname</FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="Enter you email address"
+                        placeholder="Doe"
                         {...field}
-                        className="border-0 py-6 rounded-xl"
+                        className="border-gray-200 bg-gray-50 py-5"
                       />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
+            </Box>
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Email Address</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="your.email@example.com"
+                      {...field}
+                      className="border-gray-200 bg-gray-50 py-5"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="mobilePhoneNumber"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Mobile Phone Number (for MFA)</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="+447123456789"
+                      type="text"
+                      {...field}
+                      className="border-gray-200 bg-gray-50 py-5"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* --- Company Information Section --- */}
+            <Box className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4">
+              <FormField
+                control={form.control}
+                name="companyName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Company Name</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Your Company Ltd"
+                        {...field}
+                        className="border-gray-200 bg-gray-50 py-5"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="companyRegistrationNumber"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Company Registration Number</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="12345678"
+                        {...field}
+                        className="border-gray-200 bg-gray-50 py-5"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </Box>
+            <Box className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="averageOrdersPerMonth"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Average Orders Per Month</FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger className="border-gray-200 bg-gray-50 py-5">
+                          <SelectValue placeholder="Select a range" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent className="bg-white">
+                        <SelectItem value="0-300">0 - 300</SelectItem>
+                        <SelectItem value="301-2,000">301 - 2,000</SelectItem>
+                        <SelectItem value="2,001-5,000">
+                          2,001 - 5,000
+                        </SelectItem>
+                        <SelectItem value="5000+">5,000+</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="storeUrl"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Store URL</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="https://www.yourstore.com"
+                        {...field}
+                        className="border-gray-200 bg-gray-50 py-5"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </Box>
+
+            {/* --- Password Section --- */}
+            <Box className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4">
               <FormField
                 control={form.control}
                 name="password"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Passwords</FormLabel>
+                    <FormLabel>Password</FormLabel>
                     <FormControl>
                       <div className="relative">
                         <Input
                           type={showPassword ? "text" : "password"}
                           placeholder="Enter your password"
                           {...field}
-                          className="border-0 py-6 rounded-xl"
-                          rightIcon={
-                            <Button
-                              type="button"
-                              tabIndex={-1}
-                              variant="ghost"
-                              className="mr-1.5 text-gray-400 hover:bg-transparent"
-                              onClick={() => setShowPassword((v) => !v)}
-                            >
-                              {showPassword ? (
-                                <EyeOff className="size-4" />
-                              ) : (
-                                <Eye className="size-4" />
-                              )}
-                            </Button>
-                          }
+                          className="border-gray-200 bg-gray-50 py-5 pr-10"
                         />
+                        <button
+                          type="button"
+                          className="absolute inset-y-0 right-0 px-3 flex items-center"
+                          onClick={() => setShowPassword((v) => !v)}
+                        >
+                          {showPassword ? (
+                            <EyeOff className="h-5 w-5 text-gray-400" />
+                          ) : (
+                            <Eye className="h-5 w-5 text-gray-400" />
+                          )}
+                        </button>
                       </div>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-              <Button
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white py-6 rounded-xl"
-                type="submit"
-              >
-                Sign Up
-              </Button>
-            </form>
-          </Form>
+              <FormField
+                control={form.control}
+                name="confirmPassword"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Confirm Password</FormLabel>
+                    <FormControl>
+                      <div className="relative">
+                        <Input
+                          type={showConfirmPassword ? "text" : "password"}
+                          placeholder="Confirm your password"
+                          {...field}
+                          className="border-gray-200 bg-gray-50 py-5 pr-10"
+                        />
+                        <button
+                          type="button"
+                          className="absolute inset-y-0 right-0 px-3 flex items-center"
+                          onClick={() => setShowConfirmPassword((v) => !v)}
+                        >
+                          {showConfirmPassword ? (
+                            <EyeOff className="h-5 w-5 text-gray-400" />
+                          ) : (
+                            <Eye className="h-5 w-5 text-gray-400" />
+                          )}
+                        </button>
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </Box>
 
-          <div className="flex items-center gap-4">
-            <Separator className="flex-1" />
-            <span className="text-sm">Or Sign Up</span>
-            <Separator className="flex-1" />
-          </div>
-
-          <div className="space-y-3">
             <Button
-              variant="outline"
-              className="w-full bg-[#2C2C2D] text-[#fff] py-6 rounded-lg"
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white py-6 rounded-xl mt-4"
+              type="submit"
             >
-              <FcGoogle className="mr-2 h-6 w-6" />
-              Google
+              Apply for an Account
             </Button>
-            <Button
-              variant="outline"
-              className="w-full bg-[#2C2C2D] text-[#fff] py-6 rounded-lg "
-            >
-              <img src={fbIcon} className="mr-2 h-4 w-4" />
-              Facebook
-            </Button>
-          </div>
-        </div>
-      </div>
-    </div>
+          </form>
+        </Form>
+      </Box>
+    </Box>
   );
 };

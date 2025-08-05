@@ -1,22 +1,54 @@
-import { Bell, Settings } from "lucide-react";
-import { Button } from "../ui/button"; // Assuming standard ShadCN button path
+import { Bell, Settings, Search } from "lucide-react";
+import { Button } from "../ui/button";
+import { Input } from "../ui/input"; // Assuming you have an Input component
+import { Box } from "../ui/box";
 import icon from "/icons/logo_icon.png";
 import waveIcon from "/icons/wave_icon.svg";
-import { Box } from "../ui/box";
 
-export const NavbarDashboard = () => {
+// MODIFICATION: Define the props for the component
+interface NavbarDashboardProps {
+  /**
+   * The type of user, which determines the layout.
+   */
+  userType: "admin" | "user";
+  /**
+   * The email of the currently logged-in user.
+   */
+  userEmail: string;
+}
+
+export const NavbarDashboard = ({
+  userType,
+  userEmail,
+}: NavbarDashboardProps) => {
+  // MODIFICATION: Set the welcome message based on the userType prop
+  const welcomeMessage =
+    userType === "admin"
+      ? "Welcome to, Admin Panel"
+      : "Welcome to the Dashboard";
+
   return (
     <header className="flex items-center justify-between rounded-xl bg-card p-4 shadow-sm bg-white">
-      {/* Left side: Welcome message */}
       <div>
-        <Box className="flex gap-x-2">
-          <h1 className="text-xl font-semibold">Welcome to, Admin Panel</h1>
-          <img src={waveIcon} alt="wave-icon" className="w-6" />{" "}
+        <Box className="flex gap-x-2 items-center">
+          <h1 className="text-xl font-semibold">{welcomeMessage}</h1>
+          <img src={waveIcon} alt="wave-icon" className="w-6 h-6" />
         </Box>
-        <p className="text-sm text-muted-foreground">
-          willbettelhieim@gmail.com
-        </p>
+        <p className="text-sm text-muted-foreground">{userEmail}</p>
       </div>
+
+      {/* {userType === "user" && ( */}
+      <div className="relative w-full max-w-lg mx-4">
+        <Search
+          className="absolute text-web-grey left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+          size={20}
+        />
+        <Input
+          placeholder="Search user by ID"
+          className="w-full pl-10 py-5 bg-transparent border-web-grey rounded-full  focus:border-blue-500 focus:bg-white"
+        />
+      </div>
+      {/* )} */}
 
       {/* Right side: Action Icons */}
       <div className="flex items-center gap-2">
@@ -24,7 +56,7 @@ export const NavbarDashboard = () => {
           variant="ghost"
           size="icon"
           aria-label="Settings"
-          className="bg-web-grey rounded-full p-2"
+          className="bg-gray-100 rounded-full p-2"
         >
           <Settings className="size-5" />
         </Button>
@@ -32,16 +64,16 @@ export const NavbarDashboard = () => {
           variant="ghost"
           size="icon"
           aria-label="Notifications"
-          className="bg-web-grey rounded-full p-2 "
+          className="bg-gray-100 rounded-full p-2"
         >
           <Bell className="size-5" />
         </Button>
         <Button
           size="icon"
           aria-label="App"
-          className="bg-web-blue p-2 rounded-full"
+          className="bg-blue-600 hover:bg-blue-700 p-2 rounded-full"
         >
-          <img src={icon} className="" />
+          <img src={icon} alt="Company Logo Icon" className="w-6 h-6" />
         </Button>
       </div>
     </header>

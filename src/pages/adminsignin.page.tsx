@@ -1,26 +1,24 @@
-import { SignupForm } from "../components/authform/signup.form";
-import SiginImage from "/images/sigin_page.png";
+import AdminSiginImage from "/images/admin_sigin_page.png";
 import logo from "/images/logo.png";
 import { Link } from "react-router-dom";
-import { Box } from "../components/ui/box";
+import { AdminSigninForm } from "../components/authform/adminsigin.form";
 
-export const Signup = () => {
+export const AdminSignin = () => {
   return (
     <div className="flex h-screen w-full bg-white">
       {/* Left Column: Contains logo, form, and footer */}
-      <div className="flex w-full flex-col p-8 lg:w-4/5">
-        <Box className="mb-5">
+      <div className="flex w-full flex-col p-10 lg:w-4/5">
+        <div>
           <img src={logo} alt="eComProtect Logo" className="h-14" />
-        </Box>
-
+        </div>
         <div className="flex flex-grow items-center justify-center">
           <div className="w-full">
-            <SignupForm />
+            <AdminSigninForm />
           </div>
         </div>
 
         {/* Bottom: Footer */}
-        <footer className="w-full mt-4">
+        <footer className="w-full">
           <div className="flex items-center justify-between text-sm text-gray-500">
             <p>© 2025 eComProtect. All rights reserved.</p>
             <div className="space-x-6">
@@ -35,13 +33,13 @@ export const Signup = () => {
         </footer>
       </div>
 
-      <Box className="hidden items-center justify-center bg-white p-2 lg:flex lg:w-2/5">
+      <div className="hidden items-center justify-center bg-white p-2 lg:flex lg:w-2/5">
         <img
-          src={SiginImage}
+          src={AdminSiginImage}
           alt="A seamless way to manage your profile"
           className="h-full w-full "
         />
-      </Box>
+      </div>
     </div>
   );
 };
