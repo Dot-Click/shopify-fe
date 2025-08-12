@@ -61,7 +61,6 @@ export const SignupForm = () => {
   function onSubmit(values: FormData) {
     console.log("Account application submitted:", values);
 
-    // Determine the next step based on order volume
     const nextStep =
       values.averageOrdersPerMonth === "5000+"
         ? "enterpriseReview"
@@ -78,13 +77,13 @@ export const SignupForm = () => {
 
   // The full JSX for the form component
   return (
-    <Box className="flex h-full flex-col mx-auto w-full max-w-xl justify-center py-12">
+    <Box className="flex h-full flex-col mx-auto w-full max-w-xl justify-center">
       <Box className="w-full space-y-4">
         <div className="space-y-1 text-center">
-          <h1 className="text-3xl font-bold">
+          <h1 className="text-2xl font-bold">
             Create a Customer Admin Account
           </h1>
-          <p className="text-gray-500">
+          <p className="text-gray-500 text-xs">
             Already have an account?{" "}
             <Link
               to="/signin"
@@ -96,7 +95,7 @@ export const SignupForm = () => {
         </div>
       </Box>
 
-      <Box className="w-full space-y-6 mt-10">
+      <Box className="w-full space-y-6 mt-6">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             {/* --- Personal Details Section --- */}
@@ -136,41 +135,44 @@ export const SignupForm = () => {
                 )}
               />
             </Box>
-            <FormField
-              control={form.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Email Address</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="your.email@example.com"
-                      {...field}
-                      className="border-gray-200 bg-gray-50 py-5"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="mobilePhoneNumber"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Mobile Phone Number (for MFA)</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="+447123456789"
-                      type="text"
-                      {...field}
-                      className="border-gray-200 bg-gray-50 py-5"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+
+            <Box className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Email Address</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="your.email@example.com"
+                        {...field}
+                        className="border-gray-200 bg-gray-50 py-5"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="mobilePhoneNumber"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Mobile Phone Number (for MFA)</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="+447123456789"
+                        type="text"
+                        {...field}
+                        className="border-gray-200 bg-gray-50 py-5"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </Box>
 
             {/* --- Company Information Section --- */}
             <Box className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4">
@@ -209,9 +211,12 @@ export const SignupForm = () => {
                 )}
               />
             </Box>
+
             <Box className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <FormField
                 control={form.control}
+                // className="w-full"
+
                 name="averageOrdersPerMonth"
                 render={({ field }) => (
                   <FormItem>
@@ -219,8 +224,9 @@ export const SignupForm = () => {
                     <Select
                       onValueChange={field.onChange}
                       defaultValue={field.value}
+                      // className="w-full"
                     >
-                      <FormControl>
+                      <FormControl className="w-full">
                         <SelectTrigger className="border-gray-200 bg-gray-50 py-5">
                           <SelectValue placeholder="Select a range" />
                         </SelectTrigger>

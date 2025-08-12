@@ -8,7 +8,7 @@ export const Signup = () => {
   return (
     <div className="flex h-screen w-full bg-white">
       {/* Left Column: Contains logo, form, and footer */}
-      <div className="flex w-full flex-col p-8 lg:w-4/5">
+      <Box className="flex w-full flex-col p-8 lg:w-3/5">
         <Box className="mb-5">
           <img src={logo} alt="eComProtect Logo" className="h-14" />
         </Box>
@@ -33,7 +33,7 @@ export const Signup = () => {
             </div>
           </div>
         </footer>
-      </div>
+      </Box>
 
       <Box className="hidden items-center justify-center bg-white p-2 lg:flex lg:w-2/5">
         <img
