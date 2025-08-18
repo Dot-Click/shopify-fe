@@ -10,7 +10,7 @@ export const Signup = () => {
       {/* Left Column: Contains logo, form, and footer */}
       <Box className="flex w-full flex-col p-8 lg:w-3/5">
         <Box className="mb-5">
-          <img src={logo} alt="eComProtect Logo" className="h-14" />
+          <img src={logo} alt="eComProtect Logo" className="h-10" />
         </Box>
 
         <div className="flex flex-grow items-center justify-center">
@@ -20,7 +20,7 @@ export const Signup = () => {
         </div>
 
         {/* Bottom: Footer */}
-        <footer className="w-full mt-4">
+        <footer className="w-full mt-1">
           <div className="flex items-center justify-between text-sm text-gray-500">
             <p>© 2025 eComProtect. All rights reserved.</p>
             <div className="space-x-6">

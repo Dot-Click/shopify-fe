@@ -22,6 +22,7 @@ import {
 } from "../ui/form";
 import { Eye, EyeOff } from "lucide-react";
 import { Box } from "../ui/box";
+import { authClient } from "../../lib/auth";
 
 // Form Schema
 const formSchema = z
@@ -29,7 +30,7 @@ const formSchema = z
     firstName: z.string().min(2, "First name must be at least 2 characters."),
     surname: z.string().min(2, "Surname must be at least 2 characters."),
     email: z.string().email("Please enter a valid email address."),
-    mobilePhoneNumber: z.string(),
+    mobileNumber: z.string(),
     companyName: z.string().min(2, "Company name is required."),
     companyRegistrationNumber: z
       .string()
@@ -38,6 +39,8 @@ const formSchema = z
     storeUrl: z.string().url("Please enter a valid store URL."),
     password: z.string().min(8, "Password must be at least 8 characters."),
     confirmPassword: z.string(),
+    shopifyApiKey: z.string().min(1, "Please enter a valid API key."),
+    shopifyApiSecret: z.string().min(1, "Please enter a valid API secret."),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords do not match.",
@@ -58,21 +61,43 @@ export const SignupForm = () => {
     },
   });
 
-  function onSubmit(values: FormData) {
-    console.log("Account application submitted:", values);
+  async function onSubmit(values: FormData) {
+    try {
+      const { data, error } = await authClient.signUp.email({
+        name: `${values.firstName} ${values.surname}`,
+        email: values.email,
+        password: values.password,
+        // role: "store_admin",
+        mobileNumber: values.mobileNumber,
+        companyName: values.companyName,
+        companyRegistrationNumber: values.companyRegistrationNumber,
+        averageOrdersPerMonth: values.averageOrdersPerMonth,
+        storeUrl: values.storeUrl,
+        shopifyApiKey: values.shopifyApiKey,
+        shopifyApiSecret: values.shopifyApiSecret,
+      });
 
-    const nextStep =
-      values.averageOrdersPerMonth === "5000+"
-        ? "enterpriseReview"
-        : "packageSelection";
+      console.log(data);
 
-    // Navigate to the post-signup page, passing data via router state
-    navigate("/post-signup", {
-      state: {
-        flowStep: nextStep,
-        formData: values,
-      },
-    });
+      if (error) {
+        console.error("Signup error:", error);
+        return;
+      }
+
+      const nextStep =
+        values.averageOrdersPerMonth === "5000+"
+          ? "enterpriseReview"
+          : "packageSelection";
+
+      navigate("/post-signup", {
+        state: {
+          flowStep: nextStep,
+          formData: values,
+        },
+      });
+    } catch (err) {
+      console.error("Unexpected error:", err);
+    }
   }
 
   // The full JSX for the form component
@@ -156,7 +181,7 @@ export const SignupForm = () => {
               />
               <FormField
                 control={form.control}
-                name="mobilePhoneNumber"
+                name="mobileNumber"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Mobile Phone Number (for MFA)</FormLabel>
@@ -253,6 +278,43 @@ export const SignupForm = () => {
                     <FormControl>
                       <Input
                         placeholder="https://www.yourstore.com"
+                        {...field}
+                        className="border-gray-200 bg-gray-50 py-5"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </Box>
+
+            <Box className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="shopifyApiKey"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Shopify API Key</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="api key"
+                        {...field}
+                        className="border-gray-200 bg-gray-50 py-5"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="shopifyApiSecret"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>API Secret Key</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="api secret key"
                         {...field}
                         className="border-gray-200 bg-gray-50 py-5"
                       />
