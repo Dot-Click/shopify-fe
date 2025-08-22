@@ -14,6 +14,7 @@ import NotificationsPage from "./pages/notification";
 import { AdminSignin } from "./pages/adminsignin.page";
 import { PlansPage } from "./pages/plan.page";
 import { PostSignupFlowPage } from "./pages/signinflow.page";
+import { UnderReviewComponent } from "./pages/underreview.page";
 
 export const Router = () => {
   return (
@@ -26,6 +27,7 @@ export const Router = () => {
         <Route path="/" element={<Home />} />
         <Route path="/select-plans" element={<PlansPage />} />
         <Route path="/post-signup" element={<PostSignupFlowPage />} />
+        <Route path="/under-review" element={<UnderReviewComponent />} />
 
         {/* Protected Routes with Sidebar Layout */}
         <Route

@@ -22,7 +22,8 @@ import {
 } from "../ui/form";
 import { Eye, EyeOff } from "lucide-react";
 import { Box } from "../ui/box";
-import { authClient } from "../../lib/auth";
+import { authClient } from "../../providers/user.provider";
+import { toast } from "react-hot-toast";
 
 // Form Schema
 const formSchema = z
@@ -62,47 +63,46 @@ export const SignupForm = () => {
   });
 
   async function onSubmit(values: FormData) {
-    try {
-      console.log("This is the values", values)
-      const res = await authClient.signUp.email({
+    await authClient.signUp.email(
+      {
         name: `${values.firstName} ${values.surname}`,
         email: values.email,
-        password: values.password, 
-        companyName: values.companyName,
-        averageOrdersPerMonth: values.averageOrdersPerMonth,
-        companyRegistrationNumber: values.companyRegistrationNumber,
-        mobileNumber: values.mobileNumber,
-        shopifyUrl: values.shopifyUrl,
-        shopifyApiKey:values.shopifyApiKey,
-        shopifyApiSecret: values.shopifyApiSecret,
-        package: "",
-        imagePublicId: "",
-        plan: "",
+        password: values.password,
+        company_name: values.companyName,
+        mobile_number: values.mobileNumber,
+        company_registration_number: values.companyRegistrationNumber,
+        average_orders_per_month: values.averageOrdersPerMonth,
+        shopify_url: values.shopifyUrl,
+        shopify_api_key: values.shopifyApiKey,
+        shopify_api_secret: values.shopifyApiSecret,
+        package: "free",
+        image_public_id: "",
+        plan: "free",
+      },
+      {
+        onSuccess: async (data) => {
+          console.log("this is the data", data);
+          const user = data.data.user;
+          const nextStep =
+            values.averageOrdersPerMonth === "5000+"
+              ? "enterpriseReview"
+              : "packageSelection";
 
-        
-      });
-      console.log("this is response", res)
-      const session = await authClient.getSession();
-      console.log("this is the session", session)
-      if (session?.data?.user?.role === "user") {
-        alert("You do not have admin access.");
-        return;
+          navigate("/post-signup", {
+            state: {
+              flowStep: nextStep,
+              userId: user.id,
+              userName: user.name,
+              userEmail: user.email,
+            },
+          });
+        },
+        onError: (error) => {
+          toast.error(error.error.message);
+          console.log("this is the error", error);
+        },
       }
-
-      // const nextStep =
-      //   values.averageOrdersPerMonth === "5000+"
-      //     ? "enterpriseReview"
-      //     : "packageSelection";
-
-      // navigate("/post-signup", {
-      //   state: {
-      //     flowStep: nextStep,
-      //     formData: values,
-      //   },
-      // });
-    } catch (err) {
-      console.error("Unexpected error:", err);
-    }
+    );
   }
 
   // The full JSX for the form component
@@ -254,7 +254,7 @@ export const SignupForm = () => {
                     <Select
                       onValueChange={field.onChange}
                       defaultValue={field.value}
-                    // className="w-full"
+                      // className="w-full"
                     >
                       <FormControl className="w-full">
                         <SelectTrigger className="border-gray-200 bg-gray-50 py-5">

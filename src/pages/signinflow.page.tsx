@@ -6,34 +6,45 @@ import {
   BarChart2,
   Briefcase,
   Loader2,
-  Clock,
+  // Clock,
   CheckCircle,
 } from "lucide-react";
+import { axios } from "../configs/axios.config";
 
-// --- CHILD COMPONENTS FOR EACH STEP (UNCHANGED) ---
+// --- CHILD COMPONENTS FOR EACH STEP (unchanged except Payment) ---
 
 const PackageSelectionComponent = ({
   onSelectPackage,
 }: {
-  onSelectPackage: (pkg: string) => void;
+  onSelectPackage: (pkg: {
+    name: string;
+    price: number;
+    currency: string;
+  }) => void;
 }) => {
   const packages = [
     {
       name: "ECP Insight",
       description: "Lost Data Access Only",
       icon: BarChart2,
+      price: 1000, // £10.00
+      currency: "GBP",
       available: true,
     },
     {
       name: "ECP Vision",
       description: "Lost Data + % Loss Rate",
       icon: ShieldCheck,
+      price: 2000, // £20.00
+      currency: "GBP",
       available: true,
     },
     {
       name: "ECP Shield",
       description: "Lost Data + % Loss Rate + Waiver Workflow",
       icon: Briefcase,
+      price: 3000,
+      currency: "GBP",
       available: false,
     },
   ];
@@ -66,7 +77,13 @@ const PackageSelectionComponent = ({
             <p className="text-sm mt-1 flex-grow">{pkg.description}</p>
             <Button
               className="w-full mt-6 bg-web-blue text-web-grey"
-              onClick={() => onSelectPackage(pkg.name)}
+              onClick={() =>
+                onSelectPackage({
+                  name: pkg.name,
+                  price: pkg.price,
+                  currency: pkg.currency,
+                })
+              }
               disabled={!pkg.available}
             >
               Select Package
@@ -78,45 +95,16 @@ const PackageSelectionComponent = ({
   );
 };
 
-const PaymentComponent = ({
-  onPaymentComplete,
-}: {
-  onPaymentComplete: () => void;
-}) => {
-  useEffect(() => {
-    const timer = setTimeout(onPaymentComplete, 3000);
-    return () => clearTimeout(timer);
-  }, [onPaymentComplete]);
-
-  return (
-    <div className="flex flex-col items-center text-center space-y-6 p-10">
-      <Loader2 className="h-16 w-16 text-blue-600 animate-spin" />
-      <h1 className="text-3xl font-bold">Redirecting to Payment Setup</h1>
-      <p className="text-gray-600">
-        Please wait while we securely redirect you to GoCardless.
-      </p>
-    </div>
-  );
-};
-
-const UnderReviewComponent = () => (
+const PaymentComponent = () => (
   <div className="flex flex-col items-center text-center space-y-6 p-10">
-    <Clock className="h-16 w-16 text-blue-600" />
-    <h1 className="text-3xl font-bold">Your application is under review</h1>
-    <p className="text-gray-600 max-w-md">
-      Your Account Manager will be in touch within 48 hours to activate and
-      onboard your account.
+    <Loader2 className="h-16 w-16 text-blue-600 animate-spin" />
+    <h1 className="text-3xl font-bold">Redirecting to Payment Setup</h1>
+    <p className="text-gray-600">
+      Please wait while we securely redirect you to GoCardless.
     </p>
-    <Link to="/">
-      <Button variant="outline" className="w-full mt-4">
-        Back to Homepage
-      </Button>
-    </Link>
   </div>
 );
 
-// --- UPDATED ENTERPRISE COMPONENT ---
-// This component now shows the new, direct message for Enterprise customers.
 const EnterpriseReviewComponent = () => (
   <div className="flex flex-col items-center justify-center text-center space-y-6 p-10">
     <CheckCircle className="h-16 w-16 text-green-500" />
@@ -130,51 +118,78 @@ const EnterpriseReviewComponent = () => (
   </div>
 );
 
-// --- MAIN PAGE COMPONENT (UNCHANGED) ---
-
 export const PostSignupFlowPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const [currentStep, setCurrentStep] = useState(location.state?.flowStep);
+  const [isLoading, setIsLoading] = useState(false);
+  const { flowStep, userId, userName, userEmail } = location.state || {};
+  const [currentStep, setCurrentStep] = useState(flowStep);
 
   useEffect(() => {
-    if (!location.state?.flowStep) {
+    if (!userId) {
       navigate("/signup");
+      return;
     }
-  }, [location.state, navigate]);
 
-  const handlePackageSelect = (packageName: string) => {
-    console.log(
-      "Package selected:",
-      packageName,
-      "for user:",
-      location.state?.formData?.email
-    );
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("status") === "success") {
+      setCurrentStep("underReview");
+    }
+  }, [userId, navigate]);
+
+  const handlePackageSelect = async (pkg: {
+    name: string;
+    price: number;
+    currency: string;
+  }) => {
+    setIsLoading(true);
     setCurrentStep("payment");
-  };
 
-  const handlePaymentComplete = () => {
-    console.log("Payment complete for user:", location.state?.formData?.email);
-    setCurrentStep("underReview");
+    try {
+      const response = await axios.post("/payment/create", {
+        userId,
+        planName: pkg.name,
+        amount: pkg.price,
+        currency: pkg.currency,
+        userName,
+        userEmail,
+      });
+
+      if (response.data?.redirect_url) {
+        window.location.href = response.data.redirect_url;
+      } else {
+        throw new Error("Could not retrieve payment URL.");
+      }
+    } catch (error) {
+      console.error("Payment initiation failed:", error);
+      setIsLoading(false);
+      setCurrentStep("packageSelection");
+    }
   };
 
   const renderStep = () => {
+    if (isLoading && currentStep === "payment") {
+      return <PaymentComponent />;
+    }
     switch (currentStep) {
       case "packageSelection":
         return (
           <PackageSelectionComponent onSelectPackage={handlePackageSelect} />
         );
-      case "payment":
-        return <PaymentComponent onPaymentComplete={handlePaymentComplete} />;
       case "underReview":
-        return <UnderReviewComponent />;
+        return <p>Redirecting to under review</p>;
       case "enterpriseReview":
         return <EnterpriseReviewComponent />;
       default:
         return <p>Loading...</p>;
     }
   };
+  useEffect(() => {
+    if (currentStep === "underReview") {
+      navigate("/under-review");
+    }
+  }, [currentStep, navigate]);
 
   return (
     <div className="flex items-center justify-center min-h-screen">
