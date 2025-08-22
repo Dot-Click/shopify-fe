@@ -36,7 +36,7 @@ const formSchema = z
       .string()
       .min(1, "Registration number is required."),
     averageOrdersPerMonth: z.string().min(1, "Please select an option."),
-    storeUrl: z.string().url("Please enter a valid store URL."),
+    shopifyUrl: z.string().url("Please enter a valid store URL."),
     password: z.string().min(8, "Password must be at least 8 characters."),
     confirmPassword: z.string(),
     shopifyApiKey: z.string().min(1, "Please enter a valid API key."),
@@ -63,38 +63,43 @@ export const SignupForm = () => {
 
   async function onSubmit(values: FormData) {
     try {
-      const { data, error } = await authClient.signUp.email({
+      console.log("This is the values", values)
+      const res = await authClient.signUp.email({
         name: `${values.firstName} ${values.surname}`,
         email: values.email,
-        password: values.password,
-        // role: "store_admin",
-        mobileNumber: values.mobileNumber,
+        password: values.password, 
         companyName: values.companyName,
-        companyRegistrationNumber: values.companyRegistrationNumber,
         averageOrdersPerMonth: values.averageOrdersPerMonth,
-        storeUrl: values.storeUrl,
-        shopifyApiKey: values.shopifyApiKey,
+        companyRegistrationNumber: values.companyRegistrationNumber,
+        mobileNumber: values.mobileNumber,
+        shopifyUrl: values.shopifyUrl,
+        shopifyApiKey:values.shopifyApiKey,
         shopifyApiSecret: values.shopifyApiSecret,
+        package: "",
+        imagePublicId: "",
+        plan: "",
+
+        
       });
-
-      console.log(data);
-
-      if (error) {
-        console.error("Signup error:", error);
+      console.log("this is response", res)
+      const session = await authClient.getSession();
+      console.log("this is the session", session)
+      if (session?.data?.user?.role === "user") {
+        alert("You do not have admin access.");
         return;
       }
 
-      const nextStep =
-        values.averageOrdersPerMonth === "5000+"
-          ? "enterpriseReview"
-          : "packageSelection";
+      // const nextStep =
+      //   values.averageOrdersPerMonth === "5000+"
+      //     ? "enterpriseReview"
+      //     : "packageSelection";
 
-      navigate("/post-signup", {
-        state: {
-          flowStep: nextStep,
-          formData: values,
-        },
-      });
+      // navigate("/post-signup", {
+      //   state: {
+      //     flowStep: nextStep,
+      //     formData: values,
+      //   },
+      // });
     } catch (err) {
       console.error("Unexpected error:", err);
     }
@@ -249,7 +254,7 @@ export const SignupForm = () => {
                     <Select
                       onValueChange={field.onChange}
                       defaultValue={field.value}
-                      // className="w-full"
+                    // className="w-full"
                     >
                       <FormControl className="w-full">
                         <SelectTrigger className="border-gray-200 bg-gray-50 py-5">
@@ -271,7 +276,7 @@ export const SignupForm = () => {
               />
               <FormField
                 control={form.control}
-                name="storeUrl"
+                name="shopifyUrl"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Store URL</FormLabel>
