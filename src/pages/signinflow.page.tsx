@@ -1,17 +1,10 @@
 import { useState, useEffect } from "react";
 import { useLocation, useNavigate, Link } from "react-router-dom";
 import { Button } from "../components/ui/button";
-import {
-  ShieldCheck,
-  BarChart2,
-  Briefcase,
-  Loader2,
-  // Clock,
-  CheckCircle,
-} from "lucide-react";
+import { ShieldCheck, BarChart2, Briefcase, Loader2 } from "lucide-react";
 import { axios } from "../configs/axios.config";
-
-// --- CHILD COMPONENTS FOR EACH STEP (unchanged except Payment) ---
+import { authClient } from "../providers/user.provider";
+import underreview from "/images/bg_profile.png";
 
 const PackageSelectionComponent = ({
   onSelectPackage,
@@ -20,14 +13,27 @@ const PackageSelectionComponent = ({
     name: string;
     price: number;
     currency: string;
+    plan: string;
   }) => void;
 }) => {
+  const { data } = authClient.useSession();
+
+  const avgOrders = data?.user?.average_orders_per_month;
+  const plan = data!.user!.plan;
+
   const packages = [
     {
       name: "ECP Insight",
       description: "Lost Data Access Only",
       icon: BarChart2,
-      price: 1000, // £10.00
+      price:
+        avgOrders === "0-300"
+          ? 299
+          : avgOrders === "301-2,000"
+          ? 699
+          : avgOrders === "2,001-5,000"
+          ? 1249
+          : 299,
       currency: "GBP",
       available: true,
     },
@@ -35,7 +41,14 @@ const PackageSelectionComponent = ({
       name: "ECP Vision",
       description: "Lost Data + % Loss Rate",
       icon: ShieldCheck,
-      price: 2000, // £20.00
+      price:
+        avgOrders === "0-300"
+          ? 399
+          : avgOrders === "301-2,000"
+          ? 799
+          : avgOrders === "2,001-5,000"
+          ? 1499
+          : 399,
       currency: "GBP",
       available: true,
     },
@@ -43,7 +56,14 @@ const PackageSelectionComponent = ({
       name: "ECP Shield",
       description: "Lost Data + % Loss Rate + Waiver Workflow",
       icon: Briefcase,
-      price: 3000,
+      price:
+        avgOrders === "0-300"
+          ? 499
+          : avgOrders === "301-2,000"
+          ? 899
+          : avgOrders === "2,001-5,000"
+          ? 1749
+          : 499,
       currency: "GBP",
       available: false,
     },
@@ -75,6 +95,7 @@ const PackageSelectionComponent = ({
               </p>
             )}
             <p className="text-sm mt-1 flex-grow">{pkg.description}</p>
+            <p className="text-xl flex-grow font-medium">€{pkg.price}</p>
             <Button
               className="w-full mt-6 bg-web-blue text-web-grey"
               onClick={() =>
@@ -82,6 +103,7 @@ const PackageSelectionComponent = ({
                   name: pkg.name,
                   price: pkg.price,
                   currency: pkg.currency,
+                  plan: plan,
                 })
               }
               disabled={!pkg.available}
@@ -105,18 +127,48 @@ const PaymentComponent = () => (
   </div>
 );
 
-const EnterpriseReviewComponent = () => (
-  <div className="flex flex-col items-center justify-center text-center space-y-6 p-10">
-    <CheckCircle className="h-16 w-16 text-green-500" />
-    <h1 className="text-3xl font-bold">Thank You for Your Application</h1>
-    <p className="text-gray-600 text-lg max-w-lg">
-      An eComProtect Account Manager will be in touch within 24 hours.
-    </p>
-    <Link to="/" className="mt-4">
-      <Button variant="outline">Back to Homepage</Button>
-    </Link>
-  </div>
-);
+const EnterpriseReviewComponent = () => {
+  const location = useLocation();
+  const { userEmail } = location.state || {};
+
+  useEffect(() => {
+    const setupEnterpriseUser = async () => {
+      if (userEmail) {
+        try {
+          const updatedUser = await authClient.updateUser({
+            plan: "Enterprise",
+          });
+
+          console.log("This is the updated user:", updatedUser);
+
+          if (updatedUser.data?.status === true) {
+            await authClient.sendVerificationEmail({
+              email: userEmail,
+            });
+          }
+        } catch (error) {
+          console.error("Failed to update user for enterprise review:", error);
+        }
+      }
+    };
+
+    setupEnterpriseUser();
+  }, [userEmail]);
+
+  return (
+    <div className="flex flex-col items-center justify-center text-center space-y-6 p-10">
+      <img src={underreview} alt="underreview" className="w-1/3" />
+
+      <h1 className="text-3xl font-bold">Thank You for Your Application</h1>
+      <p className="text-gray-600 text-lg max-w-lg">
+        An eComProtect Account Manager will be in touch within 24 hours.
+      </p>
+      <Link to="/" className="mt-4">
+        <Button variant="outline">Back to Homepage</Button>
+      </Link>
+    </div>
+  );
+};
 
 export const PostSignupFlowPage = () => {
   const navigate = useNavigate();
@@ -142,6 +194,7 @@ export const PostSignupFlowPage = () => {
     name: string;
     price: number;
     currency: string;
+    plan: string;
   }) => {
     setIsLoading(true);
     setCurrentStep("payment");
@@ -150,13 +203,23 @@ export const PostSignupFlowPage = () => {
       const response = await axios.post("/payment/create", {
         userId,
         planName: pkg.name,
-        amount: pkg.price,
+        amount: pkg.price * 100,
         currency: pkg.currency,
         userName,
         userEmail,
       });
 
       if (response.data?.redirect_url) {
+        const updatedUser = await authClient.updateUser({
+          plan: pkg.plan,
+          package: pkg.name,
+        });
+
+        if (updatedUser.data?.status === true) {
+          await authClient.sendVerificationEmail({
+            email: userEmail,
+          });
+        }
         window.location.href = response.data.redirect_url;
       } else {
         throw new Error("Could not retrieve payment URL.");
@@ -185,6 +248,7 @@ export const PostSignupFlowPage = () => {
         return <p>Loading...</p>;
     }
   };
+
   useEffect(() => {
     if (currentStep === "underReview") {
       navigate("/under-review");
