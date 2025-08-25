@@ -63,6 +63,7 @@ export const SignupForm = () => {
   });
 
   async function onSubmit(values: FormData) {
+    console.log("this is the values", values);
     await authClient.signUp.email(
       {
         name: `${values.firstName} ${values.surname}`,
@@ -76,7 +77,6 @@ export const SignupForm = () => {
         shopify_api_key: values.shopifyApiKey,
         shopify_api_secret: values.shopifyApiSecret,
         package: "free",
-        image_public_id: "",
         plan: "free",
       },
       {

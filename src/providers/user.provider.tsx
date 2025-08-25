@@ -43,7 +43,6 @@ export const authClient = createAuthClient({
         },
         plan: { type: "string" },
         package: { type: "string" },
-        image_public_id: { type: "string" },
       },
     }),
     phoneNumberClient(),

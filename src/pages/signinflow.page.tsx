@@ -16,10 +16,19 @@ const PackageSelectionComponent = ({
     plan: string;
   }) => void;
 }) => {
-  const { data } = authClient.useSession();
+  const { data, isPending } = authClient.useSession();
+
+  if (isPending) {
+    return (
+      <div className="flex flex-col items-center justify-center p-10 space-y-4">
+        <Loader2 className="h-12 w-12 animate-spin text-blue-600" />
+        <p className="text-gray-600">Loading your packages...</p>
+      </div>
+    );
+  }
 
   const avgOrders = data?.user?.average_orders_per_month;
-  const plan = data!.user!.plan;
+  const plan = data?.user?.plan || "";
 
   const packages = [
     {

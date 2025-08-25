@@ -2,7 +2,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Checkbox } from "../../components/ui/checkbox";
@@ -17,6 +17,8 @@ import {
 import { Eye, EyeOff } from "lucide-react";
 import { Flex } from "../ui/flex";
 import { Box } from "../ui/box";
+import { authClient } from "../../providers/user.provider";
+import toast from "react-hot-toast";
 // import { Separator } from "../ui/separator";
 // import { FcGoogle } from "react-icons/fc";
 // import fbIcon from "/images/fb_icon.png";
@@ -39,6 +41,9 @@ export const SigninForm = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [authChecked, _setAuthChecked] = useState(false);
 
+  console.log("this is the authChecked", authChecked);
+
+  const navigate = useNavigate();
   // 2. Define your form using the updated schema
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -46,13 +51,28 @@ export const SigninForm = () => {
       email: "",
       password: "",
       rememberMe: true,
+      authorisation: false,
     },
+    mode: "onChange",
   });
 
-  // 3. Define a submit handler
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
-    alert("Form Submitted! Check the console for the data.");
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    await authClient.signIn.email(
+      {
+        email: values.email,
+        password: values.password,
+      },
+      {
+        onSuccess: (data) => {
+          console.log(data);
+          navigate("/user/customer-management");
+        },
+        onError: (error) => {
+          toast.error(error.error.message || "Sign-in failed.");
+          console.log(error);
+        },
+      }
+    );
   }
 
   return (
@@ -165,12 +185,16 @@ export const SigninForm = () => {
                     <FormItem className="flex flex-row items-start space-x-2 space-y-0">
                       <FormControl>
                         <Checkbox
+                          id="authorisation"
                           checked={field.value}
                           onCheckedChange={field.onChange}
                         />
                       </FormControl>
                       <div className="leading-none">
-                        <FormLabel className="font-normal leading-4.5 text-web-dark-grey text-xs ">
+                        <FormLabel
+                          htmlFor="authorisation"
+                          className="font-normal leading-4.5 text-web-dark-grey text-xs "
+                        >
                           Unauthorised access is prohibited. Attempting to log
                           in without proper authorisation may constitute a
                           criminal offence under UK law
@@ -183,7 +207,7 @@ export const SigninForm = () => {
               <Button
                 className="w-full bg-blue-600 py-6 text-base hover:bg-blue-700 text-white"
                 type="submit"
-                disabled={!authChecked}
+                disabled={!form.formState.isValid}
               >
                 Sign In
               </Button>

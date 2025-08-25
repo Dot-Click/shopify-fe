@@ -14,42 +14,12 @@ import {
 import logo from "/images/logo_white.png";
 import { IoMdLogOut } from "react-icons/io";
 import { PiDotsNineBold } from "react-icons/pi";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { FaBell } from "react-icons/fa";
+import { authClient } from "../../providers/user.provider";
+import { toast } from "react-hot-toast";
 
 // --- Menu definitions ---
-
-const adminMainMenuItems = [
-  { title: "Dashboard", url: "/admin/dashboard", icon: LayoutGrid },
-  {
-    title: "Customer Management",
-    url: "/admin/customer-management",
-    icon: Users,
-  },
-  { title: "Store Management", url: "/admin/store-management", icon: Store },
-];
-
-const adminSecondaryMenuItems = [
-  {
-    title: "Report & Analytics",
-    url: "/admin/report-analysis",
-    icon: AlertCircle,
-  },
-  { title: "Settings", url: "/admin/settings", icon: Settings },
-];
-
-const userMenuItems = [
-  {
-    title: "Customer Management",
-    url: "/user/customer-management",
-    icon: Users,
-  },
-  { title: "Notification", url: "/user/notification", icon: FaBell },
-];
-
-const userSecondaryMenuItems = [
-  { title: "Settings", url: "/user/settings", icon: Settings },
-];
 
 // Define the component's props
 interface AppSidebarProps {
@@ -58,6 +28,39 @@ interface AppSidebarProps {
 
 export function AppSidebar({ role }: AppSidebarProps) {
   const { pathname } = useLocation();
+  const navigate = useNavigate();
+
+  const adminMainMenuItems = [
+    { title: "Dashboard", url: "/admin/dashboard", icon: LayoutGrid },
+    {
+      title: "Customer Management",
+      url: "/admin/customer-management",
+      icon: Users,
+    },
+    { title: "Store Management", url: "/admin/store-management", icon: Store },
+  ];
+
+  const adminSecondaryMenuItems = [
+    {
+      title: "Report & Analytics",
+      url: "/admin/report-analysis",
+      icon: AlertCircle,
+    },
+    { title: "Settings", url: "/admin/settings", icon: Settings },
+  ];
+
+  const userMenuItems = [
+    {
+      title: "Customer Management",
+      url: "/user/customer-management",
+      icon: Users,
+    },
+    { title: "Notification", url: "/user/notification", icon: FaBell },
+  ];
+
+  const userSecondaryMenuItems = [
+    { title: "Settings", url: "/user/settings", icon: Settings },
+  ];
 
   const renderMenuItems = (items: typeof userMenuItems) => {
     return items.map((item) => (
@@ -74,6 +77,16 @@ export function AppSidebar({ role }: AppSidebarProps) {
         </SidebarMenuButton>
       </SidebarMenuItem>
     ));
+  };
+
+  const handleLogout = async () => {
+    try {
+      await authClient.signOut();
+      navigate("/signin");
+    } catch (error) {
+      toast.error("Error logging out");
+      console.error("Error logging out:", error);
+    }
   };
 
   return (
@@ -137,15 +150,13 @@ export function AppSidebar({ role }: AppSidebarProps) {
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton
-              asChild
-              className="bg-linear-to-r from-web-dark-red to-web-light-red py-5 mb-4 text-white hover:bg-red-500"
+              // asChild
+              className="bg-linear-to-r from-web-dark-red to-web-light-red py-5 cursor-pointer mb-4 text-white hover:bg-red-500"
+              onClick={handleLogout}
             >
-              <Link to="/signin">
-                {" "}
-                {/* Changed to /signin for a clean logout */}
-                <IoMdLogOut />
-                <span>Logout</span>
-              </Link>
+              {/* <Link to="/signin"> */} <IoMdLogOut />
+              <span>Logout</span>
+              {/* </Link> */}
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>

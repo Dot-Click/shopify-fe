@@ -1,10 +1,15 @@
 import * as React from "react";
 import { type ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown, Filter as FilterIcon } from "lucide-react";
-
 import { Box } from "../components/ui/box";
 import { Button } from "../components/ui/button";
 import { Checkbox } from "../components/ui/checkbox";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "../components/ui/dropdown-menu";
 import {
   Select,
   SelectContent,
@@ -12,87 +17,127 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../components/ui/select";
-import { TableProvider } from "../providers/table.provider"; // Adjust path if needed
+
+import { TableProvider } from "../providers/table.provider";
 import {
   TableComponent,
   SortedHeader,
   checkBoxProps,
-} from "../components/common/tablecomponent"; // Adjust path if needed
+} from "../components/common/tablecomponent";
+import { useFetchAllStores } from "../hooks/users/usefetchstore";
+
+import { useUpdateUserVerification } from "../hooks/users/useupdatestorestatus";
 
 export type Store = {
   id: string;
-  storeName: string;
+  company_name: string;
+  average_orders_per_month: string;
   email: string;
-  apiKey: string;
+  emailVerified: boolean;
+  shopify_api_key: string;
+  shopify_url: string;
+  createdAt: string;
 };
 
-const stores: Store[] = [
-  {
-    id: "1001",
-    storeName: "Gucci",
-    email: "support@guci.com",
-    apiKey: "8a9d3b4x",
-  },
-  {
-    id: "1002",
-    storeName: "Dior",
-    email: "admin@dior.com",
-    apiKey: "3f4r2x8s",
-  },
-  { id: "1003", storeName: "Bata", email: "help@bata.com", apiKey: "zz5e3r1t" },
-  {
-    id: "1004",
-    storeName: "Adidas",
-    email: "support@adidas.com",
-    apiKey: "api-ax98z",
-  },
-  {
-    id: "1005",
-    storeName: "Nike",
-    email: "admin@nike.com",
-    apiKey: "api-nk23s",
-  },
-  {
-    id: "1006",
-    storeName: "Zara",
-    email: "help@zara.com",
-    apiKey: "api-hm77p",
-  },
-];
-
-const columns: ColumnDef<Store>[] = [
-  // Checkbox column
-  {
-    id: "select",
-    header: (info) => <Checkbox {...checkBoxProps(info)} />,
-    cell: (info) => <Checkbox {...checkBoxProps(info)} />,
-    enableSorting: false,
-  },
-  // Data columns
-  {
-    accessorKey: "id",
-    header: (info) => <SortedHeader header={info.header} label="ID" />,
-  },
-  {
-    accessorKey: "storeName",
-    header: (info) => <SortedHeader header={info.header} label="Store Name" />,
-  },
-  {
-    accessorKey: "email",
-    header: (info) => <SortedHeader header={info.header} label="Email" />,
-  },
-  {
-    accessorKey: "apiKey",
-    header: (info) => <SortedHeader header={info.header} label="API Key" />,
-  },
-];
-
 function StoreManagement() {
-  const [isLoading, _setIsLoading] = React.useState(false);
+  const { data: stores, isLoading: isLoadingStores } = useFetchAllStores();
+  const { mutate: updateUser, isPending: isUpdating } =
+    useUpdateUserVerification();
+
+  const columns: ColumnDef<Store>[] = React.useMemo(
+    () => [
+      {
+        id: "select",
+        header: (info) => <Checkbox {...checkBoxProps(info)} />,
+        cell: (info) => <Checkbox {...checkBoxProps(info)} />,
+        enableSorting: false,
+        enableHiding: false,
+      },
+      {
+        accessorKey: "id",
+        header: (info) => <SortedHeader header={info.header} label="ID" />,
+        cell: (info) => (
+          <span>{(info.getValue() as string).substring(0, 6)}</span>
+        ),
+      },
+      {
+        accessorKey: "company_name",
+        header: (info) => (
+          <SortedHeader header={info.header} label="Store Name" />
+        ),
+      },
+      {
+        accessorKey: "email",
+        header: (info) => <SortedHeader header={info.header} label="Email" />,
+      },
+      {
+        accessorKey: "shopify_api_key",
+        header: (info) => (
+          <SortedHeader header={info.header} label="Shopify API Key" />
+        ),
+      },
+      {
+        accessorKey: "shopify_url",
+        header: (info) => (
+          <SortedHeader header={info.header} label="Shopify URL" />
+        ),
+      },
+      {
+        accessorKey: "createdAt",
+        header: (info) => (
+          <SortedHeader header={info.header} label="Created At" />
+        ),
+        cell: (info) => {
+          const createdAt = info.getValue() as string;
+          return <span>{new Date(createdAt).toLocaleDateString()}</span>;
+        },
+      },
+      {
+        id: "actions",
+        header: "Actions",
+        cell: ({ row }) => {
+          const store = row.original;
+          return (
+            <DropdownMenu>
+              <DropdownMenuTrigger
+                className={`${
+                  store.emailVerified ? "bg-green-400" : "bg-red-400"
+                } text-[#fff] px-2 py-1 rounded-md`}
+              >
+                {store.emailVerified ? "Approve" : "Pending"}
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="bg-white border-0">
+                {store.emailVerified ? (
+                  <DropdownMenuItem
+                    onClick={() =>
+                      updateUser({ userId: store.id, isVerified: false })
+                    }
+                  >
+                    Disapprove
+                  </DropdownMenuItem>
+                ) : (
+                  <DropdownMenuItem
+                    onClick={() =>
+                      updateUser({ userId: store.id, isVerified: true })
+                    }
+                  >
+                    Approve
+                  </DropdownMenuItem>
+                )}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          );
+        },
+      },
+    ],
+    [updateUser]
+  );
+
+  const isLoading = isLoadingStores || isUpdating;
 
   return (
     <Box className="rounded-xl bg-white shadow-sm">
-      {/* Page Header - Title Changed */}
+      {/* Page Header */}
       <header className="flex flex-wrap items-center justify-between gap-4 px-5 pt-7">
         <h1 className="text-2xl font-semibold text-slate-800">
           Store Management
@@ -123,9 +168,9 @@ function StoreManagement() {
         </div>
       </header>
 
-      {/* Table Section - Provider now uses 'stores' data and new 'columns' */}
+      {/* Table Section */}
       <main className="mt-6">
-        <TableProvider data={stores} columns={columns}>
+        <TableProvider data={stores || []} columns={columns}>
           {() => <TableComponent isLoading={isLoading} />}
         </TableProvider>
       </main>
