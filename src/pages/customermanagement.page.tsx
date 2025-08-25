@@ -33,6 +33,7 @@ import {
   checkBoxProps,
 } from "../components/common/tablecomponent";
 import { cn } from "../lib/utils";
+import axios from "axios";
 
 // --- 1. Data Structure and Mock Data ---
 
@@ -246,6 +247,16 @@ const columns: ColumnDef<Customer>[] = [
 
 function CustomerManagement() {
   const [isLoading, _setIsLoading] = React.useState(false);
+
+  React.useEffect(() => {
+    const fetchData = async () => {
+      const test = await axios.get(
+        "https://fraudtest-22.myshopify.com/admin/api/2025-07/graphql.json"
+      );
+      console.log("This is the TEST:-", test);
+    };
+    fetchData();
+  }, []);
 
   return (
     <Box className="rounded-lg bg-white p-6 shadow-sm">

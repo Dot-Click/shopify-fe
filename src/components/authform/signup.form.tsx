@@ -41,7 +41,7 @@ const formSchema = z
     password: z.string().min(8, "Password must be at least 8 characters."),
     confirmPassword: z.string(),
     shopifyApiKey: z.string().min(1, "Please enter a valid API key."),
-    shopifyApiSecret: z.string().min(1, "Please enter a valid API secret."),
+    shopifyAccessToken: z.string().min(1, "Please enter a valid access token."),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords do not match.",
@@ -75,7 +75,7 @@ export const SignupForm = () => {
         average_orders_per_month: values.averageOrdersPerMonth,
         shopify_url: values.shopifyUrl,
         shopify_api_key: values.shopifyApiKey,
-        shopify_api_secret: values.shopifyApiSecret,
+        shopify_access_token: values.shopifyAccessToken,
         package: "free",
         plan: "free",
       },
@@ -313,13 +313,13 @@ export const SignupForm = () => {
               />
               <FormField
                 control={form.control}
-                name="shopifyApiSecret"
+                name="shopifyAccessToken"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>API Secret Key</FormLabel>
+                    <FormLabel>Shopify Access Token</FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="api secret key"
+                        placeholder="access token"
                         {...field}
                         className="border-gray-200 bg-gray-50 py-5"
                       />

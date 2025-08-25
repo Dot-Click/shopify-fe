@@ -35,7 +35,7 @@ export const authClient = createAuthClient({
         shopify_api_key: {
           type: "string",
         },
-        shopify_api_secret: {
+        shopify_access_token: {
           type: "string",
         },
         shopify_url: {
