@@ -1,4 +1,3 @@
-import * as React from "react";
 import { type ColumnDef } from "@tanstack/react-table";
 import {
   ArrowUpDown,
@@ -33,86 +32,12 @@ import {
   checkBoxProps,
 } from "../components/common/tablecomponent";
 import { cn } from "../lib/utils";
-import axios from "axios";
 
-// --- 1. Data Structure and Mock Data ---
+import {
+  useFetchAllCustomers,
+  type Customer,
+} from "../hooks/shopifycustomers/usefetchcustomers";
 
-export type Customer = {
-  id: string;
-  name: string;
-  avatar: string; // URL to the avatar image
-  date: string;
-  time: string;
-  riskLevel: number; // A number between 0 and 100
-  refunds: number; // Number of stores associated with refunds
-};
-
-const customers: Customer[] = [
-  {
-    id: "1001",
-    name: "Emma Johnson",
-    avatar:
-      "https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=1887&auto=format&fit=crop",
-    date: "2025-07-23",
-    time: "13:42",
-    riskLevel: 45,
-    refunds: 2,
-  },
-  {
-    id: "1002",
-    name: "Daniel Smith",
-    avatar:
-      "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=2080&auto=format&fit=crop",
-    date: "2025-07-23",
-    time: "13:42",
-    riskLevel: 88,
-    refunds: 4,
-  },
-  {
-    id: "1003",
-    name: "William Davis",
-    avatar:
-      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=1887&auto=format&fit=crop",
-    date: "2025-07-23",
-    time: "13:42",
-    riskLevel: 20,
-    refunds: 1,
-  },
-  {
-    id: "1004",
-    name: "Liam Taylor",
-    avatar:
-      "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=1887&auto=format&fit=crop",
-    date: "2025-07-23",
-    time: "13:42",
-    riskLevel: 70,
-    refunds: 3,
-  },
-  {
-    id: "1005",
-    name: "Isabella Anderson",
-    avatar:
-      "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=2070&auto=format&fit=crop",
-    date: "2025-07-23",
-    time: "13:42",
-    riskLevel: 95,
-    refunds: 5,
-  },
-  {
-    id: "1006",
-    name: "Benjamin Thomas",
-    avatar:
-      "https://images.unsplash.com/photo-1527980965255-d3b416303d12?q=80&w=1980&auto=format&fit=crop",
-    date: "2025-07-23",
-    time: "13:42",
-    riskLevel: 20,
-    refunds: 1,
-  },
-];
-
-// --- 2. Custom Cell Components for Visuals ---
-
-// Helper to determine color based on risk level
 const getRiskColor = (level: number) => {
   if (level > 75) return "bg-red-500";
   if (level > 40) return "bg-orange-400";
@@ -169,30 +94,23 @@ const columns: ColumnDef<Customer>[] = [
     header: (info) => <SortedHeader header={info.header} label="Customer ID" />,
   },
   {
-    accessorKey: "name",
+    accessorKey: "displayName",
     header: (info) => <SortedHeader header={info.header} label="Name" />,
     cell: ({ row }) => (
       <div className="flex items-center gap-3">
         <Avatar className="">
           <AvatarImage
-            src={row.original.avatar}
-            alt={row.original.name}
+            src={row.original.image?.url}
+            alt={row.original.displayName}
             className="object-cover"
           />
-          <AvatarFallback>{row.original.name.charAt(0)}</AvatarFallback>
+          <AvatarFallback>{row.original.displayName.charAt(0)}</AvatarFallback>
         </Avatar>
-        <span className="font-medium">{row.original.name}</span>
+        <span className="font-medium">{row.original.displayName}</span>
       </div>
     ),
   },
-  {
-    accessorKey: "date",
-    header: (info) => <SortedHeader header={info.header} label="Date" />,
-  },
-  {
-    accessorKey: "time",
-    header: (info) => <SortedHeader header={info.header} label="Time" />,
-  },
+
   {
     accessorKey: "riskLevel",
     header: (info) => <SortedHeader header={info.header} label="Risk Level" />,
@@ -246,17 +164,8 @@ const columns: ColumnDef<Customer>[] = [
 // --- 4. The Main Page Component ---
 
 function CustomerManagement() {
-  const [isLoading, _setIsLoading] = React.useState(false);
-
-  React.useEffect(() => {
-    const fetchData = async () => {
-      const test = await axios.get(
-        "https://fraudtest-22.myshopify.com/admin/api/2025-07/graphql.json"
-      );
-      console.log("This is the TEST:-", test);
-    };
-    fetchData();
-  }, []);
+  const { data: customers, isLoading: isLoadingCustomers } =
+    useFetchAllCustomers();
 
   return (
     <Box className="rounded-lg bg-white p-6 shadow-sm">
@@ -293,8 +202,8 @@ function CustomerManagement() {
 
       {/* Table Section */}
       <main className="mt-6">
-        <TableProvider data={customers} columns={columns}>
-          {() => <TableComponent isLoading={isLoading} />}
+        <TableProvider data={customers || []} columns={columns}>
+          {() => <TableComponent isLoading={isLoadingCustomers} />}
         </TableProvider>
       </main>
     </Box>

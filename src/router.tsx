@@ -2,19 +2,20 @@ import { BrowserRouter, Outlet, Route, Routes } from "react-router-dom";
 import { Signup } from "./pages/signup.page";
 import { Signin } from "./pages/signin.page";
 import { Home } from "./pages/home.page";
+import { Settings } from "./pages/settings.page";
+import { NotFoundPage } from "./pages/notfound.page";
+import { AdminSignin } from "./pages/adminsignin.page";
+import { PlansPage } from "./pages/plan.page";
+import { PostSignupFlowPage } from "./pages/signinflow.page";
+import { UnderReviewComponent } from "./pages/underreview.page";
 import Dashboard from "./pages/dashboard.page";
 import Layout from "./layout/sidebar.layout";
 import UserManagement from "./pages/usermanagemeent.page";
 import StoreManagement from "./pages/storemanagement.page";
 import ReportAnalysis from "./pages/reportanalysis.page";
-import { Settings } from "./pages/settings.page";
-import { NotFoundPage } from "./pages/notfound.page";
 import CustomerManagement from "./pages/customermanagement.page";
 import NotificationsPage from "./pages/notification";
-import { AdminSignin } from "./pages/adminsignin.page";
-import { PlansPage } from "./pages/plan.page";
-import { PostSignupFlowPage } from "./pages/signinflow.page";
-import { UnderReviewComponent } from "./pages/underreview.page";
+import OrderManagement from "./pages/ordermanagement.page";
 
 export const Router = () => {
   return (
@@ -50,6 +51,7 @@ export const Router = () => {
             element={<CustomerManagement />}
           />
           <Route path="/user/notification" element={<NotificationsPage />} />
+          <Route path="/user/order-management" element={<OrderManagement />} />
         </Route>
 
         {/* Top-level Catch-all 404 Route */}
