@@ -34,7 +34,7 @@ export const Footer = () => {
           </h2>
           <p className="mt-4 text-lg text-gray-200">
             Join the growing network of Shopify merchants using{" "}
-            <b>eComProtect</b> to fight back against fraud in real-time.
+            <b>eComProtect</b> to fight back against risk in real-time.
           </p>
           <Button className="mt-8 rounded-full bg-[#28A745] px-6 py-6 text-base font-semibold text-white hover:bg-[#298d5c]">
             <Link to="/install" className="flex items-center">
@@ -52,7 +52,7 @@ export const Footer = () => {
               <b>
                 e<span className="font-normal">Com</span>Protect
               </b>{" "}
-              is a smart fraud prevention platform for Shopify merchants,
+              is a smart risk prevention platform for Shopify merchants,
               designed to flag repeat offenders and protect your store in real
               time.
             </p>

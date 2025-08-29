@@ -57,19 +57,25 @@ export const SigninForm = () => {
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    const { data: session } = await authClient.getSession();
+
     await authClient.signIn.email(
       {
         email: values.email,
         password: values.password,
       },
       {
-        onSuccess: (data) => {
-          console.log(data);
+        onSuccess: async (data) => {
+          console.log("Initial sign-in data:", data);
+
+          console.log("Refreshed session data:", session);
+
+          // Optional: Navigate or update UI
           navigate("/user/customer-management");
         },
         onError: (error) => {
           toast.error(error.error.message || "Sign-in failed.");
-          console.log(error);
+          console.error("Sign-in error:", error);
         },
       }
     );

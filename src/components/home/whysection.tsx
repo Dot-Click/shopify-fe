@@ -11,7 +11,7 @@ const features = [
   {
     title: "Accuracy Across Stores",
     description:
-      "We cross-check fraud data from multiple Shopify merchants to give you insights with unmatched accuracy.",
+      "We cross-check risk data from multiple Shopify merchants to give you insights with unmatched accuracy.",
   },
   {
     title: "Full Transparency",
@@ -21,7 +21,7 @@ const features = [
   {
     title: "Complete Control",
     description:
-      "Customize tags, override blocks, and control how fraud alerts behave — right from your dashboard.",
+      "Customize tags, override blocks, and control how risk alerts behave — right from your dashboard.",
   },
 ];
 
@@ -44,7 +44,7 @@ export const WhySection = () => {
           </h2>
           <p className="mt-4 text-lg text-gray-600">
             eComProtect delivers speed, accuracy, and peace of mind — empowering
-            Shopify merchants to fight fraud with total confidence.
+            Shopify merchants to fight risk with total confidence.
           </p>
         </Box>
 

@@ -20,7 +20,7 @@ export const AheadSection = () => {
           </h2>
           <p className="mt-6 max-w-lg text-lg text-gray-200 max-sm:text-sm">
             The world of online retail is rapidly shifting — shaped by consumer
-            habits, global economics, and evolving fraud tactics. Our latest
+            habits, global economics, and evolving risk tactics. Our latest
             Commerce in 2025 insight report reveals the biggest trends and
             threats facing merchants today.
           </p>

@@ -8,15 +8,15 @@ const steps = [
   },
   {
     number: 2,
-    title: "Fraud Detected",
+    title: "Risk Detected",
     description:
-      "Automatically adds fraud warning tags to orders inside your Shopify admin.",
+      "Automatically adds risk warning tags to orders inside your Shopify admin.",
   },
   {
     number: 3,
     title: "Cross-Check",
     description:
-      "The system cross-checks against previous fraud activity across all participating stores.",
+      "The system cross-checks against previous risk activity across all participating stores.",
   },
   {
     number: 4,
@@ -45,7 +45,7 @@ export const HowItWorksSection = () => {
           </h2>
           <p className="mt-6 max-w-md text-lg text-gray-600">
             Understand how our detection engine works from order placement to
-            fraud alert in four simple steps.
+            risk alert in four simple steps.
           </p>
         </Box>
 

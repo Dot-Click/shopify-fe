@@ -48,23 +48,23 @@ import underline from "/images/underline_2.svg";
 // --- Chart Component ---
 
 const chartData = [
-  { month: "Jan", fraudIncidents: 40, affectedStores: 62 },
-  { month: "Feb", fraudIncidents: 20, affectedStores: 82 },
-  { month: "Mar", fraudIncidents: 40, affectedStores: 62 },
-  { month: "Apr", fraudIncidents: 40, affectedStores: 62 },
-  { month: "May", fraudIncidents: 88, affectedStores: 42 },
-  { month: "Jun", fraudIncidents: 88, affectedStores: 82 },
-  { month: "Jul", fraudIncidents: 40, affectedStores: 28 },
-  { month: "Aug", fraudIncidents: 62, affectedStores: 42 },
-  { month: "Sep", fraudIncidents: 55, affectedStores: 62 },
-  { month: "Oct", fraudIncidents: 62, affectedStores: 82 },
-  { month: "Nov", fraudIncidents: 88, affectedStores: 100 },
-  { month: "Dec", fraudIncidents: 88, affectedStores: 62 },
+  { month: "Jan", riskIncidents: 40, affectedStores: 62 },
+  { month: "Feb", riskIncidents: 20, affectedStores: 82 },
+  { month: "Mar", riskIncidents: 40, affectedStores: 62 },
+  { month: "Apr", riskIncidents: 40, affectedStores: 62 },
+  { month: "May", riskIncidents: 88, affectedStores: 42 },
+  { month: "Jun", riskIncidents: 88, affectedStores: 82 },
+  { month: "Jul", riskIncidents: 40, affectedStores: 28 },
+  { month: "Aug", riskIncidents: 62, affectedStores: 42 },
+  { month: "Sep", riskIncidents: 55, affectedStores: 62 },
+  { month: "Oct", riskIncidents: 62, affectedStores: 82 },
+  { month: "Nov", riskIncidents: 88, affectedStores: 100 },
+  { month: "Dec", riskIncidents: 88, affectedStores: 62 },
 ];
 
 const chartConfig = {
-  fraudIncidents: {
-    label: "Fraud Incidents (Users)",
+  riskIncidents: {
+    label: "risk Incidents (Users)",
     color: "hsl(221, 83%, 53%)", // Blue
   },
   affectedStores: {
@@ -119,8 +119,8 @@ function ReportOverviewChart() {
               }
             />
             <Bar
-              dataKey="fraudIncidents"
-              fill="var(--color-fraudIncidents)"
+              dataKey="riskIncidents"
+              fill="var(--color-riskIncidents)"
               radius={4}
             />
             <Bar
@@ -142,7 +142,7 @@ type CustomerEntry = {
   name: string;
   email: string;
   riskLevel: number;
-  totalFraudReports: number;
+  totalriskReports: number;
 };
 
 type StoreEntry = {
@@ -157,7 +157,7 @@ const customerData: CustomerEntry[] = Array(5).fill({
   name: "Emma Johnson",
   email: "emma.j@gmail.com",
   riskLevel: 45,
-  totalFraudReports: 12,
+  totalriskReports: 12,
 });
 
 const storeData: StoreEntry[] = [
@@ -242,12 +242,12 @@ const customerColumns: ColumnDef<CustomerEntry>[] = [
     },
   },
   {
-    accessorKey: "totalFraudReports",
+    accessorKey: "totalriskReports",
     header: (info) => (
-      <SortedHeader header={info.header} label="Total Fraud Reports" />
+      <SortedHeader header={info.header} label="Total risk Reports" />
     ),
     meta: {
-      mobileHeader: "Total Fraud Reports",
+      mobileHeader: "Total risk Reports",
     },
   },
   {

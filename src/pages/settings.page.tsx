@@ -208,14 +208,14 @@ export const Settings = () => {
             <div className="flex items-center justify-between">
               <div>
                 <h3 className="font-semibold text-web-dark-grey opacity-70">
-                  Unusual Fraud Activity Spike
+                  Unusual Risk Activity Spike
                 </h3>
                 <p className="text-sm text-web-dark-grey">
-                  Get notified if there's a spike in fraud cases across multiple
+                  Get notified if there's a spike in risk cases across multiple
                   retailers.
                 </p>
               </div>
-              <Switch id="fraud-notifications" />
+              <Switch id="risk-notifications" />
             </div>
           </CardContent>
         </Card>
