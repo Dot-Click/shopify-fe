@@ -1,5 +1,5 @@
 import { type ColumnDef } from "@tanstack/react-table";
-import { ArrowUpDown, Eye, Filter as FilterIcon } from "lucide-react";
+import { ArrowUpDown, Filter as FilterIcon } from "lucide-react";
 
 import { Box } from "../components/ui/box";
 import { Button } from "../components/ui/button";
