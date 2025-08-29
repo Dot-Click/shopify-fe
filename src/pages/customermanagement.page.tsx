@@ -9,7 +9,7 @@ import {
 import { Box } from "../components/ui/box";
 import { Button } from "../components/ui/button";
 import { Checkbox } from "../components/ui/checkbox";
-import { Avatar, AvatarFallback, AvatarImage } from "../components/ui/avatar";
+import { Avatar } from "../components/ui/avatar";
 import { Badge } from "../components/ui/badge";
 import {
   Select,
@@ -33,10 +33,20 @@ import {
 } from "../components/common/tablecomponent";
 import { cn } from "../lib/utils";
 
-import {
-  useFetchAllCustomers,
-  type Customer,
-} from "../hooks/shopifycustomers/usefetchcustomers";
+import { useFetchAllCustomers } from "../hooks/shopifycustomers/usefetchcustomers";
+
+interface Customer {
+  id: string;
+  displayName: string;
+  createdAt: string;
+  customerEmail: string;
+  customerPhone: string | null;
+  image: {
+    url: string;
+  };
+  riskLevel: number;
+  refunds: number;
+}
 
 const getRiskColor = (level: number) => {
   if (level > 75) return "bg-red-500";
@@ -79,91 +89,95 @@ const RefundsBadge = ({ level, count }: { level: number; count: number }) => (
 
 // --- 3. Column Definitions for the Table ---
 
-const columns: ColumnDef<Customer>[] = [
-  // Checkbox column
-  {
-    id: "select",
-    header: (info) => <Checkbox {...checkBoxProps(info)} />,
-    cell: (info) => <Checkbox {...checkBoxProps(info)} />,
-    enableSorting: false,
-    enableHiding: false,
-  },
-  // Data columns
-  {
-    accessorKey: "id",
-    header: (info) => <SortedHeader header={info.header} label="Customer ID" />,
-  },
-  {
-    accessorKey: "displayName",
-    header: (info) => <SortedHeader header={info.header} label="Name" />,
-    cell: ({ row }) => (
-      <div className="flex items-center gap-3">
-        <Avatar className="">
-          <AvatarImage
+// --- 4. The Main Page Component ---
+
+function CustomerManagement() {
+  const columns: ColumnDef<Customer>[] = [
+    // Checkbox column
+    {
+      id: "select",
+      header: (info) => <Checkbox {...checkBoxProps(info)} />,
+      cell: (info) => <Checkbox {...checkBoxProps(info)} />,
+      enableSorting: false,
+      enableHiding: false,
+    },
+    // Data columns
+    {
+      accessorKey: "id",
+      header: (info) => (
+        <SortedHeader header={info.header} label="Customer ID" />
+      ),
+    },
+    {
+      accessorKey: "displayName",
+      header: (info) => <SortedHeader header={info.header} label="Name" />,
+      cell: ({ row }) => (
+        <div className="flex items-center gap-3">
+          <Avatar className="">
+            {/* <AvatarImage
             src={row.original.image?.url}
             alt={row.original.displayName}
             className="object-cover"
           />
-          <AvatarFallback>{row.original.displayName.charAt(0)}</AvatarFallback>
-        </Avatar>
-        <span className="font-medium">{row.original.displayName}</span>
-      </div>
-    ),
-  },
+          <AvatarFallback>{row.original.displayName.charAt(0)}</AvatarFallback> */}
+          </Avatar>
+          <span className="font-medium">{row.original.displayName}</span>
+        </div>
+      ),
+    },
 
-  {
-    accessorKey: "riskLevel",
-    header: (info) => <SortedHeader header={info.header} label="Risk Level" />,
-    cell: ({ row }) => <RiskLevelIndicator level={row.original.riskLevel} />,
-  },
-  {
-    accessorKey: "refunds",
-    header: (info) => <SortedHeader header={info.header} label="Refunds" />,
-    cell: ({ row }) => (
-      <RefundsBadge
-        level={row.original.riskLevel}
-        count={row.original.refunds}
-      />
-    ),
-  },
-  // Actions column with View and Block buttons
-  {
-    id: "actions",
-    header: (info) => <SortedHeader header={info.header} label="Actions" />,
-    cell: () => (
-      <div className="flex items-center gap-2">
-        <Button
-          variant="default"
-          size="sm"
-          className="bg-blue-600 hover:bg-blue-700 text-white"
-        >
-          <Eye className="mr-2 h-4 w-4" />
-          View
-        </Button>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button
-              variant="destructive"
-              size="sm"
-              className="bg-red-600 hover:bg-red-700 text-white"
-            >
-              Block
-              <MoreVertical className="ml-2 h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="bg-white">
-            <DropdownMenuItem>Block from this store</DropdownMenuItem>
-            <DropdownMenuItem>Block from all stores</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </div>
-    ),
-  },
-];
+    {
+      accessorKey: "riskLevel",
+      header: (info) => (
+        <SortedHeader header={info.header} label="Risk Level" />
+      ),
+      cell: ({ row }) => <RiskLevelIndicator level={row.original.riskLevel} />,
+    },
+    {
+      accessorKey: "refunds",
+      header: (info) => <SortedHeader header={info.header} label="Refunds" />,
+      cell: ({ row }) => (
+        <RefundsBadge
+          level={row.original.riskLevel}
+          count={row.original.refunds}
+        />
+      ),
+    },
+    // Actions column with View and Block buttons
+    {
+      id: "actions",
+      header: (info) => <SortedHeader header={info.header} label="Actions" />,
+      cell: () => (
+        <div className="flex items-center gap-2">
+          <Button
+            variant="default"
+            size="sm"
+            className="bg-blue-600 hover:bg-blue-700 text-white"
+          >
+            <Eye className="mr-2 h-4 w-4" />
+            View
+          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="destructive"
+                size="sm"
+                className="bg-red-600 hover:bg-red-700 text-white"
+              >
+                Block
+                <MoreVertical className="ml-2 h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="bg-white">
+              <DropdownMenuItem>Block from this store</DropdownMenuItem>
+              <DropdownMenuItem>Block from all stores</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+      ),
+    },
+  ];
 
-// --- 4. The Main Page Component ---
-
-function CustomerManagement() {
   const { data: customers, isLoading: isLoadingCustomers } =
     useFetchAllCustomers();
 
@@ -202,7 +216,10 @@ function CustomerManagement() {
 
       {/* Table Section */}
       <main className="mt-6">
-        <TableProvider data={customers || []} columns={columns}>
+        <TableProvider
+          data={customers || []}
+          columns={columns as ColumnDef<any, any>[]}
+        >
           {() => <TableComponent isLoading={isLoadingCustomers} />}
         </TableProvider>
       </main>

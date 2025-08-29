@@ -11,7 +11,7 @@ export type Customer = {
     url: string;
   };
   riskLevel: number;
-}[];
+};
 
 export const useFetchAllCustomers = () => {
   return useQuery<Customer[], ErrorWithMessage>({
