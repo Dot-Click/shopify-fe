@@ -18,14 +18,14 @@ const features = [
     icon: <img src={brain} className="h-14 w-14 text-white mt-12" />,
     title: "Shared Risk Intelligence",
     description:
-      "Access a growing network of Risk reports shared anonymously across other trusted Shopify merchants.",
+      "Access a growing network of risk reports shared anonymously across other trusted Shopify merchants.",
     bgColor: "bg-[#F04461]",
   },
   {
     icon: <img src={bell} className="h-14 w-14 text-white mt-12" />,
     title: "Automatic Alerts",
     description:
-      "Receive alerts directly in your Shopify admin and via email when a potential Risk attempt occurs.",
+      "Receive alerts directly in your Shopify admin and via email when a potential risk attempt occurs.",
     bgColor: "bg-[#5B66F0]",
   },
   {
@@ -53,9 +53,9 @@ export const TrustSection = () => {
             <span className="text-[#05C165]">eComProtect</span>
           </h2>
           <p className="mt-4 text-lg text-gray-600">
-            eComProtect offers a smart, secure, and scalable way to stop
-            Riskulent orders before they impact your store. Here's how it keeps
-            you protected:
+            eComProtect offers a smart, secure, and scalable way to stop risky
+            orders before they impact your store. Here's how it keeps you
+            protected:
           </p>
         </Box>
 
