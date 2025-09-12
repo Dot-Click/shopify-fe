@@ -8,8 +8,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
   const userType = pathname.startsWith("/admin") ? "admin" : "user";
 
-  const userEmail =
-    userType === "admin" ? "admin@example.com" : "user@example.com";
+  // const userEmail =
+  //   userType === "admin" ? "admin@example.com" : "user@example.com";
 
   return (
     <SidebarProvider>
@@ -22,7 +22,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           {/* You can add breadcrumbs or other elements here if needed */}
         </header>
 
-        <NavbarDashboard userType={userType} userEmail={userEmail} />
+        <NavbarDashboard userType={userType} />
 
         {/* 3. The rest of your page content */}
         <main className="mt-4 flex-1">{children}</main>

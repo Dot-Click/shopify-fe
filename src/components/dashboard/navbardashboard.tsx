@@ -1,27 +1,18 @@
 import { Bell, Settings, Search } from "lucide-react";
 import { Button } from "../ui/button";
-import { Input } from "../ui/input"; // Assuming you have an Input component
+import { Input } from "../ui/input";
 import { Box } from "../ui/box";
 import icon from "/icons/logo_icon.png";
 import waveIcon from "/icons/wave_icon.svg";
+import { authClient } from "../../providers/user.provider";
 
-// MODIFICATION: Define the props for the component
 interface NavbarDashboardProps {
-  /**
-   * The type of user, which determines the layout.
-   */
   userType: "admin" | "user";
-  /**
-   * The email of the currently logged-in user.
-   */
-  userEmail: string;
 }
 
-export const NavbarDashboard = ({
-  userType,
-  userEmail,
-}: NavbarDashboardProps) => {
-  // MODIFICATION: Set the welcome message based on the userType prop
+export const NavbarDashboard = ({ userType }: NavbarDashboardProps) => {
+  const { data: session } = authClient.useSession();
+
   const welcomeMessage =
     userType === "admin"
       ? "Welcome to, Admin Panel"
@@ -34,7 +25,7 @@ export const NavbarDashboard = ({
           <h1 className="text-xl font-semibold">{welcomeMessage}</h1>
           <img src={waveIcon} alt="wave-icon" className="w-6 h-6" />
         </Box>
-        <p className="text-sm text-muted-foreground">{userEmail}</p>
+        <p className="text-sm text-muted-foreground">{session?.user.email}</p>
       </div>
 
       {/* {userType === "user" && ( */}

@@ -11,6 +11,7 @@ export type Customer = {
     url: string;
   };
   riskLevel: number;
+  totalRefunds: number;
 };
 
 export const useFetchAllCustomers = () => {

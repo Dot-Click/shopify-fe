@@ -1,11 +1,4 @@
-import {
-  AlertCircle,
-  LayoutGrid,
-  Settings,
-  Store,
-  Users,
-  ShoppingBag,
-} from "lucide-react";
+import { AlertCircle, LayoutGrid, Settings, Store, Users } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -61,11 +54,6 @@ export function AppSidebar({ role }: AppSidebarProps) {
       title: "Customer Management",
       url: "/user/customer-management",
       icon: Users,
-    },
-    {
-      title: "Order Management",
-      url: "/user/order-management",
-      icon: ShoppingBag,
     },
     { title: "Notification", url: "/user/notification", icon: FaBell },
   ];

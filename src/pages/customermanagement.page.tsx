@@ -45,7 +45,7 @@ interface Customer {
     url: string;
   };
   riskLevel: number;
-  refunds: number;
+  totalRefunds: number;
 }
 
 const getRiskColor = (level: number) => {
@@ -54,14 +54,12 @@ const getRiskColor = (level: number) => {
   return "bg-green-500";
 };
 
-// Helper for the badge class
 const getRiskBadgeClass = (level: number) => {
   if (level > 75) return "bg-red-100 text-red-700 border-red-200";
   if (level > 40) return "bg-orange-100 text-orange-700 border-orange-200";
   return "bg-green-100 text-green-700 border-green-200";
 };
 
-// Risk Level Progress Bar Component
 const RiskLevelIndicator = ({ level }: { level: number }) => (
   <div className="flex items-center gap-3">
     <div className="relative w-28 h-1.5 bg-slate-200 rounded-full">
@@ -87,13 +85,8 @@ const RefundsBadge = ({ level, count }: { level: number; count: number }) => (
   </Badge>
 );
 
-// --- 3. Column Definitions for the Table ---
-
-// --- 4. The Main Page Component ---
-
 function CustomerManagement() {
   const columns: ColumnDef<Customer>[] = [
-    // Checkbox column
     {
       id: "select",
       header: (info) => <Checkbox {...checkBoxProps(info)} />,
@@ -101,7 +94,6 @@ function CustomerManagement() {
       enableSorting: false,
       enableHiding: false,
     },
-    // Data columns
     {
       accessorKey: "id",
       header: (info) => (
@@ -134,13 +126,16 @@ function CustomerManagement() {
       cell: ({ row }) => <RiskLevelIndicator level={row.original.riskLevel} />,
     },
     {
-      accessorKey: "refunds",
+      accessorKey: "totalRefunds",
       header: (info) => <SortedHeader header={info.header} label="Refunds" />,
       cell: ({ row }) => (
-        <RefundsBadge
-          level={row.original.riskLevel}
-          count={row.original.refunds}
-        />
+        console.log("row", row.original.totalRefunds),
+        (
+          <RefundsBadge
+            level={row.original.riskLevel}
+            count={row.original.totalRefunds}
+          />
+        )
       ),
     },
     // Actions column with View and Block buttons
@@ -180,6 +175,8 @@ function CustomerManagement() {
 
   const { data: customers, isLoading: isLoadingCustomers } =
     useFetchAllCustomers();
+
+  console.log("customers", customers);
 
   return (
     <Box className="rounded-lg bg-white p-6 shadow-sm">
