@@ -1,4 +1,3 @@
-import * as React from "react";
 import { type ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown, Eye, Filter as FilterIcon } from "lucide-react";
 
@@ -21,76 +20,17 @@ import {
 import { cn } from "../lib/utils";
 import { Dialog, DialogTrigger } from "../components/ui/dialog";
 import { ReportSummaryModal } from "../components/common/modal";
+import {
+  useFetchDashboardCustomers,
+  type Customer,
+} from "../hooks/shopifycustomers/usefetchdashboardcustomer";
+import {
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+} from "../components/ui/tooltip";
 
 // --- 1. Data Structure and Mock Data ---
-
-export type User = {
-  refundHistory?: {
-    date: string;
-    reason: string;
-  }[];
-  accountSummary?: {
-    merchants: number;
-    totalFlags: number;
-  };
-  id: string;
-  name: string;
-  email: string;
-  contactNumber: string;
-  ipAddress: string;
-  riskLevel: number; // A number between 0 and 100
-};
-
-const users: User[] = [
-  {
-    id: "1001",
-    name: "Emma Johnson",
-    email: "emma.j@gmail.com",
-    contactNumber: "+1 202 555 0121",
-    ipAddress: "192.168.1.100",
-    riskLevel: 45,
-  },
-  {
-    id: "1002",
-    name: "Daniel Smith",
-    email: "dan.smith@outlook.com",
-    contactNumber: "+44 7700 900456",
-    ipAddress: "192.168.1.100",
-    riskLevel: 98,
-  },
-  {
-    id: "1003",
-    name: "William Davis",
-    email: "willd@gmail.com",
-    contactNumber: "+44 7700 909888",
-    ipAddress: "192.168.1.100",
-    riskLevel: 22,
-  },
-  {
-    id: "1004",
-    name: "Liam Taylor",
-    email: "liamtaylor@gmail.com",
-    contactNumber: "+44 7500 778899",
-    ipAddress: "192.168.1.100",
-    riskLevel: 55,
-  },
-  {
-    id: "1005",
-    name: "Isabella Anderson",
-    email: "isa.anderson@yahoo.com",
-    contactNumber: "+1 917 345 6780",
-    ipAddress: "192.168.1.100",
-    riskLevel: 80,
-  },
-  {
-    id: "1006",
-    name: "Benjamin Thomas",
-    email: "ben.thomas@gmail.com",
-    contactNumber: "+1 202 555 0121",
-    ipAddress: "192.168.1.100",
-    riskLevel: 30,
-  },
-];
 
 const getRiskColor = (level: number) => {
   if (level > 75) return "bg-red-400";
@@ -110,7 +50,30 @@ const RiskLevelIndicator = ({ level }: { level: number }) => (
   </div>
 );
 
-const columns: ColumnDef<User>[] = [
+const TruncatedCell = ({ text }: { text: string | null }) => {
+  if (!text) {
+    return <span className="text-slate-400">N/A</span>;
+  }
+
+  // Truncation logic: show first 6...last 4 for long strings
+  const truncatedText =
+    text.length > 15
+      ? `${text.substring(0, 6)}...${text.substring(text.length - 4)}`
+      : text;
+
+  return (
+    <Tooltip delayDuration={150}>
+      <TooltipTrigger asChild>
+        <span className="cursor-default">{truncatedText}</span>
+      </TooltipTrigger>
+      <TooltipContent className="bg-white text-slate-700 shadow">
+        <p>{text}</p>
+      </TooltipContent>
+    </Tooltip>
+  );
+};
+
+const columns: ColumnDef<Customer>[] = [
   // Checkbox column using the helper function
   {
     id: "select",
@@ -122,17 +85,28 @@ const columns: ColumnDef<User>[] = [
   {
     accessorKey: "id",
     header: (info) => <SortedHeader header={info.header} label="User ID" />,
+    cell: ({ row }) => <TruncatedCell text={row.original.id ?? "N/A"} />,
   },
   {
-    accessorKey: "name",
+    accessorKey: "displayName",
     header: (info) => <SortedHeader header={info.header} label="Name" />,
   },
   {
     accessorKey: "email",
     header: (info) => <SortedHeader header={info.header} label="Email" />,
   },
-  { accessorKey: "contactNumber", header: "Contact Number" },
-  { accessorKey: "ipAddress", header: "IP Address" },
+  {
+    accessorKey: "phone",
+    header: "Contact Number",
+    cell: ({ row }) => row.original.phone ?? "N/A",
+  },
+  {
+    accessorKey: "lastKnownIp",
+    header: "IP Address",
+    cell: ({ row }) => (
+      <TruncatedCell text={row.original.lastKnownIp ?? "N/A"} />
+    ),
+  },
   {
     accessorKey: "riskLevel",
     header: "Risk Level",
@@ -160,7 +134,16 @@ const columns: ColumnDef<User>[] = [
 ];
 
 function UserManagement() {
-  const [isLoading, _setIsLoading] = React.useState(false);
+  const { data: customers, isLoading, error } = useFetchDashboardCustomers();
+
+  if (error) {
+    return (
+      <Box className="rounded-xl bg-white shadow-sm p-7">
+        <h2 className="text-red-600 font-semibold">Failed to load data</h2>
+        <p className="text-slate-500 mt-2">{error.message}</p>
+      </Box>
+    );
+  }
 
   return (
     <Box className="rounded-xl bg-white shadow-sm">
@@ -200,7 +183,7 @@ function UserManagement() {
 
       {/* Table Section */}
       <main className="mt-6">
-        <TableProvider data={users} columns={columns}>
+        <TableProvider data={customers ?? []} columns={columns}>
           {() => <TableComponent isLoading={isLoading} />}
         </TableProvider>
       </main>

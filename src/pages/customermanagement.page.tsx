@@ -9,7 +9,6 @@ import {
 import { Box } from "../components/ui/box";
 import { Button } from "../components/ui/button";
 import { Checkbox } from "../components/ui/checkbox";
-import { Avatar } from "../components/ui/avatar";
 import { Badge } from "../components/ui/badge";
 import {
   Select,
@@ -104,17 +103,9 @@ function CustomerManagement() {
       accessorKey: "displayName",
       header: (info) => <SortedHeader header={info.header} label="Name" />,
       cell: ({ row }) => (
-        <div className="flex items-center gap-3">
-          <Avatar className="">
-            {/* <AvatarImage
-            src={row.original.image?.url}
-            alt={row.original.displayName}
-            className="object-cover"
-          />
-          <AvatarFallback>{row.original.displayName.charAt(0)}</AvatarFallback> */}
-          </Avatar>
-          <span className="font-medium">{row.original.displayName}</span>
-        </div>
+        <Box className="flex items-center gap-3">
+          <Box className="font-medium">{row.original.displayName}</Box>
+        </Box>
       ),
     },
 
@@ -129,13 +120,10 @@ function CustomerManagement() {
       accessorKey: "totalRefunds",
       header: (info) => <SortedHeader header={info.header} label="Refunds" />,
       cell: ({ row }) => (
-        console.log("row", row.original.totalRefunds),
-        (
-          <RefundsBadge
-            level={row.original.riskLevel}
-            count={row.original.totalRefunds}
-          />
-        )
+        <RefundsBadge
+          level={row.original.riskLevel}
+          count={row.original.totalRefunds}
+        />
       ),
     },
     // Actions column with View and Block buttons
@@ -143,7 +131,7 @@ function CustomerManagement() {
       id: "actions",
       header: (info) => <SortedHeader header={info.header} label="Actions" />,
       cell: () => (
-        <div className="flex items-center gap-2">
+        <Box className="flex items-center gap-2">
           <Button
             variant="default"
             size="sm"
@@ -168,7 +156,7 @@ function CustomerManagement() {
               <DropdownMenuItem>Block from all stores</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
-        </div>
+        </Box>
       ),
     },
   ];
@@ -176,12 +164,10 @@ function CustomerManagement() {
   const { data: customers, isLoading: isLoadingCustomers } =
     useFetchAllCustomers();
 
-  console.log("customers", customers);
-
   return (
-    <Box className="rounded-lg bg-white p-6 shadow-sm">
+    <Box className="rounded-lg bg-white shadow-sm">
       {/* Page Header */}
-      <header className="flex flex-wrap items-center justify-between gap-4">
+      <header className="flex flex-wrap items-center p-6 justify-between gap-4">
         <h1 className="text-2xl font-bold text-slate-800">
           Customer Management
         </h1>
@@ -212,14 +198,14 @@ function CustomerManagement() {
       </header>
 
       {/* Table Section */}
-      <main className="mt-6">
+      <Box className="mt-6">
         <TableProvider
           data={customers || []}
           columns={columns as ColumnDef<any, any>[]}
         >
           {() => <TableComponent isLoading={isLoadingCustomers} />}
         </TableProvider>
-      </main>
+      </Box>
     </Box>
   );
 }

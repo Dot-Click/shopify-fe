@@ -1,20 +1,16 @@
 import { useState } from "react";
-import { Avatar, AvatarFallback, AvatarImage } from "../components/ui/avatar";
-import { Box } from "../components/ui/box";
-import { Button } from "../components/ui/button";
-import { Input } from "../components/ui/input";
-import { Label } from "../components/ui/label";
-import { Separator } from "../components/ui/separator";
-import { Switch } from "../components/ui/switch";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "../components/ui/card"; // Import Card components
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Box } from "@/components/ui/box";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Separator } from "@/components/ui/separator";
+// import { Switch } from "@/components/ui/switch";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"; // Import Card components
 import { Library, Lock, Eye, EyeOff } from "lucide-react"; // Import new icons
 import logoIcon from "/icons/logo_icon.png";
-import { Stack } from "../components/ui/stack";
+import { Stack } from "@/components/ui/stack";
+import RiskSettings from "@/components/settings/risksettings";
 
 export const Settings = () => {
   // State to toggle password visibility
@@ -174,8 +170,10 @@ export const Settings = () => {
 
         <Separator className="my-2" />
 
+        <RiskSettings />
+
         {/* --- NOTIFICATIONS SECTION --- */}
-        <Card className="border-none shadow-none px-5 w-[80%]">
+        {/* <Card className="border-none shadow-none px-5 w-[80%]">
           <CardHeader className="p-0 mb-2">
             <CardTitle className="text-xl font-bold text-web-dark-grey">
               Notifications
@@ -218,7 +216,7 @@ export const Settings = () => {
               <Switch id="risk-notifications" />
             </div>
           </CardContent>
-        </Card>
+        </Card> */}
       </Box>
     </Box>
   );

@@ -5,9 +5,9 @@
     { "path": "./tsconfig.node.json" }
   ],
   "compilerOptions": {
-    "forceConsistentCasingInFileNames": true,
-    "strict": true,
-    "baseUrl": "./",
+    "lib": ["dom", "es2022"],
+    "target": "es2022",
+    "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]
     }
