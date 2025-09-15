@@ -16,6 +16,7 @@ import ReportAnalysis from "./pages/reportanalysis.page";
 import CustomerManagement from "./pages/customermanagement.page";
 import NotificationsPage from "./pages/notification";
 import OrderManagement from "./pages/ordermanagement.page";
+import RiskSettings from "./pages/risksettings.page";
 
 export const Router = () => {
   return (
@@ -51,6 +52,7 @@ export const Router = () => {
             element={<CustomerManagement />}
           />
           <Route path="/user/notification" element={<NotificationsPage />} />
+          <Route path="/user/settings" element={<RiskSettings />} />
           <Route path="/user/order-management" element={<OrderManagement />} />
         </Route>
 

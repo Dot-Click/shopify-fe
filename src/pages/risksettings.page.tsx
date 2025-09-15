@@ -12,28 +12,54 @@ import {
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { useCreateSettings } from "@/hooks/settings/usecreatesettings"; // Assuming this path
+
+// Define a type for your settings state for type safety
+type SettingsState = {
+  lostParcelThreshold: number;
+  lostParcelPeriod: string;
+  lossRateThreshold: number;
+  matchSensitivity: string;
+  action: string;
+  requireEsignature: boolean;
+  forceSignedDelivery: boolean;
+  requirePhoto: boolean;
+  sendCancellationEmail: boolean;
+  includeWaiverLink: boolean;
+};
 
 function RiskSettings() {
-  const [settings, setSettings] = useState({
-    lost_parcel_threshold: 3,
-    lost_parcel_period: "6",
-    loss_rate_threshold: 40,
-    match_sensitivity: "medium",
+  // State to manage form inputs
+  const [settings, setSettings] = useState<SettingsState>({
+    lostParcelThreshold: 3,
+    lostParcelPeriod: "6",
+    lossRateThreshold: 40,
+    matchSensitivity: "medium",
     action: "hold",
-    require_esignature: false,
-    force_signed_delivery: false,
-    require_photo: false,
-    send_cancellation_email: false,
-    include_waiver_link: false,
+    requireEsignature: false,
+    forceSignedDelivery: false,
+    requirePhoto: false,
+    sendCancellationEmail: false,
+    includeWaiverLink: false,
   });
 
-  const handleChange = (key: string, value: any) => {
+  // Hooks for fetching and updating settings
+  // const { data: fetchedSettings, isLoading: isLoadingSettings } = useGetSettings();
+  const { mutate: saveSettings, isPending: isSaving } = useCreateSettings();
+
+  const handleChange = (key: keyof SettingsState, value: any) => {
     setSettings((prev) => ({ ...prev, [key]: value }));
   };
 
   const handleSave = () => {
-    // Call backend API
-    console.log("Saving settings:", settings);
+    // The API only needs a subset of fields, so we send just those.
+    const payload = {
+      lostParcelThreshold: Number(settings.lostParcelThreshold),
+      lostParcelPeriod: settings.lostParcelPeriod,
+      lossRateThreshold: Number(settings.lossRateThreshold),
+      matchSensitivity: settings.matchSensitivity,
+    };
+    saveSettings(payload);
   };
 
   return (
@@ -51,12 +77,12 @@ function RiskSettings() {
             <Label>Lost Parcel Threshold</Label>
             <Input
               type="number"
-              value={settings.lost_parcel_threshold}
+              value={settings.lostParcelThreshold}
               min={1}
               max={10}
               className="mt-2"
               onChange={(e) =>
-                handleChange("lost_parcel_threshold", e.target.value)
+                handleChange("lostParcelThreshold", e.target.value)
               }
             />
           </div>
@@ -64,8 +90,8 @@ function RiskSettings() {
           <div>
             <Label>Lost Parcel Period</Label>
             <Select
-              value={settings.lost_parcel_period}
-              onValueChange={(val) => handleChange("lost_parcel_period", val)}
+              value={settings.lostParcelPeriod}
+              onValueChange={(val) => handleChange("lostParcelPeriod", val)}
             >
               <SelectTrigger className="w-40 mt-2">
                 <SelectValue />
@@ -83,12 +109,12 @@ function RiskSettings() {
             <Label>Loss Rate Threshold (%)</Label>
             <Input
               type="number"
-              value={settings.loss_rate_threshold}
+              value={settings.lossRateThreshold}
               min={1}
               max={100}
               className="mt-2"
               onChange={(e) =>
-                handleChange("loss_rate_threshold", e.target.value)
+                handleChange("lossRateThreshold", e.target.value)
               }
             />
           </div>
@@ -96,8 +122,8 @@ function RiskSettings() {
           <div>
             <Label>Match Sensitivity</Label>
             <Select
-              value={settings.match_sensitivity}
-              onValueChange={(val) => handleChange("match_sensitivity", val)}
+              value={settings.matchSensitivity}
+              onValueChange={(val) => handleChange("matchSensitivity", val)}
             >
               <SelectTrigger className="w-40 mt-2">
                 <SelectValue />
@@ -140,17 +166,17 @@ function RiskSettings() {
           <div className="flex items-center justify-between">
             <Label>Require customer e-signature</Label>
             <Switch
-              checked={settings.require_esignature}
-              onCheckedChange={(val) => handleChange("require_esignature", val)}
+              checked={settings.requireEsignature}
+              onCheckedChange={(val) => handleChange("requireEsignature", val)}
             />
           </div>
 
           <div className="flex items-center justify-between">
             <Label>Force courier to signed delivery</Label>
             <Switch
-              checked={settings.force_signed_delivery}
+              checked={settings.forceSignedDelivery}
               onCheckedChange={(val) =>
-                handleChange("force_signed_delivery", val)
+                handleChange("forceSignedDelivery", val)
               }
             />
           </div>
@@ -158,17 +184,17 @@ function RiskSettings() {
           <div className="flex items-center justify-between">
             <Label>Photo on delivery required</Label>
             <Switch
-              checked={settings.require_photo}
-              onCheckedChange={(val) => handleChange("require_photo", val)}
+              checked={settings.requirePhoto}
+              onCheckedChange={(val) => handleChange("requirePhoto", val)}
             />
           </div>
 
           <div className="flex items-center justify-between">
             <Label>Send cancellation email</Label>
             <Switch
-              checked={settings.send_cancellation_email}
+              checked={settings.sendCancellationEmail}
               onCheckedChange={(val) =>
-                handleChange("send_cancellation_email", val)
+                handleChange("sendCancellationEmail", val)
               }
             />
           </div>
@@ -176,17 +202,19 @@ function RiskSettings() {
           <div className="flex items-center justify-between">
             <Label>Include waiver link</Label>
             <Switch
-              checked={settings.include_waiver_link}
-              onCheckedChange={(val) =>
-                handleChange("include_waiver_link", val)
-              }
+              checked={settings.includeWaiverLink}
+              onCheckedChange={(val) => handleChange("includeWaiverLink", val)}
             />
           </div>
         </CardContent>
       </Card>
 
-      <Button onClick={handleSave} className="bg-blue-600 hover:bg-blue-700">
-        Save Settings
+      <Button
+        onClick={handleSave}
+        disabled={isSaving}
+        className="bg-blue-600 hover:bg-blue-700"
+      >
+        {isSaving ? "Saving..." : "Save Settings"}
       </Button>
     </Box>
   );
