@@ -1,0 +1,250 @@
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  //   ArrowUpDown,
+  Ban,
+  CalendarDays,
+  Clock,
+  Eye,
+  Mail,
+  Phone,
+  User,
+} from "lucide-react";
+import { type Customer } from "@/hooks/shopifycustomers/usefetchdashboardcustomer"; // Adjust this import path
+import { TableProvider } from "@/providers/table.provider";
+import { TableComponent } from "../common/tablecomponent";
+import {
+  type RiskyOrderResponse,
+  useGetRiskyOrders,
+} from "@/hooks/shopifycustomers/usefetchcustomerorders";
+import { type ColumnDef } from "@tanstack/react-table";
+import { SortedHeader } from "../common/tablecomponent";
+import { cn } from "@/lib/utils";
+import { DialogTrigger } from "@radix-ui/react-dialog";
+import { Box } from "../ui/box";
+import { useState } from "react";
+
+const mockDetails = {
+  registrationDate: "Mar 15, 2024",
+  lastActive: "2 hours ago",
+};
+
+// const StatusBadge = ({ status }: { status: string }) => {
+//   const statusStyles: { [key: string]: string } = {
+//     disputed: "bg-red-100 text-red-800 border-red-200",
+//     refund: "bg-orange-100 text-orange-800 border-orange-200",
+//     success: "bg-green-100 text-green-800 border-green-200",
+//   };
+
+//   return (
+//     <Badge
+//       className={
+//         statusStyles[status.toLowerCase()] || "bg-gray-100 text-gray-800"
+//       }
+//     >
+//       {status}
+//     </Badge>
+//   );
+// };
+
+const getRiskColor = (level: number) => {
+  if (level > 75) return "bg-red-400";
+  if (level > 40) return "bg-orange-400";
+  return "bg-green-400";
+};
+
+const RiskLevelIndicator = ({ level }: { level: number }) => (
+  <div className="w-full flex items-center gap-2">
+    <div className="relative w-full h-2 bg-slate-200 rounded-full overflow-hidden">
+      <div
+        className={cn("absolute top-0 left-0 h-full", getRiskColor(level))}
+        style={{ width: `${level}%` }}
+      />
+    </div>
+  </div>
+);
+
+// Helper component for the overview section
+const InfoItem = ({
+  icon,
+  label,
+  value,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  value: string | null | undefined;
+}) => (
+  <div className="flex items-start gap-3 p-3 bg-white rounded-lg shadow-sm">
+    <div className="text-muted-foreground mt-1">{icon}</div>
+    <div>
+      <p className="text-sm text-muted-foreground">{label}</p>
+      <p className="font-semibold text-gray-800 text-[10px]">
+        {value || "N/A"}
+      </p>
+    </div>
+  </div>
+);
+
+// The main modal component
+export const ViewOrderModal = ({ user }: { user: Customer }) => {
+  const isHighRisk = user.riskLevel > 50;
+  const [open, setOpen] = useState(false);
+  const { data, isLoading } = useGetRiskyOrders(open ? user.id : null);
+
+  const orders = data?.orders ?? [];
+
+  const columns: ColumnDef<RiskyOrderResponse["orders"][number]>[] = [
+    {
+      accessorKey: "id",
+      header: (info) => <SortedHeader header={info.header} label="User ID" />,
+    },
+    {
+      accessorKey: "totalAmount",
+      header: (info) => (
+        <SortedHeader header={info.header} label="Total Amount" />
+      ),
+    },
+    {
+      accessorKey: "createdAt",
+      header: "Created At",
+    },
+    {
+      accessorKey: "flagged",
+      header: "Flagged",
+    },
+  ];
+
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
+        <Button
+          variant="outline"
+          size="sm"
+          className="bg-blue-600 text-white hover:bg-blue-700 hover:text-white py-5"
+        >
+          <Eye className="mr-2 h-4 w-4" /> View Detail
+        </Button>
+      </DialogTrigger>
+
+      <DialogContent className="w-full max-w-3xl sm:max-w-xl md:max-w-2xl lg:max-w-4xl overflow-y-auto max-h-[90vh] border-0 bg-white">
+        <DialogHeader>
+          <DialogTitle className="text-2xl font-semibold text-gray-800">
+            View Details
+          </DialogTitle>
+        </DialogHeader>
+        <Box className="space-y-8 mt-4">
+          {/* Top Profile Section */}
+          <Box className="flex flex-col gap-4 p-6 bg-gray-100 rounded-lg shadow-sm">
+            <Box className="flex items-center justify-between">
+              <Box className="flex items-center gap-4">
+                <Avatar className="h-16 w-16">
+                  {/* Using a generic avatar, replace with user.avatarUrl if available */}
+                  <AvatarImage
+                    src={`https://i.pravatar.cc/150?u=${user.id}`}
+                    alt={user.displayName}
+                  />
+                  <AvatarFallback>{user.displayName.charAt(0)}</AvatarFallback>
+                </Avatar>
+                <Box>
+                  <Box className="flex items-center gap-2">
+                    <h2 className="text-xl font-bold text-slate-900">
+                      {user.displayName}
+                    </h2>
+                    {isHighRisk && (
+                      <Badge
+                        variant="destructive"
+                        className="bg-red-600 text-white"
+                      >
+                        HIGH RISK
+                      </Badge>
+                    )}
+                  </Box>
+                  <p className="text-sm text-slate-500">{user.email}</p>
+                  <p className="text-sm text-slate-500">
+                    Customer ID: {user.id}
+                  </p>
+                </Box>
+              </Box>
+              <div className="flex gap-2">
+                <Button className="bg-red-600 text-white hover:bg-red-700 hover:text-white">
+                  <Ban className="mr-2 h-4 w-4" />
+                  Block Customer
+                </Button>
+              </div>
+            </Box>
+            <div>
+              <div className="flex justify-between text-sm mb-1">
+                <span className="font-medium text-slate-700">Risk Level</span>
+                <span className="text-sm text-slate-600 w-10 text-right">
+                  {user.riskLevel}%
+                </span>
+              </div>
+              <RiskLevelIndicator level={user.riskLevel} />
+            </div>
+          </Box>
+
+          {/* Customer Overview Section */}
+          <Card className="bg-gray-100 border-0 shadow-sm">
+            <CardHeader>
+              <CardTitle className="text-slate-800">
+                Customer Overview
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-sm">
+                <InfoItem
+                  icon={<User size={18} />}
+                  label="Customer ID"
+                  value={user.id}
+                />
+                <InfoItem
+                  icon={<User size={18} />}
+                  label="Full Name"
+                  value={user.displayName}
+                />
+                <InfoItem
+                  icon={<Mail size={18} />}
+                  label="Email"
+                  value={user.email ?? "N/A"}
+                />
+                <InfoItem
+                  icon={<Phone size={18} />}
+                  label="Phone"
+                  value={user.phone ?? "N/A"}
+                />
+                <InfoItem
+                  icon={<CalendarDays size={18} />}
+                  label="Registration Date"
+                  value={mockDetails.registrationDate}
+                />
+                <InfoItem
+                  icon={<Clock size={18} />}
+                  label="Last Active"
+                  value={mockDetails.lastActive}
+                />
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Transaction History Section */}
+          <Box className="p-6 bg-white rounded-lg shadow-sm">
+            <h3 className="text-lg font-semibold mb-4 text-slate-800">
+              Transaction & Refund History
+            </h3>
+            <TableProvider data={orders} columns={columns}>
+              {() => <TableComponent isLoading={isLoading} />}
+            </TableProvider>
+          </Box>
+        </Box>
+      </DialogContent>
+    </Dialog>
+  );
+};

@@ -1,7 +1,7 @@
 import { type ColumnDef } from "@tanstack/react-table";
 import {
   ArrowUpDown,
-  Eye,
+  //   Eye,
   Filter as FilterIcon,
   MoreVertical,
 } from "lucide-react";
@@ -33,6 +33,7 @@ import {
 import { cn } from "../lib/utils";
 
 import { useFetchAllCustomers } from "../hooks/shopifycustomers/usefetchcustomers";
+import { ViewOrderModal } from "../components/modals/vieworder.modal";
 
 interface Customer {
   id: string;
@@ -44,7 +45,7 @@ interface Customer {
     url: string;
   };
   riskLevel: number;
-  totalRefunds: number;
+  refundsFromStores: number;
 }
 
 const getRiskColor = (level: number) => {
@@ -67,7 +68,7 @@ const RiskLevelIndicator = ({ level }: { level: number }) => (
           "absolute top-0 left-0 h-full rounded-full",
           getRiskColor(level)
         )}
-        style={{ width: `${level}%` }}
+        style={{ width: `${level}%`, maxWidth: "100%" }}
       />
     </div>
     <span className="text-sm font-medium text-slate-600 w-8">{level}%</span>
@@ -122,7 +123,7 @@ function CustomerManagement() {
       cell: ({ row }) => (
         <RefundsBadge
           level={row.original.riskLevel}
-          count={row.original.totalRefunds}
+          count={row.original.refundsFromStores}
         />
       ),
     },
@@ -130,16 +131,9 @@ function CustomerManagement() {
     {
       id: "actions",
       header: (info) => <SortedHeader header={info.header} label="Actions" />,
-      cell: () => (
+      cell: ({ row }) => (
         <Box className="flex items-center gap-2">
-          <Button
-            variant="default"
-            size="sm"
-            className="bg-blue-600 hover:bg-blue-700 text-white"
-          >
-            <Eye className="mr-2 h-4 w-4" />
-            View
-          </Button>
+          <ViewOrderModal user={row.original} />
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button

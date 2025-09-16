@@ -4,10 +4,10 @@ import { axios, type ErrorWithMessage } from "../../configs/axios.config";
 export type Customer = {
   id: string;
   displayName: string;
-  lastKnownIp: string | null;
-  email: string;
-  totalOrders: number;
-  phone: string | null;
+  lastKnownIp?: string | null;
+  email?: string;
+  totalOrders?: number;
+  phone?: string | null;
   riskLevel: number;
   refundsFromStores: number;
 };
