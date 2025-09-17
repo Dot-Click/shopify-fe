@@ -8,6 +8,7 @@ export interface RiskyOrderResponse {
     totalAmount: string;
     currency: string;
     flagged: boolean;
+    manualFlag: boolean;
     reasons: string[];
     createdAt: string;
   }[];

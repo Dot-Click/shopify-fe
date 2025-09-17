@@ -3,7 +3,7 @@ import { axios, type ErrorWithMessage } from "../../configs/axios.config";
 
 export type Customer = {
   id: string;
-  displayName: string;
+  name: string;
   lastKnownIp?: string | null;
   email?: string;
   totalOrders?: number;

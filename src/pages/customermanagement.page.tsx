@@ -37,7 +37,7 @@ import { ViewOrderModal } from "../components/modals/vieworder.modal";
 
 interface Customer {
   id: string;
-  displayName: string;
+  name: string;
   createdAt: string;
   customerEmail: string;
   customerPhone: string | null;
@@ -101,11 +101,11 @@ function CustomerManagement() {
       ),
     },
     {
-      accessorKey: "displayName",
+      accessorKey: "name",
       header: (info) => <SortedHeader header={info.header} label="Name" />,
       cell: ({ row }) => (
         <Box className="flex items-center gap-3">
-          <Box className="font-medium">{row.original.displayName}</Box>
+          <Box className="font-medium">{row.original.name}</Box>
         </Box>
       ),
     },

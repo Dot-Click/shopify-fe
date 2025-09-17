@@ -12,10 +12,14 @@ import {
   //   ArrowUpDown,
   Ban,
   CalendarDays,
+  CircleCheckBig,
   Clock,
   Eye,
+  Flag,
+  FlagOff,
   Mail,
   Phone,
+  ShieldAlert,
   User,
 } from "lucide-react";
 import { type Customer } from "@/hooks/shopifycustomers/usefetchdashboardcustomer"; // Adjust this import path
@@ -31,6 +35,8 @@ import { cn } from "@/lib/utils";
 import { DialogTrigger } from "@radix-ui/react-dialog";
 import { Box } from "../ui/box";
 import { useState } from "react";
+import { useAddFlag } from "@/hooks/shopifycustomers/useaddflag";
+import { useDeleteFlag } from "@/hooks/shopifycustomers/usedeleteflag";
 
 const mockDetails = {
   registrationDate: "Mar 15, 2024",
@@ -98,9 +104,10 @@ export const ViewOrderModal = ({ user }: { user: Customer }) => {
   const isHighRisk = user.riskLevel > 50;
   const [open, setOpen] = useState(false);
   const { data, isLoading } = useGetRiskyOrders(open ? user.id : null);
-
+  const { mutate: addFlag } = useAddFlag();
+  const { mutate: deleteFlag } = useDeleteFlag();
   const orders = data?.orders ?? [];
-
+  console.log("orders", orders);
   const columns: ColumnDef<RiskyOrderResponse["orders"][number]>[] = [
     {
       accessorKey: "id",
@@ -115,10 +122,61 @@ export const ViewOrderModal = ({ user }: { user: Customer }) => {
     {
       accessorKey: "createdAt",
       header: "Created At",
+      cell: ({ row }) => {
+        return (
+          <Box>{new Date(row.original.createdAt).toLocaleDateString()}</Box>
+        );
+      },
     },
     {
       accessorKey: "flagged",
       header: "Flagged",
+      cell: ({ row }) => {
+        return (
+          <Box>
+            {row.original.flagged || row.original.manualFlag ? (
+              <ShieldAlert className="h-7 w-7 text-red-500" />
+            ) : (
+              <CircleCheckBig className="h-5 w-5 text-green-500" />
+            )}
+          </Box>
+        );
+      },
+    },
+    {
+      accessorKey: "actions",
+      header: "Actions",
+      cell: ({ row }) => {
+        return (
+          <Box className="space-x-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                addFlag({ orderId: row.original.id, flag: true });
+              }}
+              disabled={row.original.flagged || row.original.manualFlag}
+              className="cursor-pointer bg-red-500 border-0 text-white text-center"
+            >
+              <Flag className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              className="cursor-pointer bg-blue-400 border-0 text-white text-center"
+              onClick={() => {
+                deleteFlag({ orderId: row.original.id });
+              }}
+              disabled={
+                row.original.flagged === false ||
+                row.original.manualFlag === false
+              }
+            >
+              <FlagOff className="h-4 w-4" />
+            </Button>
+          </Box>
+        );
+      },
     },
   ];
 
@@ -128,7 +186,7 @@ export const ViewOrderModal = ({ user }: { user: Customer }) => {
         <Button
           variant="outline"
           size="sm"
-          className="bg-blue-600 text-white hover:bg-blue-700 hover:text-white py-5"
+          className="bg-blue-600 text-white hover:bg-blue-700 hover:text-white py-4.5 cursor-pointer"
         >
           <Eye className="mr-2 h-4 w-4" /> View Detail
         </Button>
@@ -136,7 +194,7 @@ export const ViewOrderModal = ({ user }: { user: Customer }) => {
 
       <DialogContent className="w-full max-w-3xl sm:max-w-xl md:max-w-2xl lg:max-w-4xl overflow-y-auto max-h-[90vh] border-0 bg-white">
         <DialogHeader>
-          <DialogTitle className="text-2xl font-semibold text-gray-800">
+          <DialogTitle className="text-2xl font-bold text-gray-800">
             View Details
           </DialogTitle>
         </DialogHeader>
@@ -149,14 +207,14 @@ export const ViewOrderModal = ({ user }: { user: Customer }) => {
                   {/* Using a generic avatar, replace with user.avatarUrl if available */}
                   <AvatarImage
                     src={`https://i.pravatar.cc/150?u=${user.id}`}
-                    alt={user.displayName}
+                    alt={user.name}
                   />
-                  <AvatarFallback>{user.displayName.charAt(0)}</AvatarFallback>
+                  <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
                 </Avatar>
                 <Box>
                   <Box className="flex items-center gap-2">
                     <h2 className="text-xl font-bold text-slate-900">
-                      {user.displayName}
+                      {user.name}
                     </h2>
                     {isHighRisk && (
                       <Badge
@@ -208,7 +266,7 @@ export const ViewOrderModal = ({ user }: { user: Customer }) => {
                 <InfoItem
                   icon={<User size={18} />}
                   label="Full Name"
-                  value={user.displayName}
+                  value={user.name}
                 />
                 <InfoItem
                   icon={<Mail size={18} />}
@@ -235,10 +293,12 @@ export const ViewOrderModal = ({ user }: { user: Customer }) => {
           </Card>
 
           {/* Transaction History Section */}
-          <Box className="p-6 bg-white rounded-lg shadow-sm">
-            <h3 className="text-lg font-semibold mb-4 text-slate-800">
-              Transaction & Refund History
-            </h3>
+          <Box className="bg-white rounded-lg shadow-sm">
+            <Box className="p-6">
+              <h3 className="text-lg font-semibold mb-4 text-slate-800">
+                Transaction & Refund History
+              </h3>
+            </Box>
             <TableProvider data={orders} columns={columns}>
               {() => <TableComponent isLoading={isLoading} />}
             </TableProvider>

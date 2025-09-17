@@ -19,7 +19,7 @@ import {
 } from "../components/common/tablecomponent"; // IMPORTANT: Adjust path
 import { cn } from "../lib/utils";
 import { Dialog, DialogTrigger } from "../components/ui/dialog";
-import { ReportSummaryModal } from "../components/common/modal";
+// import { ReportSummaryModal } from "../components/common/modal";
 import {
   useFetchDashboardCustomers,
   type Customer,
@@ -115,7 +115,7 @@ const columns: ColumnDef<Customer>[] = [
   // Actions column
   {
     id: "actions",
-    cell: ({ row }) => (
+    cell: () => (
       <Dialog>
         <DialogTrigger asChild>
           <Button
@@ -127,7 +127,7 @@ const columns: ColumnDef<Customer>[] = [
           </Button>
         </DialogTrigger>
         {/* The DialogContent is our custom modal, receiving the user data for this row */}
-        <ReportSummaryModal user={row.original} />
+        {/* <ReportSummaryModal user={row.original} /> */}
       </Dialog>
     ),
   },

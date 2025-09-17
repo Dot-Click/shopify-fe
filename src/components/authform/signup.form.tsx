@@ -54,6 +54,7 @@ export const SignupForm = () => {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
@@ -80,6 +81,9 @@ export const SignupForm = () => {
         plan: "free",
       },
       {
+        onRequest: () => {
+          setIsLoading(true);
+        },
         onSuccess: async (data) => {
           console.log("this is the data", data);
           const user = data.data.user;
@@ -96,10 +100,15 @@ export const SignupForm = () => {
               userEmail: user.email,
             },
           });
+          setIsLoading(false);
         },
         onError: (error) => {
           toast.error(error.error.message);
           console.log("this is the error", error);
+          setIsLoading(false);
+        },
+        onSettled: () => {
+          setIsLoading(false);
         },
       }
     );
@@ -399,8 +408,11 @@ export const SignupForm = () => {
             <Button
               className="w-full bg-blue-600 hover:bg-blue-700 text-white py-6 rounded-xl mt-4"
               type="submit"
+              disabled={isLoading}
             >
-              Apply for an Account
+              {isLoading
+                ? "Applying for an Account..."
+                : "Apply for an Account"}
             </Button>
           </form>
         </Form>

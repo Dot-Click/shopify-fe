@@ -3,7 +3,7 @@ import { axios, type ErrorWithMessage } from "../../configs/axios.config";
 
 export type Customer = {
   id: string;
-  displayName: string;
+  name: string;
   createdAt: string;
   customerEmail: string;
   customerPhone: string | null;
@@ -18,8 +18,8 @@ export const useFetchAllCustomers = () => {
   return useQuery<Customer[], ErrorWithMessage>({
     queryFn: async () => {
       const response = await axios.get("/shopify/customers");
-      console.log("This is the RESPONSE:", response?.data);
-      return response?.data ?? [];
+      console.log("This is the RESPONSE:", response?.data.data);
+      return response?.data.data ?? [];
     },
     queryKey: ["all-customers"],
     staleTime: 1000 * 60 * 15,
