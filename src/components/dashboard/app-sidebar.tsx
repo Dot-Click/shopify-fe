@@ -25,6 +25,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { FaBell } from "react-icons/fa";
 import { authClient } from "../../providers/user.provider";
 import { toast } from "react-hot-toast";
+import { FaUserPlus } from "react-icons/fa6";
 
 // --- Menu definitions ---
 
@@ -61,6 +62,11 @@ export function AppSidebar({ role }: AppSidebarProps) {
       title: "Customer Management",
       url: "/user/customer-management",
       icon: Users,
+    },
+    {
+      title: "Create Staff",
+      url: "/user/create-staff",
+      icon: FaUserPlus,
     },
     { title: "Notification", url: "/user/notification", icon: FaBell },
   ];

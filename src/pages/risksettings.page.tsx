@@ -13,6 +13,7 @@ import {
 import { Switch } from "@/components/ui/switch";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { useCreateSettings } from "@/hooks/settings/usecreatesettings"; // Assuming this path
+import { Flex } from "@/components/ui/flex";
 
 // Define a type for your settings state for type safety
 type SettingsState = {
@@ -63,96 +64,98 @@ function RiskSettings() {
   };
 
   return (
-    <Box className="p-6">
+    <Box>
       <h1 className="text-2xl font-bold text-slate-800 mb-6">
         Risk Detection Settings
       </h1>
 
-      <Card className="mb-6 shadow-sm border-slate-200">
+      <Card className="mb-6 bg-white shadow-sm border-slate-200">
         <CardHeader>
           <CardTitle>Detection Rules</CardTitle>
         </CardHeader>
         <CardContent className="space-y-5">
-          <div>
-            <Label>Lost Parcel Threshold</Label>
-            <Input
-              type="number"
-              value={settings.lostParcelThreshold}
-              min={1}
-              max={10}
-              className="mt-2"
-              onChange={(e) =>
-                handleChange("lostParcelThreshold", e.target.value)
-              }
-            />
-          </div>
+          <Flex className="w-full">
+            <Box className="w-2/5">
+              <Label>Lost Parcel Threshold</Label>
+              <Input
+                type="number"
+                value={settings.lostParcelThreshold}
+                min={1}
+                max={10}
+                className="mt-2 bg-white border-0 shadow py-5"
+                onChange={(e) =>
+                  handleChange("lostParcelThreshold", e.target.value)
+                }
+              />
+            </Box>
 
-          <div>
-            <Label>Lost Parcel Period</Label>
-            <Select
-              value={settings.lostParcelPeriod}
-              onValueChange={(val) => handleChange("lostParcelPeriod", val)}
-            >
-              <SelectTrigger className="w-40 mt-2">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="1">1 Month</SelectItem>
-                <SelectItem value="3">3 Months</SelectItem>
-                <SelectItem value="6">6 Months</SelectItem>
-                <SelectItem value="12">12 Months</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+            <Box>
+              <Label>Lost Parcel Period</Label>
+              <Select
+                value={settings.lostParcelPeriod}
+                onValueChange={(val) => handleChange("lostParcelPeriod", val)}
+              >
+                <SelectTrigger className="mt-2 bg-white border-0 shadow w-96">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className="bg-white border-0 shadow">
+                  <SelectItem value="1">1 Month</SelectItem>
+                  <SelectItem value="3">3 Months</SelectItem>
+                  <SelectItem value="6">6 Months</SelectItem>
+                  <SelectItem value="12">12 Months</SelectItem>
+                </SelectContent>
+              </Select>
+            </Box>
+          </Flex>
 
-          <div>
+          <Box>
             <Label>Loss Rate Threshold (%)</Label>
             <Input
               type="number"
               value={settings.lossRateThreshold}
               min={1}
               max={100}
-              className="mt-2"
+              className="mt-2 bg-white border-0 shadow"
               onChange={(e) =>
                 handleChange("lossRateThreshold", e.target.value)
               }
             />
-          </div>
+          </Box>
 
-          <div>
+          <Box>
             <Label>Match Sensitivity</Label>
             <Select
               value={settings.matchSensitivity}
               onValueChange={(val) => handleChange("matchSensitivity", val)}
             >
-              <SelectTrigger className="w-40 mt-2">
+              <SelectTrigger className="w-40 mt-2 border-0 bg-white shadow">
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="bg-white border-0 shadow">
                 <SelectItem value="low">Low</SelectItem>
                 <SelectItem value="medium">Medium</SelectItem>
                 <SelectItem value="high">High</SelectItem>
               </SelectContent>
             </Select>
-          </div>
+          </Box>
         </CardContent>
       </Card>
 
-      <Card className="mb-6 shadow-sm border-slate-200">
+      <Card className="mb-6 bg-white shadow-sm border-slate-200">
         <CardHeader>
           <CardTitle>Action on Risky Orders</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div>
+          <Box>
             <Label>Primary Action</Label>
             <Select
               value={settings.action}
               onValueChange={(val) => handleChange("action", val)}
             >
-              <SelectTrigger className="w-56 mt-2">
+              <SelectTrigger className="w-56 mt-2 border-0 shadow">
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="bg-white border-0 shadow">
                 <SelectItem value="hold">
                   Fulfilment Hold (Manual Review)
                 </SelectItem>
@@ -161,17 +164,17 @@ function RiskSettings() {
                 </SelectItem>
               </SelectContent>
             </Select>
-          </div>
+          </Box>
 
-          <div className="flex items-center justify-between">
+          <Box className="flex items-center justify-between">
             <Label>Require customer e-signature</Label>
             <Switch
               checked={settings.requireEsignature}
               onCheckedChange={(val) => handleChange("requireEsignature", val)}
             />
-          </div>
+          </Box>
 
-          <div className="flex items-center justify-between">
+          <Box className="flex items-center justify-between">
             <Label>Force courier to signed delivery</Label>
             <Switch
               checked={settings.forceSignedDelivery}
@@ -179,17 +182,17 @@ function RiskSettings() {
                 handleChange("forceSignedDelivery", val)
               }
             />
-          </div>
+          </Box>
 
-          <div className="flex items-center justify-between">
+          <Box className="flex items-center justify-between">
             <Label>Photo on delivery required</Label>
             <Switch
               checked={settings.requirePhoto}
               onCheckedChange={(val) => handleChange("requirePhoto", val)}
             />
-          </div>
+          </Box>
 
-          <div className="flex items-center justify-between">
+          <Box className="flex items-center justify-between">
             <Label>Send cancellation email</Label>
             <Switch
               checked={settings.sendCancellationEmail}
@@ -197,22 +200,22 @@ function RiskSettings() {
                 handleChange("sendCancellationEmail", val)
               }
             />
-          </div>
+          </Box>
 
-          <div className="flex items-center justify-between">
+          <Box className="flex items-center justify-between">
             <Label>Include waiver link</Label>
             <Switch
               checked={settings.includeWaiverLink}
               onCheckedChange={(val) => handleChange("includeWaiverLink", val)}
             />
-          </div>
+          </Box>
         </CardContent>
       </Card>
 
       <Button
         onClick={handleSave}
         disabled={isSaving}
-        className="bg-blue-600 hover:bg-blue-700"
+        className="bg-blue-600 hover:bg-blue-700 text-white w-42"
       >
         {isSaving ? "Saving..." : "Save Settings"}
       </Button>
