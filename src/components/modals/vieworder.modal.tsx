@@ -37,6 +37,7 @@ import { Box } from "../ui/box";
 import { useState } from "react";
 import { useAddFlag } from "@/hooks/shopifycustomers/useaddflag";
 import { useDeleteFlag } from "@/hooks/shopifycustomers/usedeleteflag";
+import { useBlockCustomer } from "@/hooks/shopifycustomers/useblockcustomer";
 
 const mockDetails = {
   registrationDate: "Mar 15, 2024",
@@ -107,7 +108,8 @@ export const ViewOrderModal = ({ user }: { user: Customer }) => {
   const { mutate: addFlag } = useAddFlag();
   const { mutate: deleteFlag } = useDeleteFlag();
   const orders = data?.orders ?? [];
-  console.log("orders", orders);
+  const { mutate: block } = useBlockCustomer();
+
   const columns: ColumnDef<RiskyOrderResponse["orders"][number]>[] = [
     {
       accessorKey: "id",
@@ -232,7 +234,10 @@ export const ViewOrderModal = ({ user }: { user: Customer }) => {
                 </Box>
               </Box>
               <div className="flex gap-2">
-                <Button className="bg-red-600 text-white hover:bg-red-700 hover:text-white">
+                <Button
+                  className="bg-red-600 text-white hover:bg-red-700 hover:text-white"
+                  onClick={() => block(user?.id)}
+                >
                   <Ban className="mr-2 h-4 w-4" />
                   Block Customer
                 </Button>
