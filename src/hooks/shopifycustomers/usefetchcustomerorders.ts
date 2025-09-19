@@ -29,6 +29,7 @@ export const useGetRiskyOrders = (customerId: string | null) => {
           },
         }
       );
+      console.log("This is RESPONSE:___", res.data.flaggedOrders);
       return res.data;
     },
     enabled: !!customerId,

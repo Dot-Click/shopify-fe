@@ -44,24 +44,6 @@ const mockDetails = {
   lastActive: "2 hours ago",
 };
 
-// const StatusBadge = ({ status }: { status: string }) => {
-//   const statusStyles: { [key: string]: string } = {
-//     disputed: "bg-red-100 text-red-800 border-red-200",
-//     refund: "bg-orange-100 text-orange-800 border-orange-200",
-//     success: "bg-green-100 text-green-800 border-green-200",
-//   };
-
-//   return (
-//     <Badge
-//       className={
-//         statusStyles[status.toLowerCase()] || "bg-gray-100 text-gray-800"
-//       }
-//     >
-//       {status}
-//     </Badge>
-//   );
-// };
-
 const getRiskColor = (level: number) => {
   if (level > 75) return "bg-red-400";
   if (level > 40) return "bg-orange-400";
@@ -104,11 +86,14 @@ const InfoItem = ({
 export const ViewOrderModal = ({ user }: { user: Customer }) => {
   const isHighRisk = user.riskLevel > 50;
   const [open, setOpen] = useState(false);
+
   const { data, isLoading } = useGetRiskyOrders(open ? user.id : null);
   const { mutate: addFlag } = useAddFlag();
   const { mutate: deleteFlag } = useDeleteFlag();
-  const orders = data?.orders ?? [];
   const { mutate: block } = useBlockCustomer();
+
+  console.log("From modal:-", data);
+  const orders = data?.orders ?? [];
 
   const columns: ColumnDef<RiskyOrderResponse["orders"][number]>[] = [
     {
