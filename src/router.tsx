@@ -19,6 +19,9 @@ import OrderManagement from "./pages/ordermanagement.page";
 import RiskSettings from "./pages/risksettings.page";
 import CreateStaff from "./pages/staff.page";
 import VerifyEmailPage from "./pages/acceptinvitation.page";
+import { ForgotPasswordForm } from "./pages/forgotpassword.page";
+import ResetPasswordPage from "./pages/reset.page";
+import AcceptInvitation from "./pages/acceptinvitation.page";
 
 export const Router = () => {
   return (
@@ -27,12 +30,16 @@ export const Router = () => {
         {/* Public Routes */}
         <Route path="/signin" element={<Signin />} />
         <Route path="/admin-signin" element={<AdminSignin />} />
+        <Route path="/forgot-password" element={<ForgotPasswordForm />} />
+        <Route path="/reset-password" element={<ResetPasswordPage />} />
+        <Route path="/verify-email" element={<VerifyEmailPage />} />
+
         <Route path="/signup" element={<Signup />} />
         <Route path="/" element={<Home />} />
         <Route path="/select-plans" element={<PlansPage />} />
         <Route path="/post-signup" element={<PostSignupFlowPage />} />
         <Route path="/under-review" element={<UnderReviewComponent />} />
-        <Route path="/accept-invite" element={<VerifyEmailPage />} />
+        <Route path="/accept-invite" element={<AcceptInvitation />} />
 
         {/* Protected Routes with Sidebar Layout */}
         <Route

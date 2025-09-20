@@ -4,7 +4,7 @@ import { authClient } from "@/providers/user.provider";
 import { Box } from "@/components/ui/box";
 import { Spinner } from "@/components/ui/spinner";
 
-const AcceptInvitation: React.FC = () => {
+const VerifyEmailPage: React.FC = () => {
   const [searchParams] = useSearchParams();
   const [status, setStatus] = useState<"verifying" | "success" | "error">(
     "verifying"
@@ -38,8 +38,8 @@ const AcceptInvitation: React.FC = () => {
   }, [searchParams]);
 
   return (
-    <Box className="h-[100vh]">
-      <Box className="p-8 bg-white shadow rounded-md ">
+    <Box>
+      <Box>
         {status === "verifying" && (
           <>
             <h1>Verifying your email...</h1>
@@ -50,7 +50,7 @@ const AcceptInvitation: React.FC = () => {
 
         {status === "success" && (
           <>
-            <h1 className="blue.500">Email Verified!</h1>
+            <h1>Email Verified!</h1>
             <p>Your account is now active.</p>
 
             <Link to={"/signin"}>Proceed to Login</Link>
@@ -59,7 +59,7 @@ const AcceptInvitation: React.FC = () => {
 
         {status === "error" && (
           <>
-            <h1 color="red.500">Verification Failed</h1>
+            <h1>Verification Failed</h1>
             <p>{errorMessage}</p>
           </>
         )}
@@ -68,4 +68,4 @@ const AcceptInvitation: React.FC = () => {
   );
 };
 
-export default AcceptInvitation;
+export default VerifyEmailPage;

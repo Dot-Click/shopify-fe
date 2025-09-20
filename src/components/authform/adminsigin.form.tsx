@@ -2,7 +2,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Checkbox } from "../../components/ui/checkbox";
@@ -17,9 +17,9 @@ import {
 import { Eye, EyeOff } from "lucide-react";
 import { Flex } from "../ui/flex";
 import { Box } from "../ui/box";
-// import { Separator } from "../ui/separator";
-// import { FcGoogle } from "react-icons/fc";
-// import fbIcon from "/images/fb_icon.png";
+import { authClient } from "@/providers/user.provider";
+import toast from "react-hot-toast";
+import { Spinner } from "../ui/spinner";
 
 const formSchema = z.object({
   email: z.string().email({
@@ -29,16 +29,13 @@ const formSchema = z.object({
     message: "Password must be at least 8 characters.",
   }),
   rememberMe: z.boolean().default(false).optional(),
-
-  authorisation: z.boolean().refine((val) => val === true, {
-    message: "You must accept the terms to sign in.",
-  }),
 });
 
 export const AdminSigninForm = () => {
   const [showPassword, setShowPassword] = useState(false);
-  const [authChecked, _setAuthChecked] = useState(false);
+  const [authChecked, setAuthChecked] = useState(false);
 
+  const navigate = useNavigate();
   // 2. Define your form using the updated schema
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -50,10 +47,30 @@ export const AdminSigninForm = () => {
   });
 
   // 3. Define a submit handler
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
     console.log(values);
-    alert("Form Submitted! Check the console for the data.");
-  }
+    await authClient.signIn.email(
+      {
+        email: values.email,
+        password: values.password,
+        rememberMe: values.rememberMe,
+      },
+      {
+        onRequest: () => {
+          setAuthChecked(true);
+        },
+        onSuccess: () => {
+          toast.success("Signed in successfully!");
+          navigate("/admin/dashboard");
+          setAuthChecked(false);
+        },
+        onError: (ctx) => {
+          toast.error(ctx.error.message);
+          setAuthChecked(false);
+        },
+      }
+    );
+  };
 
   return (
     <Flex className=" h-full flex-col justify-center">
@@ -153,9 +170,9 @@ export const AdminSigninForm = () => {
               <Button
                 className="w-full bg-blue-600 py-6 text-base hover:bg-blue-700 text-white"
                 type="submit"
-                disabled={!authChecked}
+                // disabled={!authChecked}
               >
-                Sign In
+                {authChecked ? <Spinner /> : "Sign In"}
               </Button>
             </form>
           </Form>
