@@ -7,7 +7,7 @@ export const useAddFlag = () => {
 
   return useMutation({
     mutationFn: ({ orderId, flag }: { orderId: string; flag: boolean }) =>
-      axios.post(`/shopify/add-flag?orderId=${orderId}`, { flag }),
+      axios.post(`/customer/add-flag?orderId=${orderId}`, { flag }),
     onSuccess: () => {
       console.log("Flag added successfully. Refetching orders...");
       queryClient.invalidateQueries({ queryKey: ["risky-orders"] });

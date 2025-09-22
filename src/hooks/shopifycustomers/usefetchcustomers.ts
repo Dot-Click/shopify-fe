@@ -17,7 +17,7 @@ export type Customer = {
 export const useFetchAllCustomers = () => {
   return useQuery<Customer[], ErrorWithMessage>({
     queryFn: async () => {
-      const response = await axios.get("/shopify/customers");
+      const response = await axios.get("/customer/customers");
       console.log("This is the RESPONSE:", response?.data.data);
       return response?.data.data ?? [];
     },

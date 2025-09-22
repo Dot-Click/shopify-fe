@@ -21,7 +21,7 @@ export const useGetRiskyOrders = (customerId: string | null) => {
       if (!customerId) throw new Error("Customer ID required");
 
       const res = await axios.get(
-        `/shopify/risky-orders?customerId=${customerId}`,
+        `/order/risky-orders?customerId=${customerId}`,
         {
           headers: {
             "Cache-Control": "no-store",

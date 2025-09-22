@@ -15,7 +15,7 @@ export type Customer = {
 export const useFetchDashboardCustomers = () => {
   return useQuery<Customer[], ErrorWithMessage>({
     queryFn: async () => {
-      const response = await axios.get("/shopify/admin-customers");
+      const response = await axios.get("/customer/admin-customers");
       console.log("This is the RESPONSE:", response?.data);
       return response?.data ?? [];
     },

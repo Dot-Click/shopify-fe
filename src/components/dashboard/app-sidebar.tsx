@@ -1,6 +1,7 @@
 import {
   AlertCircle,
   LayoutGrid,
+  PackagePlus,
   Settings,
   // ShoppingBag,
   Store,
@@ -49,6 +50,11 @@ export function AppSidebar({ role }: AppSidebarProps) {
   ];
 
   const adminSecondaryMenuItems = [
+    {
+      title: "Create Store",
+      url: "/admin/create-store",
+      icon: PackagePlus,
+    },
     {
       title: "Report & Analytics",
       url: "/admin/report-analysis",

@@ -17,14 +17,18 @@ import IPLogo from "/icons/ip.svg";
 import Store from "/icons/retailer.svg";
 import Hat from "/icons/hat.svg";
 import Flag from "/icons/flag.svg";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Box } from "../ui/box";
+import { useFetchTotalFlaggedCustomers } from "@/hooks/shopifycustomers/usefetchtotalflagged";
+import { authClient } from "@/providers/user.provider";
+import { useFetchRiskyIPs } from "@/hooks/shopifycustomers/usefetchriskyip";
+import { useFetchRepeatedOffenders } from "@/hooks/shopifycustomers/usefetchrepeatedoffenders";
 // import { BiSolidFlagAlt } from "react-icons/bi";
 // import { FaHatCowboy } from "react-icons/fa";
 
 type StatCardProps = {
   title: string;
-  value: string;
+  value: number;
   icon: React.ElementType | string;
   bgColor: string;
   iconColor: string;
@@ -64,31 +68,58 @@ StatCardProps) {
 export function OverviewSection() {
   const [date, setDate] = useState<Date | undefined>(new Date());
 
+  const { data: TotalFlagged } = useFetchTotalFlaggedCustomers();
+  const { data: RiskyIPs } = useFetchRiskyIPs();
+  const { data: RepeatedOffenders } = useFetchRepeatedOffenders();
+  const [totalStores, setTotalStores] = useState(0);
+
+  useEffect(() => {
+    const fetchAccounts = async () => {
+      try {
+        const { data: store } = await authClient.admin.listUsers({
+          query: {
+            filterField: "role",
+            filterValue: "sub-admin",
+            filterOperator: "contains",
+          },
+        });
+
+        const extractingTotalStore =
+          store?.users.filter((c) => c.banned === false).length || 0;
+        setTotalStores(extractingTotalStore);
+      } catch (error) {
+        console.error("Failed to fetch accounts:", error);
+      }
+    };
+
+    fetchAccounts();
+  }, []);
+
   const overviewData: StatCardProps[] = [
     {
       title: "Total Flagged Users",
-      value: "1,278",
+      value: TotalFlagged ?? 0,
       icon: Flag,
       bgColor: "bg-blue-500",
       iconColor: "text-blue-500",
     },
     {
       title: "Repeat Offenders",
-      value: "412",
+      value: RepeatedOffenders ?? 0,
       icon: Hat,
       bgColor: "bg-red-500",
       iconColor: "text-red-500",
     },
     {
       title: "Top Risk IPs",
-      value: "192",
+      value: RiskyIPs ?? 0,
       icon: IPLogo,
       bgColor: "bg-teal-400",
       iconColor: "text-teal-400",
     },
     {
       title: "Active Retailers",
-      value: "87",
+      value: totalStores,
       icon: Store,
       bgColor: "bg-orange-400",
       iconColor: "text-orange-400",

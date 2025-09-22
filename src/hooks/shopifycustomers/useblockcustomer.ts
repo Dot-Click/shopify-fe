@@ -7,7 +7,7 @@ export const useBlockCustomer = () => {
 
   return useMutation({
     mutationFn: (customerId: string) =>
-      axios.post(`/shopify/block-customer?customerId=${customerId}`),
+      axios.post(`/customer/block-customer?customerId=${customerId}`),
     onSuccess: () => {
       toast.success("Customer Blocked successfully");
       console.log("Flag added successfully. Refetching orders...");

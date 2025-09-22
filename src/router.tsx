@@ -22,6 +22,7 @@ import VerifyEmailPage from "./pages/acceptinvitation.page";
 import { ForgotPasswordForm } from "./pages/forgotpassword.page";
 import ResetPasswordPage from "./pages/reset.page";
 import AcceptInvitation from "./pages/acceptinvitation.page";
+import CreateStore from "./pages/createstores.page";
 
 export const Router = () => {
   return (
@@ -56,6 +57,7 @@ export const Router = () => {
           />
           <Route path="/admin/store-management" element={<StoreManagement />} />
           <Route path="/admin/report-analysis" element={<ReportAnalysis />} />
+          <Route path="/admin/create-store" element={<CreateStore />} />
           <Route path="/admin/settings" element={<Settings />} />
           <Route
             path="/user/customer-management"

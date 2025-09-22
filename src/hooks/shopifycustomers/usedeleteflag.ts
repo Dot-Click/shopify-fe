@@ -7,7 +7,7 @@ export const useDeleteFlag = () => {
 
   return useMutation({
     mutationFn: ({ orderId }: { orderId: string }) =>
-      axios.post(`/shopify/delete-flag?orderId=${orderId}`),
+      axios.post(`/order/delete-flag?orderId=${orderId}`),
     onSuccess: () => {
       console.log("Flag deleted successfully. Refetching orders...");
       queryClient.invalidateQueries({ queryKey: ["risky-orders"] });

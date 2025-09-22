@@ -19,6 +19,7 @@ import { Flex } from "../ui/flex";
 import { Box } from "../ui/box";
 import { authClient } from "../../providers/user.provider";
 import toast from "react-hot-toast";
+import { Spinner } from "../ui/spinner";
 // import { Separator } from "../ui/separator";
 // import { FcGoogle } from "react-icons/fc";
 // import fbIcon from "/images/fb_icon.png";
@@ -39,9 +40,7 @@ const formSchema = z.object({
 
 export const SigninForm = () => {
   const [showPassword, setShowPassword] = useState(false);
-  const [authChecked, _setAuthChecked] = useState(false);
-
-  console.log("this is the authChecked", authChecked);
+  const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
   // 2. Define your form using the updated schema
@@ -65,10 +64,14 @@ export const SigninForm = () => {
         password: values.password,
       },
       {
+        onRequest: () => {
+          setLoading(true);
+        },
         onSuccess: async (data) => {
           console.log("Initial sign-in data:", data);
 
           console.log("Refreshed session data:", session);
+          setLoading(false);
 
           // Optional: Navigate or update UI
           navigate("/user/customer-management");
@@ -76,6 +79,7 @@ export const SigninForm = () => {
         onError: (error) => {
           toast.error(error.error.message || "Sign-in failed.");
           console.error("Sign-in error:", error);
+          setLoading(false);
         },
       }
     );
@@ -215,7 +219,7 @@ export const SigninForm = () => {
                 type="submit"
                 disabled={!form.formState.isValid}
               >
-                Sign In
+                {loading ? <Spinner /> : "Sign In"}
               </Button>
             </form>
           </Form>
