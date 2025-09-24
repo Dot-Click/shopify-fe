@@ -1,3 +1,5 @@
+// notificationsPage.tsx
+
 import { ArrowUpDown } from "lucide-react";
 import { cn } from "../lib/utils";
 
@@ -11,174 +13,178 @@ import {
   type ReportData,
 } from "../components/common/reportsummarymodal";
 import { Dialog, DialogTrigger } from "../components/ui/dialog";
+import { useFetchNotification } from "@/hooks/notifications/usegetnotification";
 
-type RiskLevel = "High" | "Medium" | "Low";
+type RiskLevelText = "High" | "Medium" | "Low";
 
-export type Notification = {
+export interface NotificationMeta {
+  orderId?: string;
+  orderName?: string;
+  reasons?: string[];
+  totalAmount?: string;
+  currency?: string;
+  customerEmail?: string;
+  ip?: string;
+  location?: string;
+  riskLevel?: string; // e.g. "100%" or "25%"
+  detectedOn?: string;
+}
+
+export interface NotificationBackend {
   id: string;
-  userName: string;
-  userId: string;
-  userAvatar: string;
-  description: string;
+  storeId: string;
+  customerId: string | null;
+  customerName: string | null;
+  type: string;
+  title: string;
+  message: string;
+  meta: NotificationMeta;
+  read: boolean;
+  createdAt: string;
+  updatedAt: string | null;
+}
+
+export interface NotificationUI {
+  id: string;
+  customerName: string;
+  customerId: string;
+  message: string;
   detectedAt: string;
-  riskLevel: RiskLevel;
-  report: ReportData;
-};
+  riskLevelPercent: number;       // numeric, e.g. 100
+  riskLevelText: RiskLevelText;   // “High” / “Medium” / “Low”
+  email: string;
+  ipAddress: string;
+  location: string;
+  detectedOn: string;
+  flaggedBehaviors: string[];
+  suggestedActions: string[];
+}
 
-const notifications: Notification[] = [
-  {
-    id: "notif_01",
-    userName: "Emma Johnson",
-    userId: "C-1001",
-    userAvatar:
-      "https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=1887&auto=format&fit=crop",
-    description: "Attempted refund on 3 Shopify stores within 2 weeks.",
-    detectedAt: "July 23, 2025 at 13:42",
-    riskLevel: "High",
-    report: {
-      name: "Emma Johnson",
-      id: "C-1001",
-      email: "emma.johnson@mail.com",
-      ipAddress: "192.168.1.54",
-      location: "Birmingham, UK",
-      detectedOn: "July 23, 2025 at 13:42",
-      riskLevel: 98,
-      flaggedBehaviors: [
-        "Requested 3 refunds from different stores in 24 hours",
-        "Same IP used across 4 different identities",
-        "Chargeback incident reported on “GadgetStore UK”",
-        "Suspicious delivery address reuse across accounts",
-      ],
-      suggestedActions: [
-        "Verify customer’s identity manually",
-        "Enable OTP verification for future orders",
-        "Block from initiating refunds",
-      ],
-    },
-  },
-  {
-    id: "notif_02",
-    userName: "Liam Taylor",
-    userId: "C-1002",
-    userAvatar:
-      "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=1887&auto=format&fit=crop",
-    description: "Attempted refund on 3 Shopify stores within 2 weeks.",
-    detectedAt: "July 23, 2025 at 13:42",
-    riskLevel: "Medium",
-    report: {
-      name: "Liam Taylor",
-      id: "C-1002",
-      email: "liam.taylor@mail.com",
-      ipAddress: "10.0.0.12",
-      location: "Manchester, UK",
-      detectedOn: "July 22, 2025 at 09:15",
-      riskLevel: 65,
-      flaggedBehaviors: [
-        "Unusual purchase pattern noted.",
-        "Used previously flagged payment method.",
-      ],
-      suggestedActions: [
-        "Monitor account for 24 hours",
-        "Suggest 2-Factor Authentication.",
-      ],
-    },
-  },
-  {
-    id: "notif_03",
-    userName: "Ava Brown",
-    userId: "C-1003",
-    userAvatar:
-      "https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=1961&auto=format&fit=crop",
-    description: "Attempted refund on 3 Shopify stores within 2 weeks.",
-    detectedAt: "July 23, 2025 at 13:42",
-    riskLevel: "Low",
-    report: {
-      name: "Ava Brown",
-      id: "C-1003",
-      email: "ava.brown@mail.com",
-      ipAddress: "172.16.0.40",
-      location: "London, UK",
-      detectedOn: "July 23, 2025 at 13:42",
-      riskLevel: 25,
-      flaggedBehaviors: ["First-time refund request from a new account."],
-      suggestedActions: [
-        "Approve refund if item is returned.",
-        "No further action needed at this time.",
-      ],
-    },
-  },
-];
-
-const RiskBadge = ({ riskLevel }: { riskLevel: RiskLevel }) => {
+const RiskBadge = ({ levelText }: { levelText: RiskLevelText }) => {
   const baseClass =
     "min-w-[120px] px-5 py-3 text-xs font-semibold rounded-md border-none";
-  const riskStyles = {
+  const styles = {
     High: "bg-red-100 text-red-700",
     Medium: "bg-orange-100 text-orange-700",
     Low: "bg-[#3C9E0333] text-[#3C9E03]",
   };
-
   return (
-    <Badge className={cn(baseClass, riskStyles[riskLevel])}>
-      {riskLevel} Risk
+    <Badge className={cn(baseClass, styles[levelText])}>
+      {levelText} Risk
     </Badge>
   );
 };
 
-// The main component for a single notification item
-const NotificationItem = ({ notification }: { notification: Notification }) => {
+const NotificationItem = ({ notification }: { notification: NotificationUI }) => {
+  // Build report data object
+  const report: ReportData = {
+    name: notification.customerName,
+    id: notification.customerId,
+    email: notification.email,
+    ipAddress: notification.ipAddress,
+    location: notification.location,
+    detectedOn: notification.detectedOn,
+    riskLevel: notification.riskLevelPercent,
+    flaggedBehaviors: notification.flaggedBehaviors,
+    suggestedActions: notification.suggestedActions,
+  };
+
   return (
     <Dialog>
       <DialogTrigger asChild>
         <Box className="flex items-center justify-between gap-4 p-4 mb-4 bg-gray-100 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-200 cursor-pointer">
           <div className="flex-1">
-            {" "}
-            {/* Use flex-1 to allow this section to grow */}
             <Flex className="items-center mb-2">
               <Avatar className="h-10 w-10 mr-3">
                 <AvatarImage
-                  src={notification.userAvatar}
-                  alt={notification.userName}
+                  src={""}
+                  alt={notification.customerName}
                   className="object-cover"
                 />
                 <AvatarFallback>
-                  {notification.userName.charAt(0)}
+                  {notification.customerName.charAt(0)}
                 </AvatarFallback>
               </Avatar>
               <div>
                 <span className="font-bold text-slate-800">
-                  {notification.userName}
+                  {notification.customerName}
                 </span>
                 <span className="font-medium text-blue-600">
                   {" "}
-                  (ID: {notification.userId})
+                  (ID: {notification.customerId})
                 </span>
               </div>
             </Flex>
             <Box>
               <p className="text-base font-semibold text-slate-900">
-                {notification.description}
+                {notification.message}
               </p>
               <p className="mt-1 text-xs text-slate-500">
                 Detected on: {notification.detectedAt}
               </p>
             </Box>
           </div>
-          <RiskBadge riskLevel={notification.riskLevel} />
+          <RiskBadge levelText={notification.riskLevelText} />
         </Box>
       </DialogTrigger>
-      {/* The modal is placed here, ready to be shown, populated with correct data */}
-      <ReportSummaryModal user={notification.report} />
+      <ReportSummaryModal user={report} />
     </Dialog>
   );
 };
 
-// --- 3. The Main Page Component ---
-
 function NotificationsPage() {
+  const { data, isLoading, isError } = useFetchNotification();
+
+  if (isLoading) {
+    return <Box>Loading...</Box>;
+  }
+  if (isError) {
+    return <Box>Error loading notifications.</Box>;
+  }
+
+  const raw: NotificationBackend[] = data ?? [];
+
+  const notifications: NotificationUI[] = raw.map((n) => {
+    const meta = n.meta || {};
+
+    // Parse risk level string into number
+    let percent = 0;
+    if (meta.riskLevel) {
+      // remove trailing "%" if present
+      const cleaned = meta.riskLevel.toString().replace("%", "");
+      const num = Number(cleaned);
+      if (!isNaN(num)) {
+        percent = num;
+      }
+    }
+
+    // Determine text label
+    let textLevel: RiskLevelText = "Low";
+    if (percent >= 75) {
+      textLevel = "High";
+    } else if (percent >= 50) {
+      textLevel = "Medium";
+    }
+
+    return {
+      id: n.id,
+      customerName: n.customerName ?? "Unknown",
+      customerId: n.customerId ?? "",
+      message: n.message,
+      detectedAt: new Date(n.createdAt).toLocaleString(),
+      riskLevelPercent: percent,
+      riskLevelText: textLevel,
+      email: meta.customerEmail ?? "",
+      ipAddress: meta.ip ?? "",
+      location: meta.location ?? "",
+      detectedOn: meta.detectedOn ?? new Date(n.createdAt).toLocaleString(),
+      flaggedBehaviors: meta.reasons ?? [],
+      suggestedActions: [],
+    };
+  });
+
   return (
     <Box className="p-6 bg-white min-h-[90%]">
-      {/* Page Header */}
       <header className="flex items-center justify-between mb-6">
         <h1 className="text-xl font-bold text-web-dark-grey">Notifications</h1>
         <Button
@@ -188,8 +194,6 @@ function NotificationsPage() {
           <ArrowUpDown className="mr-2 h-4 w-4" /> Sort by
         </Button>
       </header>
-
-      {/* Notifications List */}
       <main>
         {notifications.map((notification) => (
           <NotificationItem key={notification.id} notification={notification} />

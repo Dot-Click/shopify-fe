@@ -1,3 +1,5 @@
+// reportSummaryModal.tsx
+
 import { Circle } from "lucide-react";
 import { Button } from "../ui/button";
 import {
@@ -8,8 +10,7 @@ import {
 } from "../ui/dialog";
 import { Separator } from "../ui/separator";
 
-// --- Data Structure for the Modal ---
-// This should match the data you'll fetch for a user.
+// This should match the data you pass in
 export type ReportData = {
   name: string;
   id: string;
@@ -17,14 +18,11 @@ export type ReportData = {
   ipAddress: string;
   location: string;
   detectedOn: string;
-  riskLevel: number;
+  riskLevel: number; // e.g. 100, 25, etc.
   flaggedBehaviors: string[];
   suggestedActions: string[];
 };
 
-// --- Helper Components for Clean Code ---
-
-// For the two-column details layout
 const DetailRow = ({ label, value }: { label: string; value: string }) => (
   <div className="flex justify-between py-2">
     <dt className="text-sm font-medium text-slate-500">{label}</dt>
@@ -32,7 +30,6 @@ const DetailRow = ({ label, value }: { label: string; value: string }) => (
   </div>
 );
 
-// For the risk level progress bar
 const RiskLevelIndicator = ({ level }: { level: number }) => (
   <div className="flex items-center justify-between py-2">
     <dt className="text-sm font-medium text-slate-500">Risk Level</dt>
@@ -48,7 +45,6 @@ const RiskLevelIndicator = ({ level }: { level: number }) => (
   </div>
 );
 
-// For the bulleted list items
 const ListItem = ({ text }: { text: string }) => (
   <li className="flex items-start gap-3 py-1">
     <Circle className="h-2 w-2 mt-1.5 flex-shrink-0 fill-slate-400 text-slate-400" />
@@ -56,7 +52,6 @@ const ListItem = ({ text }: { text: string }) => (
   </li>
 );
 
-// --- The Main Modal Component ---
 interface ReportSummaryModalProps {
   user: ReportData;
 }
@@ -71,7 +66,6 @@ export function ReportSummaryModal({ user }: ReportSummaryModalProps) {
       </DialogHeader>
 
       <div className="p-6 pt-0">
-        {/* Customer Details Section */}
         <dl>
           <DetailRow label="Customer Name:" value={user.name} />
           <DetailRow label="ID:" value={user.id} />
@@ -82,35 +76,36 @@ export function ReportSummaryModal({ user }: ReportSummaryModalProps) {
           <RiskLevelIndicator level={user.riskLevel} />
         </dl>
 
-        <Separator className="bg-gray-300  my-2 " />
+        <Separator className="bg-gray-300 my-2" />
 
-        {/* Flagged Behavior Section */}
-        <div className="mt-3">
-          <h3 className="text-base font-bold text-slate-800 mb-2">
-            Flaggedulent Behavior
-          </h3>
-          <ul className="space-y-0.3">
-            {user.flaggedBehaviors.map((item, index) => (
-              <ListItem key={index} text={item} />
-            ))}
-          </ul>
-        </div>
+        {user.flaggedBehaviors.length > 0 && (
+          <div className="mt-3">
+            <h3 className="text-base font-bold text-slate-800 mb-2">
+              Flagged Behavior
+            </h3>
+            <ul className="space-y-0.5">
+              {user.flaggedBehaviors.map((item, idx) => (
+                <ListItem key={idx} text={item} />
+              ))}
+            </ul>
+          </div>
+        )}
 
-        {/* Suggested Actions Section */}
-        <div className="mt-3">
-          <h3 className="text-base font-bold text-slate-800 mb-2">
-            Suggested Actions
-          </h3>
-          <ul className="space-y-0.3    ">
-            {user.suggestedActions.map((item, index) => (
-              <ListItem key={index} text={item} />
-            ))}
-          </ul>
-        </div>
+        {user.suggestedActions.length > 0 && (
+          <div className="mt-3">
+            <h3 className="text-base font-bold text-slate-800 mb-2">
+              Suggested Actions
+            </h3>
+            <ul className="space-y-0.5">
+              {user.suggestedActions.map((item, idx) => (
+                <ListItem key={idx} text={item} />
+              ))}
+            </ul>
+          </div>
+        )}
       </div>
 
-      {/* Footer with Action Buttons */}
-      <div className="flex justify-end gap-3 p-4 bg-slate-50  rounded-b-2xl">
+      <div className="flex justify-end gap-3 p-4 bg-slate-50 rounded-b-2xl">
         <DialogClose asChild>
           <Button
             variant="ghost"
