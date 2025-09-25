@@ -6,10 +6,10 @@ export const useFetchNotification = () => {
     queryKey: ["get-notification"],
     queryFn: async () => {
       const res = await axios.get(`/notifications/get-notifications`);
-      console.log("This is RESPONSE:___", res.data);
+
       return res.data.data;
     },
-    // enabled: !!customerId,
+
     gcTime: 0,
     staleTime: 0,
     refetchOnWindowFocus: true,

@@ -19,23 +19,9 @@ import { CalendarIcon } from "lucide-react";
 import { Calendar } from "../ui/calendar";
 import { useState } from "react";
 import { cn } from "../../lib/utils";
-import { format } from "date-fns";
+import { eachMonthOfInterval, format } from "date-fns";
 import underline from "/images/underline_2.svg";
-
-const chartData = [
-  { month: "Jan", incidents: 88 },
-  { month: "Feb", incidents: 61 },
-  { month: "Mar", incidents: 19 },
-  { month: "Apr", incidents: 82 },
-  { month: "May", incidents: 50 },
-  { month: "Jun", incidents: 62 },
-  { month: "Jul", incidents: 96 },
-  { month: "Aug", incidents: 40 },
-  { month: "Sep", incidents: 61 },
-  { month: "Oct", incidents: 82 },
-  { month: "Nov", incidents: 61 },
-  { month: "Dec", incidents: 40 },
-];
+import { useFetchMonthlyIncidents } from "@/hooks/shopifycustomers/usefetchincidents";
 
 const incidentsConfig = {
   incidents: {
@@ -46,6 +32,28 @@ const incidentsConfig = {
 
 export function IncidentsBarChart() {
   const [date, setDate] = useState<Date | undefined>(new Date());
+
+  const { data, isLoading, isError } = useFetchMonthlyIncidents();
+
+  const allMonths = eachMonthOfInterval({
+    start: new Date(new Date().getFullYear(), 0),
+    end: new Date(new Date().getFullYear(), 11),
+  }).map((date) => ({
+    month: format(date, "LLL"),
+    incidents: 0,
+  }));
+
+  // merge API data into base
+  const chartData = allMonths.map((m) => {
+    const apiMonth = data?.find(
+      (item: { month: string; count: number }) =>
+        format(new Date(item.month + "-01"), "LLL") === m.month
+    );
+    return {
+      ...m,
+      incidents: apiMonth ? apiMonth.count : 0,
+    };
+  });
 
   return (
     <Card className="flex h-full flex-col border-0">
@@ -74,7 +82,6 @@ export function IncidentsBarChart() {
                 selected={date}
                 onSelect={setDate}
                 className={"bg-white border-web-grey"}
-                // initialFocus
               />
             </PopoverContent>
           </Popover>
@@ -83,33 +90,45 @@ export function IncidentsBarChart() {
       </CardHeader>
 
       <CardContent className="flex-1 h-[200px] w-full">
-        <ChartContainer config={incidentsConfig} className="h-full w-full">
-          <BarChart data={chartData} accessibilityLayer>
-            <CartesianGrid vertical={false} />
-            <XAxis
-              dataKey="month"
-              tickLine={false}
-              tickMargin={10}
-              axisLine={false}
-            />
-            <YAxis
-              tickLine={false}
-              axisLine={false}
-              tickMargin={10}
-              tickCount={6}
-            />
-            <ChartTooltip
-              cursor={false}
-              content={
-                <ChartTooltipContent
-                  hideLabel
-                  className="bg-white text-web-dark-grey p-2 rounded-lg border-0 shadow-lg"
-                />
-              }
-            />
-            <Bar dataKey="incidents" fill="var(--color-incidents)" radius={8} />
-          </BarChart>
-        </ChartContainer>
+        {isLoading ? (
+          <p className="text-center text-sm text-gray-500">Loading...</p>
+        ) : isError ? (
+          <p className="text-center text-sm text-red-500">
+            Failed to load data
+          </p>
+        ) : (
+          <ChartContainer config={incidentsConfig} className="h-full w-full">
+            <BarChart data={chartData} accessibilityLayer>
+              <CartesianGrid vertical={false} />
+              <XAxis
+                dataKey="month"
+                tickLine={false}
+                tickMargin={10}
+                axisLine={false}
+              />
+              <YAxis
+                tickLine={false}
+                axisLine={false}
+                tickMargin={10}
+                tickCount={6}
+              />
+              <ChartTooltip
+                cursor={false}
+                content={
+                  <ChartTooltipContent
+                    hideLabel
+                    className="bg-white text-web-dark-grey p-2 rounded-lg border-0 shadow-lg"
+                  />
+                }
+              />
+              <Bar
+                dataKey="incidents"
+                fill="var(--color-incidents)"
+                radius={8}
+              />
+            </BarChart>
+          </ChartContainer>
+        )}
       </CardContent>
     </Card>
   );

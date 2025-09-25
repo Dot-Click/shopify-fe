@@ -14,13 +14,14 @@ import {
   ChartTooltipContent,
 } from "../../components/ui/chart";
 import underline from "/images/underline.svg";
+import { useFetchFlaggedReason } from "@/hooks/shopifycustomers/useflaggedreason";
 
-const chartData = [
-  { reason: "Duplicate IPs", count: 45, fill: "var(--color-duplicate-ips)" },
-  { reason: "Refund Abuse", count: 35, fill: "var(--color-refund-abuse)" },
-  { reason: "Address Reuse", count: 25, fill: "var(--color-address-reuse)" },
-  { reason: "Other", count: 13, fill: "var(--color-other)" },
-];
+// const chartData = [
+//   { reason: "Duplicate IPs", count: 45, fill: "var(--color-duplicate-ips)" },
+//   { reason: "Refund Abuse", count: 35, fill: "var(--color-refund-abuse)" },
+//   { reason: "Address Reuse", count: 25, fill: "var(--color-address-reuse)" },
+//   { reason: "Other", count: 13, fill: "var(--color-other)" },
+// ];
 
 const chartConfig = {
   "refund-abuse": {
@@ -42,6 +43,32 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 export function FlaggedReasonsChart() {
+  const { data } = useFetchFlaggedReason();
+  console.log("From Pie Chart Component:", data);
+
+  const chartData = data?.map((item) => {
+    // normalize reason (fallback to "Other" if it doesn't match)
+    let key: keyof typeof chartConfig;
+
+    if (item.riskReason?.toLowerCase().includes("refund")) {
+      key = "refund-abuse";
+    } else if (item.riskReason?.toLowerCase().includes("ip")) {
+      key = "duplicate-ips";
+    } else if (item.riskReason?.toLowerCase().includes("address")) {
+      key = "address-reuse";
+    } else {
+      key = "other";
+    }
+
+    const config = chartConfig[key];
+
+    return {
+      reason: config.label,
+      count: Number(item.count), // convert string -> number
+      fill: config.color,
+    };
+  });
+
   return (
     <Card className="flex flex-col border-0 bg-white">
       <CardHeader className="items-center">
@@ -73,7 +100,7 @@ export function FlaggedReasonsChart() {
               innerRadius={38}
               outerRadius={70}
             >
-              {chartData.map((entry, index) => (
+              {chartData?.map((entry, index) => (
                 <Cell key={`cell-${index}`} fill={entry.fill} />
               ))}
             </Pie>

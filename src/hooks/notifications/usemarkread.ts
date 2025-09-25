@@ -11,7 +11,6 @@ export const useMarkNotificationAsRead = () => {
         .data;
     },
     onSuccess: () => {
-      // Invalidate and refetch notifications
       queryClient.invalidateQueries({ queryKey: ["get-notification"] });
     },
   });

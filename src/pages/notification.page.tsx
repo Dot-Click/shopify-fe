@@ -14,6 +14,7 @@ import {
 } from "../components/common/reportsummarymodal";
 import { Dialog, DialogTrigger } from "../components/ui/dialog";
 import { useFetchNotification } from "@/hooks/notifications/usegetnotification";
+import { useNotificationContext } from "@/providers/notification.provider";
 
 type RiskLevelText = "High" | "Medium" | "Low";
 
@@ -50,11 +51,12 @@ export interface NotificationUI {
   customerId: string;
   message: string;
   detectedAt: string;
-  riskLevelPercent: number;       // numeric, e.g. 100
-  riskLevelText: RiskLevelText;   // “High” / “Medium” / “Low”
+  riskLevelPercent: number; // numeric, e.g. 100
+  riskLevelText: RiskLevelText; // “High” / “Medium” / “Low”
   email: string;
   ipAddress: string;
   location: string;
+  read?: boolean;
   detectedOn: string;
   flaggedBehaviors: string[];
   suggestedActions: string[];
@@ -69,14 +71,15 @@ const RiskBadge = ({ levelText }: { levelText: RiskLevelText }) => {
     Low: "bg-[#3C9E0333] text-[#3C9E03]",
   };
   return (
-    <Badge className={cn(baseClass, styles[levelText])}>
-      {levelText} Risk
-    </Badge>
+    <Badge className={cn(baseClass, styles[levelText])}>{levelText} Risk</Badge>
   );
 };
 
-const NotificationItem = ({ notification }: { notification: NotificationUI }) => {
-  // Build report data object
+const NotificationItem = ({
+  notification,
+}: {
+  notification: NotificationUI;
+}) => {
   const report: ReportData = {
     name: notification.customerName,
     id: notification.customerId,
@@ -89,10 +92,24 @@ const NotificationItem = ({ notification }: { notification: NotificationUI }) =>
     suggestedActions: notification.suggestedActions,
   };
 
+  const { markAsSeen } = useNotificationContext();
+
+  const handleClick = () => {
+    if (!notification.read) {
+      markAsSeen(notification.id);
+    }
+  };
+
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Box className="flex items-center justify-between gap-4 p-4 mb-4 bg-gray-100 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-200 cursor-pointer">
+        <Box
+          onClick={handleClick}
+          className={cn(
+            "flex items-center justify-between gap-4 p-4 mb-4 rounded-xl shadow-sm transition-shadow duration-200 cursor-pointer",
+            notification.read ? "bg-gray-50" : "bg-blue-50"
+          )}
+        >
           <div className="flex-1">
             <Flex className="items-center mb-2">
               <Avatar className="h-10 w-10 mr-3">
@@ -150,7 +167,6 @@ function NotificationsPage() {
     // Parse risk level string into number
     let percent = 0;
     if (meta.riskLevel) {
-      // remove trailing "%" if present
       const cleaned = meta.riskLevel.toString().replace("%", "");
       const num = Number(cleaned);
       if (!isNaN(num)) {

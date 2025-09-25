@@ -5,6 +5,8 @@ import { Box } from "../ui/box";
 import icon from "/icons/logo_icon.png";
 import waveIcon from "/icons/wave_icon.svg";
 import { authClient } from "../../providers/user.provider";
+import { useNotificationContext } from "@/providers/notification.provider";
+import { Link } from "react-router-dom";
 
 interface NavbarDashboardProps {
   userType: "admin" | "user";
@@ -17,6 +19,8 @@ export const NavbarDashboard = ({ userType }: NavbarDashboardProps) => {
     userType === "admin"
       ? "Welcome to, Admin Panel"
       : "Welcome to the Dashboard";
+
+  const { unreadCount } = useNotificationContext();
 
   return (
     <header className="flex items-center justify-between rounded-xl bg-card p-4 shadow-sm bg-white">
@@ -55,9 +59,14 @@ export const NavbarDashboard = ({ userType }: NavbarDashboardProps) => {
           variant="ghost"
           size="icon"
           aria-label="Notifications"
-          className="bg-gray-100 rounded-full p-2"
+          className="bg-gray-100 rounded-full p-2 relative"
         >
-          <Bell className="size-5" />
+          <Link to="/user/notification">
+            <Bell className="size-5" />
+            {unreadCount > 0 && (
+              <span className="absolute top-1 right-1 h-2 w-2 bg-red-500 rounded-full" />
+            )}
+          </Link>
         </Button>
         <Button
           size="icon"

@@ -44,23 +44,8 @@ import {
   DropdownMenuTrigger,
 } from "../components/ui/dropdown-menu";
 import underline from "/images/underline_2.svg";
-
-// --- Chart Component ---
-
-const chartData = [
-  { month: "Jan", riskIncidents: 40, affectedStores: 62 },
-  { month: "Feb", riskIncidents: 20, affectedStores: 82 },
-  { month: "Mar", riskIncidents: 40, affectedStores: 62 },
-  { month: "Apr", riskIncidents: 40, affectedStores: 62 },
-  { month: "May", riskIncidents: 88, affectedStores: 42 },
-  { month: "Jun", riskIncidents: 88, affectedStores: 82 },
-  { month: "Jul", riskIncidents: 40, affectedStores: 28 },
-  { month: "Aug", riskIncidents: 62, affectedStores: 42 },
-  { month: "Sep", riskIncidents: 55, affectedStores: 62 },
-  { month: "Oct", riskIncidents: 62, affectedStores: 82 },
-  { month: "Nov", riskIncidents: 88, affectedStores: 100 },
-  { month: "Dec", riskIncidents: 88, affectedStores: 62 },
-];
+import { useFetchReportIncidents } from "@/hooks/shopifycustomers/usefetchreportincidents";
+import { eachMonthOfInterval, format } from "date-fns";
 
 const chartConfig = {
   riskIncidents: {
@@ -74,6 +59,34 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 function ReportOverviewChart() {
+  const { data, isLoading, error } = useFetchReportIncidents();
+
+  const allMonths = eachMonthOfInterval({
+    start: new Date(new Date().getFullYear(), 0), // Jan
+    end: new Date(new Date().getFullYear(), 11), // Dec
+  }).map((date) => ({
+    month: format(date, "LLL yyyy"), // e.g., "Jan 2025"
+    riskIncidents: 0,
+    affectedStores: 0,
+  }));
+
+  const chartData = allMonths.map((m) => {
+    const found = data?.find((item) => item.month === m.month);
+    return {
+      ...m,
+      riskIncidents: found ? Number(found.riskIncidents) : 0,
+      affectedStores: found ? Number(found.affectedStores) : 0,
+    };
+  });
+
+  if (isLoading) {
+    return <div className="p-6 text-slate-500">Loading chart...</div>;
+  }
+
+  if (error) {
+    return <div className="p-6 text-red-500">Error loading chart data</div>;
+  }
+
   return (
     <Card className="border-0 shadow-none">
       <CardHeader className="w-full">

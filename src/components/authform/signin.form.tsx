@@ -215,9 +215,9 @@ export const SigninForm = () => {
                 />
               </Flex>
               <Button
-                className="w-full bg-blue-600 py-6 text-base hover:bg-blue-700 text-white"
+                className="w-full cursor-pointer bg-blue-600 py-6 text-base hover:bg-blue-700 text-white"
                 type="submit"
-                disabled={!form.formState.isValid}
+                disabled={loading}
               >
                 {loading ? <Spinner /> : "Sign In"}
               </Button>

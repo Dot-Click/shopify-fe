@@ -1,78 +1,72 @@
-// // contexts/NotificationContext.tsx
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  type ReactNode,
+} from "react";
+import { useFetchNotification } from "@/hooks/notifications/usegetnotification";
+import { useMarkNotificationAsRead } from "@/hooks/notifications/usemarkread";
 
-// import React, {
-//   createContext,
-//   useContext,
-//   useEffect,
-//   useState,
-//   ReactNode,
-// } from "react";
+interface NotificationBackend {
+  id: string;
+  storeId: string;
+  customerId: string | null;
+  customerName: string | null;
+  type: string;
+  title: string;
+  message: string;
+  meta: any;
+  read: boolean;
+  createdAt: string;
+  updatedAt: string | null;
+}
 
-// import { useFetchNotification } from "@/hooks/notifications/usegetnotification";
-// import { useMarkNotificationAsRead } from "@/hooks/notifications/usemarkread";
+interface NotificationContextType {
+  notifications: NotificationBackend[];
+  unreadCount: number;
+  markAsSeen: (id: string) => Promise<void>;
+  reload: () => void;
+}
 
-// interface NotificationBackend {
-//   id: string;
-//   storeId: string;
-//   customerId: string | null;
-//   customerName: string | null;
-//   type: string;
-//   title: string;
-//   message: string;
-//   meta: any;
-//   read: boolean;
-//   createdAt: string;
-//   updatedAt: string | null;
-// }
+const NotificationContext = createContext<NotificationContextType | undefined>(
+  undefined
+);
 
-// interface NotificationContextType {
-//   notifications: NotificationBackend[];
-//   unreadCount: number;
-//   markAsSeen: (ids?: string[]) => Promise<void>;
-//   reload: () => void;
-// }
+export const NotificationProvider = ({ children }: { children: ReactNode }) => {
+  const { data } = useFetchNotification();
+  const [notifications, setNotifications] = useState<NotificationBackend[]>([]);
+  const { mutate } = useMarkNotificationAsRead();
 
-// const NotificationContext = createContext<NotificationContextType | undefined>(
-//   undefined
-// );
+  useEffect(() => {
+    if (data) {
+      setNotifications(data);
+    }
+  }, [data]);
 
-// export const NotificationProvider = ({ children }: { children: ReactNode }) => {
-//   const { data, isLoading, isError } = useFetchNotification();
-//   const [notifications, setNotifications] = useState<NotificationBackend[]>([]);
+  const unreadCount = notifications.filter((n) => !n.read).length;
 
-//   // Whenever the fetched data changes, update local state
-//   useEffect(() => {
-//     if (data) {
-//       setNotifications(data);
-//     }
-//   }, [data]);
+  const markAsSeen = async (id: string) => {
+    mutate(id);
+  };
 
-//   const unreadCount = notifications.filter((n) => !n.read).length;
+  const reload = () => {};
 
-//   const markAsSeen = async (ids?: string[]) => {
-//     // Placeholder function to mark notifications as seen
-//     const { mutate } = useMarkNotificationAsRead();
+  return (
+    <NotificationContext.Provider
+      value={{ notifications, unreadCount, markAsSeen, reload }}
+    >
+      {children}
+    </NotificationContext.Provider>
+  );
+};
 
-//     mutate(ids);
-//   };
-
-//   const reload = () => {};
-
-//   return (
-//     <NotificationContext.Provider
-//       value={{ notifications, unreadCount, markAsSeen, reload }}
-//     >
-//       {children}
-//     </NotificationContext.Provider>
-//   );
-// };
-
-// export const useNotificationContext = (): NotificationContextType => {
-//   const ctx = useContext(NotificationContext);
-//   if (!ctx) {
-//     throw new Error(
-//       "useNotificationContext must be used within a NotificationProvider"
-//     );
-//   }
-//   return ctx;
-// };
+export const useNotificationContext = (): NotificationContextType => {
+  const ctx = useContext(NotificationContext);
+  if (!ctx) {
+    throw new Error(
+      "useNotificationContext must be used within a NotificationProvider"
+    );
+  }
+  return ctx;
+};

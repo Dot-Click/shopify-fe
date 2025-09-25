@@ -14,7 +14,7 @@ import UserManagement from "./pages/usermanagemeent.page";
 import StoreManagement from "./pages/storemanagement.page";
 import ReportAnalysis from "./pages/reportanalysis.page";
 import CustomerManagement from "./pages/customermanagement.page";
-import NotificationsPage from "./pages/notification";
+import NotificationsPage from "./pages/notification.page";
 import OrderManagement from "./pages/ordermanagement.page";
 import RiskSettings from "./pages/risksettings.page";
 import CreateStaff from "./pages/staff.page";
