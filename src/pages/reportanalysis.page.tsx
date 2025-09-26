@@ -1,12 +1,7 @@
 import * as React from "react";
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
 import { type ColumnDef } from "@tanstack/react-table";
-import {
-  ArrowUpDown,
-  ChevronDown,
-  Download,
-  Filter as FilterIcon,
-} from "lucide-react";
+import { ChevronDown, Download } from "lucide-react";
 
 import { Box } from "../components/ui/box";
 import { Button } from "../components/ui/button";
@@ -23,19 +18,12 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "../components/ui/chart";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../components/ui/select";
 import { TableProvider } from "../providers/table.provider";
 import {
   TableComponent,
   SortedHeader,
   checkBoxProps,
-} from "../components/common/tablecomponent"; // Adjust path to your table component
+} from "../components/common/tablecomponent";
 import { cn } from "../lib/utils";
 import {
   DropdownMenu,
@@ -46,6 +34,12 @@ import {
 import underline from "/images/underline_2.svg";
 import { useFetchReportIncidents } from "@/hooks/shopifycustomers/usefetchreportincidents";
 import { eachMonthOfInterval, format } from "date-fns";
+import { useFetchFlaggedCustomerAndStore } from "@/hooks/shopifycustomers/usefetchflaggedcustomer";
+import {
+  generateCustomerReport,
+  generateStoreReport,
+  generateNetworkOnboardingEffectivenessReport,
+} from "@/utils/pdfgenerator";
 
 const chartConfig = {
   riskIncidents: {
@@ -58,14 +52,18 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-function ReportOverviewChart() {
+function ReportOverviewChart({
+  onExport,
+}: {
+  onExport: (chartData: any[]) => void;
+}) {
   const { data, isLoading, error } = useFetchReportIncidents();
 
   const allMonths = eachMonthOfInterval({
     start: new Date(new Date().getFullYear(), 0), // Jan
     end: new Date(new Date().getFullYear(), 11), // Dec
   }).map((date) => ({
-    month: format(date, "LLL yyyy"), // e.g., "Jan 2025"
+    month: format(date, "LLL yyyy"),
     riskIncidents: 0,
     affectedStores: 0,
   }));
@@ -143,13 +141,21 @@ function ReportOverviewChart() {
             />
           </BarChart>
         </ChartContainer>
+        <div className="mt-4 flex justify-end">
+          <Button
+            size="sm"
+            className="bg-blue-600 text-white hover:bg-blue-700"
+            onClick={() => onExport(chartData)}
+          >
+            <Download className="mr-2 h-4 w-4" /> Export Chart as PDF
+          </Button>
+        </div>
       </CardContent>
     </Card>
   );
 }
 
 // --- Types and Data for Tables ---
-
 type CustomerEntry = {
   id: string;
   name: string;
@@ -164,42 +170,6 @@ type StoreEntry = {
   email: string;
   apiKey: string;
 };
-
-const customerData: CustomerEntry[] = Array(5).fill({
-  id: "1001",
-  name: "Emma Johnson",
-  email: "emma.j@gmail.com",
-  riskLevel: 45,
-  totalriskReports: 12,
-});
-
-const storeData: StoreEntry[] = [
-  {
-    id: "1001",
-    storeName: "Gucci",
-    email: "support@guci.com",
-    apiKey: "8a9d3b4x",
-  },
-  {
-    id: "1002",
-    storeName: "Dior",
-    email: "admin@dior.com",
-    apiKey: "3f4r2x8s",
-  },
-  { id: "1003", storeName: "Bata", email: "help@bata.com", apiKey: "z25s3r1t" },
-  {
-    id: "1004",
-    storeName: "Adidas",
-    email: "support@adidas.com",
-    apiKey: "api-ax98z",
-  },
-  {
-    id: "1005",
-    storeName: "Nike",
-    email: "admin@nike.com",
-    apiKey: "api-nk23s",
-  },
-];
 
 const getRiskColor = (level: number) => {
   if (level > 75) return "bg-red-500";
@@ -219,100 +189,113 @@ const RiskLevelIndicator = ({ level }: { level: number }) => (
   </div>
 );
 
-const customerColumns: ColumnDef<CustomerEntry>[] = [
-  {
-    id: "select",
-    header: (info) => <Checkbox {...checkBoxProps(info)} />,
-    cell: (info) => <Checkbox {...checkBoxProps(info)} />,
-  },
-  {
-    accessorKey: "id",
-    header: (info) => <SortedHeader header={info.header} label="User ID" />,
-    meta: {
-      mobileHeader: "USer Id",
-    },
-  },
-  {
-    accessorKey: "name",
-    header: (info) => <SortedHeader header={info.header} label="Name" />,
-    meta: {
-      mobileHeader: "Name",
-    },
-  },
-  {
-    accessorKey: "email",
-    header: (info) => <SortedHeader header={info.header} label="Email" />,
-    meta: {
-      mobileHeader: "Email",
-    },
-  },
-  {
-    accessorKey: "riskLevel",
-    header: "Risk Level",
-    cell: ({ row }) => <RiskLevelIndicator level={row.original.riskLevel} />,
-    meta: {
-      mobileHeader: "Risk Level",
-    },
-  },
-  {
-    accessorKey: "totalriskReports",
-    header: (info) => (
-      <SortedHeader header={info.header} label="Total risk Reports" />
-    ),
-    meta: {
-      mobileHeader: "Total risk Reports",
-    },
-  },
-  {
-    id: "actions",
-    cell: () => (
-      <Button size="sm" className="bg-blue-600 text-white hover:bg-blue-700">
-        <Download className="mr-2 h-4 w-4" /> Download
-      </Button>
-    ),
-  },
-];
-
-const storeColumns: ColumnDef<StoreEntry>[] = [
-  {
-    id: "select",
-    header: (info) => <Checkbox {...checkBoxProps(info)} />,
-    cell: (info) => <Checkbox {...checkBoxProps(info)} />,
-  },
-  {
-    accessorKey: "id",
-    header: (info) => <SortedHeader header={info.header} label="ID" />,
-  },
-  {
-    accessorKey: "storeName",
-    header: (info) => <SortedHeader header={info.header} label="Store Name" />,
-  },
-  {
-    accessorKey: "email",
-    header: (info) => <SortedHeader header={info.header} label="Email" />,
-  },
-  {
-    accessorKey: "apiKey",
-    header: (info) => <SortedHeader header={info.header} label="API Key" />,
-  },
-  {
-    id: "actions",
-    header: () => <div className="text-right pr-4">Action</div>,
-    cell: () => (
-      <div className="text-right">
-        <Button size="sm" className="bg-blue-600 text-white hover:bg-blue-700">
-          <Download className="mr-2 h-4 w-4" /> Download
-        </Button>
-      </div>
-    ),
-  },
-];
-
 function ReportTable() {
   const [activeTab, setActiveTab] = React.useState("customers");
-  const [isLoading] = React.useState(false);
+  const { data, isLoading } = useFetchFlaggedCustomerAndStore();
 
   const isCustomerView = activeTab === "customers";
+
+  const customerData: CustomerEntry[] =
+    data?.flaggedCustomers?.map((c) => ({
+      id: c.id,
+      name: c.name,
+      email: c.email,
+      riskLevel: c.riskLevel,
+      totalriskReports: c.totalRiskReport ?? 0,
+    })) ?? [];
+
+  const storeData: StoreEntry[] =
+    data?.storesAffected?.map((s) => ({
+      id: s.id,
+      storeName: s.name,
+      email: s.email,
+      apiKey: s.shopifyApiKey || "N/A",
+    })) ?? [];
+
+  const customerColumns: ColumnDef<CustomerEntry>[] = [
+    {
+      id: "select",
+      header: (info) => <Checkbox {...checkBoxProps(info)} />,
+      cell: (info) => <Checkbox {...checkBoxProps(info)} />,
+    },
+    {
+      accessorKey: "id",
+      header: (info) => <SortedHeader header={info.header} label="User ID" />,
+    },
+    {
+      accessorKey: "name",
+      header: (info) => <SortedHeader header={info.header} label="Name" />,
+    },
+    {
+      accessorKey: "email",
+      header: (info) => <SortedHeader header={info.header} label="Email" />,
+    },
+    {
+      accessorKey: "riskLevel",
+      header: "Risk Level",
+      cell: ({ row }) => <RiskLevelIndicator level={row.original.riskLevel} />,
+    },
+    {
+      accessorKey: "totalriskReports",
+      header: (info) => (
+        <SortedHeader header={info.header} label="Total risk Reports" />
+      ),
+    },
+    {
+      id: "actions",
+      cell: () => (
+        <Button
+          size="sm"
+          className="bg-blue-600 text-white hover:bg-blue-700"
+          onClick={() => generateCustomerReport(customerData)}
+        >
+          <Download className="mr-2 h-4 w-4" /> Download
+        </Button>
+      ),
+    },
+  ];
+
+  const storeColumns: ColumnDef<StoreEntry>[] = [
+    {
+      id: "select",
+      header: (info) => <Checkbox {...checkBoxProps(info)} />,
+      cell: (info) => <Checkbox {...checkBoxProps(info)} />,
+    },
+    {
+      accessorKey: "id",
+      header: (info) => <SortedHeader header={info.header} label="ID" />,
+    },
+    {
+      accessorKey: "storeName",
+      header: (info) => (
+        <SortedHeader header={info.header} label="Store Name" />
+      ),
+    },
+    {
+      accessorKey: "email",
+      header: (info) => <SortedHeader header={info.header} label="Email" />,
+    },
+    {
+      accessorKey: "apiKey",
+      header: (info) => <SortedHeader header={info.header} label="API Key" />,
+    },
+    {
+      id: "actions",
+      header: () => <div className="text-right pr-4">Action</div>,
+      cell: () => (
+        <div className="text-right">
+          <Button
+            size="sm"
+            className="bg-blue-600 text-white hover:bg-blue-700"
+            onClick={() => generateStoreReport(storeData)}
+          >
+            <Download className="mr-2 h-4 w-4" /> Download
+          </Button>
+        </div>
+      ),
+    },
+  ];
+
   return (
     <div className="mt-6">
       <header className="flex flex-wrap items-center justify-between gap-4 px-5 ">
@@ -320,9 +303,9 @@ function ReportTable() {
           <Button
             size="sm"
             onClick={() => setActiveTab("customers")}
-            variant={isCustomerView ? "default" : "ghost"}
+            variant={activeTab === "customers" ? "default" : "ghost"}
             className={cn(
-              isCustomerView
+              activeTab === "customers"
                 ? "bg-white text-slate-700 shadow-sm hover:bg-white"
                 : "text-slate-600 hover:bg-slate-200"
             )}
@@ -332,43 +315,18 @@ function ReportTable() {
           <Button
             size="sm"
             onClick={() => setActiveTab("stores")}
-            variant={!isCustomerView ? "default" : "ghost"}
+            variant={activeTab === "stores" ? "default" : "ghost"}
             className={cn(
-              !isCustomerView
+              activeTab === "stores"
                 ? "bg-white text-slate-700 shadow-sm hover:bg-white"
                 : "text-slate-600 hover:bg-slate-200"
             )}
           >
-            Store
-          </Button>
-        </div>
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2 text-sm">
-            <span className="text-slate-600">Showing</span>
-            <Select defaultValue="10">
-              <SelectTrigger className="w-20 border-slate-300 text-slate-700">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent className="bg-white">
-                <SelectItem value="10">10</SelectItem>
-                <SelectItem value="20">20</SelectItem>
-                <SelectItem value="50">50</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <Button
-            variant="outline"
-            className="border-slate-300 text-slate-700 hover:bg-slate-100"
-          >
-            <ArrowUpDown className="mr-2 h-4 w-4" />
-            Sort by
-          </Button>
-          <Button className="bg-blue-600 text-white hover:bg-blue-700">
-            <FilterIcon className="mr-2 h-4 w-4" />
-            Filter
+            Stores
           </Button>
         </div>
       </header>
+
       <main className="mt-4">
         {isCustomerView ? (
           <TableProvider data={customerData} columns={customerColumns}>
@@ -393,12 +351,9 @@ function ReportAnalysis() {
           Report & Analytics
         </h1>
         <div className="flex">
-          {/* Main action button */}
           <Button className="rounded-r-none bg-blue-600 text-white hover:bg-blue-700">
             Export Data
           </Button>
-
-          {/* Dropdown trigger button */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
@@ -408,10 +363,36 @@ function ReportAnalysis() {
                 <ChevronDown className="h-5 w-5" />
               </Button>
             </DropdownMenuTrigger>
-
-            {/* Dropdown menu content */}
             <DropdownMenuContent align="end" className="bg-white">
-              <DropdownMenuItem>Export as PDF</DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() =>
+                  generateNetworkOnboardingEffectivenessReport({
+                    networkChartNode: document.getElementById("networkChart"), // or pass null if none
+                    monthlyData: [], // your monthly risk/store data here
+                    topDomains: [
+                      ["gmail.com", 20],
+                      ["yahoo.com", 5],
+                    ], // example
+                    topPostcodes: [
+                      ["12345", 12],
+                      ["67890", 8],
+                    ], // optional
+                    plansStats: [], // [["Basic", 10], ["Pro", 5]]
+                    pendingActivations: 0,
+                    avgActivationTimeDays: 0,
+                    newStores30: 0,
+                    systemEffectiveness: {
+                      totalFlaggedOrders: 0,
+                      preventedLossEstimate: 0,
+                      percentRealIssues: 0, // should be number, e.g., 0.25 (25%)
+                      percentCancelled: 0, // add if needed
+                      monthly: [], // same shape as monthlyData
+                    },
+                  })
+                }
+              >
+                Export as PDF
+              </DropdownMenuItem>
               <DropdownMenuItem>Export as CSV</DropdownMenuItem>
               <DropdownMenuItem>Export as Excel</DropdownMenuItem>
             </DropdownMenuContent>
@@ -420,7 +401,33 @@ function ReportAnalysis() {
       </header>
 
       {/* Chart Section */}
-      <ReportOverviewChart />
+      <ReportOverviewChart
+        onExport={() =>
+          generateNetworkOnboardingEffectivenessReport({
+            networkChartNode: document.getElementById("networkChart"), // or pass null if none
+            monthlyData: [], // your monthly risk/store data here
+            topDomains: [
+              ["gmail.com", 20],
+              ["yahoo.com", 5],
+            ], // example
+            topPostcodes: [
+              ["12345", 12],
+              ["67890", 8],
+            ], // optional
+            plansStats: [], // [["Basic", 10], ["Pro", 5]]
+            pendingActivations: 0,
+            avgActivationTimeDays: 0,
+            newStores30: 0,
+            systemEffectiveness: {
+              totalFlaggedOrders: 0,
+              preventedLossEstimate: 0,
+              percentRealIssues: 0, // should be number, e.g., 0.25 (25%)
+              percentCancelled: 0, // add if needed
+              monthly: [], // same shape as monthlyData
+            },
+          })
+        }
+      />
 
       {/* Table Section */}
       <ReportTable />
