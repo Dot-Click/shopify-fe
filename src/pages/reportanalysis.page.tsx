@@ -2,7 +2,6 @@ import * as React from "react";
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
 import { type ColumnDef } from "@tanstack/react-table";
 import { ChevronDown, Download } from "lucide-react";
-
 import { Box } from "../components/ui/box";
 import { Button } from "../components/ui/button";
 import { Checkbox } from "../components/ui/checkbox";
@@ -35,11 +34,8 @@ import underline from "/images/underline_2.svg";
 import { useFetchReportIncidents } from "@/hooks/shopifycustomers/usefetchreportincidents";
 import { eachMonthOfInterval, format } from "date-fns";
 import { useFetchFlaggedCustomerAndStore } from "@/hooks/shopifycustomers/usefetchflaggedcustomer";
-import {
-  generateCustomerReport,
-  generateStoreReport,
-  generateNetworkOnboardingEffectivenessReport,
-} from "@/utils/pdfgenerator";
+import { useGenerateReportMutation } from "@/hooks/reports/usefetchstoreactivity";
+import { Spinner } from "@/components/ui/spinner";
 
 const chartConfig = {
   riskIncidents: {
@@ -52,11 +48,7 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-function ReportOverviewChart({
-  onExport,
-}: {
-  onExport: (chartData: any[]) => void;
-}) {
+function ReportOverviewChart() {
   const { data, isLoading, error } = useFetchReportIncidents();
 
   const allMonths = eachMonthOfInterval({
@@ -141,27 +133,18 @@ function ReportOverviewChart({
             />
           </BarChart>
         </ChartContainer>
-        <div className="mt-4 flex justify-end">
-          <Button
-            size="sm"
-            className="bg-blue-600 text-white hover:bg-blue-700"
-            onClick={() => onExport(chartData)}
-          >
-            <Download className="mr-2 h-4 w-4" /> Export Chart as PDF
-          </Button>
-        </div>
       </CardContent>
     </Card>
   );
 }
 
-// --- Types and Data for Tables ---
 type CustomerEntry = {
   id: string;
   name: string;
   email: string;
   riskLevel: number;
   totalriskReports: number;
+  createdAt: string;
 };
 
 type StoreEntry = {
@@ -202,6 +185,7 @@ function ReportTable() {
       email: c.email,
       riskLevel: c.riskLevel,
       totalriskReports: c.totalRiskReport ?? 0,
+      createdAt: c.createdAt ?? new Date().toISOString(),
     })) ?? [];
 
   const storeData: StoreEntry[] =
@@ -211,6 +195,24 @@ function ReportTable() {
       email: s.email,
       apiKey: s.shopifyApiKey || "N/A",
     })) ?? [];
+
+  const { mutate: generateReport, isPending } = useGenerateReportMutation();
+
+  const handleDownloadStoreReport = () => {
+    generateReport({
+      fileName: `Store_Activity_Report_${
+        new Date().toISOString().split("T")[0]
+      }.pdf`,
+      url: "/reports/store-activity-report",
+    });
+  };
+
+  const handleDownloadCustomerReport = () => {
+    generateReport({
+      fileName: `Customer_Report_${new Date().toISOString().split("T")[0]}.pdf`,
+      url: "/reports/customer-report",
+    });
+  };
 
   const customerColumns: ColumnDef<CustomerEntry>[] = [
     {
@@ -241,18 +243,6 @@ function ReportTable() {
         <SortedHeader header={info.header} label="Total risk Reports" />
       ),
     },
-    {
-      id: "actions",
-      cell: () => (
-        <Button
-          size="sm"
-          className="bg-blue-600 text-white hover:bg-blue-700"
-          onClick={() => generateCustomerReport(customerData)}
-        >
-          <Download className="mr-2 h-4 w-4" /> Download
-        </Button>
-      ),
-    },
   ];
 
   const storeColumns: ColumnDef<StoreEntry>[] = [
@@ -279,27 +269,12 @@ function ReportTable() {
       accessorKey: "apiKey",
       header: (info) => <SortedHeader header={info.header} label="API Key" />,
     },
-    {
-      id: "actions",
-      header: () => <div className="text-right pr-4">Action</div>,
-      cell: () => (
-        <div className="text-right">
-          <Button
-            size="sm"
-            className="bg-blue-600 text-white hover:bg-blue-700"
-            onClick={() => generateStoreReport(storeData)}
-          >
-            <Download className="mr-2 h-4 w-4" /> Download
-          </Button>
-        </div>
-      ),
-    },
   ];
 
   return (
-    <div className="mt-6">
-      <header className="flex flex-wrap items-center justify-between gap-4 px-5 ">
-        <div className="flex items-center gap-1 rounded-lg bg-slate-100 p-1">
+    <Box className="mt-6">
+      <Box className="flex flex-wrap items-center justify-between gap-4 px-5 ">
+        <Box className="flex items-center gap-1 rounded-lg bg-slate-100 p-1">
           <Button
             size="sm"
             onClick={() => setActiveTab("customers")}
@@ -324,10 +299,31 @@ function ReportTable() {
           >
             Stores
           </Button>
-        </div>
-      </header>
+        </Box>
+        <Box className="flex items-center gap-2">
+          {isCustomerView ? (
+            <Button
+              size="sm"
+              className="bg-blue-600 text-white hover:bg-blue-700"
+              onClick={handleDownloadCustomerReport}
+            >
+              {isPending ? <Spinner /> : <Download className="mr-2 h-4 w-4" />}{" "}
+              Download
+            </Button>
+          ) : (
+            <Button
+              size="sm"
+              className="bg-blue-600 text-white hover:bg-blue-700"
+              onClick={handleDownloadStoreReport}
+            >
+              {isPending ? <Spinner /> : <Download className="mr-2 h-4 w-4" />}{" "}
+              Download
+            </Button>
+          )}
+        </Box>
+      </Box>
 
-      <main className="mt-4">
+      <Box className="mt-4">
         {isCustomerView ? (
           <TableProvider data={customerData} columns={customerColumns}>
             {() => <TableComponent isLoading={isLoading} />}
@@ -337,12 +333,21 @@ function ReportTable() {
             {() => <TableComponent isLoading={isLoading} />}
           </TableProvider>
         )}
-      </main>
-    </div>
+      </Box>
+    </Box>
   );
 }
 
 function ReportAnalysis() {
+  const { mutate: generateReport, isPending } = useGenerateReportMutation();
+
+  const handleDownloadCombinedReport = () => {
+    generateReport({
+      fileName: `Combined_Report_${new Date().toISOString().split("T")[0]}.pdf`,
+      url: "/reports/combined-report",
+    });
+  };
+
   return (
     <Box className="rounded-xl bg-white pt-10">
       {/* Page Header */}
@@ -351,8 +356,11 @@ function ReportAnalysis() {
           Report & Analytics
         </h1>
         <div className="flex">
-          <Button className="rounded-r-none bg-blue-600 text-white hover:bg-blue-700">
-            Export Data
+          <Button
+            className="rounded-r-none bg-blue-600 text-white hover:bg-blue-700"
+            onClick={handleDownloadCombinedReport}
+          >
+            {isPending ? <Spinner /> : "Export Data"}
           </Button>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -364,35 +372,7 @@ function ReportAnalysis() {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="bg-white">
-              <DropdownMenuItem
-                onClick={() =>
-                  generateNetworkOnboardingEffectivenessReport({
-                    networkChartNode: document.getElementById("networkChart"), // or pass null if none
-                    monthlyData: [], // your monthly risk/store data here
-                    topDomains: [
-                      ["gmail.com", 20],
-                      ["yahoo.com", 5],
-                    ], // example
-                    topPostcodes: [
-                      ["12345", 12],
-                      ["67890", 8],
-                    ], // optional
-                    plansStats: [], // [["Basic", 10], ["Pro", 5]]
-                    pendingActivations: 0,
-                    avgActivationTimeDays: 0,
-                    newStores30: 0,
-                    systemEffectiveness: {
-                      totalFlaggedOrders: 0,
-                      preventedLossEstimate: 0,
-                      percentRealIssues: 0, // should be number, e.g., 0.25 (25%)
-                      percentCancelled: 0, // add if needed
-                      monthly: [], // same shape as monthlyData
-                    },
-                  })
-                }
-              >
-                Export as PDF
-              </DropdownMenuItem>
+              <DropdownMenuItem>Export as PDF</DropdownMenuItem>
               <DropdownMenuItem>Export as CSV</DropdownMenuItem>
               <DropdownMenuItem>Export as Excel</DropdownMenuItem>
             </DropdownMenuContent>
@@ -401,33 +381,7 @@ function ReportAnalysis() {
       </header>
 
       {/* Chart Section */}
-      <ReportOverviewChart
-        onExport={() =>
-          generateNetworkOnboardingEffectivenessReport({
-            networkChartNode: document.getElementById("networkChart"), // or pass null if none
-            monthlyData: [], // your monthly risk/store data here
-            topDomains: [
-              ["gmail.com", 20],
-              ["yahoo.com", 5],
-            ], // example
-            topPostcodes: [
-              ["12345", 12],
-              ["67890", 8],
-            ], // optional
-            plansStats: [], // [["Basic", 10], ["Pro", 5]]
-            pendingActivations: 0,
-            avgActivationTimeDays: 0,
-            newStores30: 0,
-            systemEffectiveness: {
-              totalFlaggedOrders: 0,
-              preventedLossEstimate: 0,
-              percentRealIssues: 0, // should be number, e.g., 0.25 (25%)
-              percentCancelled: 0, // add if needed
-              monthly: [], // same shape as monthlyData
-            },
-          })
-        }
-      />
+      <ReportOverviewChart />
 
       {/* Table Section */}
       <ReportTable />

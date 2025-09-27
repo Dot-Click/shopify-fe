@@ -8,6 +8,7 @@ interface FlaggedCustomer {
   riskLevel: number;
   totalRiskReport: number;
   storeId: string;
+  createdAt: string;
 }
 
 interface StoreAffected {

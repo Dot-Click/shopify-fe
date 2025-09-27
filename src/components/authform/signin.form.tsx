@@ -223,29 +223,6 @@ export const SigninForm = () => {
               </Button>
             </form>
           </Form>
-          {/*
-          <div className="flex items-center gap-4">
-            <Separator className="flex-1 bg-web-checkbox-grey" />
-            <span className="text-sm text-gray-500">Or sign in with</span>
-            <Separator className="flex-1 bg-web-checkbox-grey" />
-          </div>
-
-          <div className="space-y-3">
-            <Button
-              variant="outline"
-              className="w-full bg-[#2C2C2D] text-[#fff] py-6 rounded-lg"
-            >
-              <FcGoogle className="mr-2 h-6 w-6" />
-              Google
-            </Button>
-            <Button
-              variant="outline"
-              className="w-full bg-[#2C2C2D] text-[#fff] py-6 rounded-lg"
-            >
-              <img src={fbIcon} className="mr-2 h-4 w-4" />
-              Facebook
-            </Button>
-          </div> */}
         </Box>
       </Flex>
     </Flex>

@@ -21,7 +21,7 @@ type SettingsState = {
   lostParcelPeriod: string;
   lossRateThreshold: number;
   matchSensitivity: string;
-  action: string;
+  primaryAction: string;
   requireEsignature: boolean;
   forceSignedDelivery: boolean;
   requirePhoto: boolean;
@@ -30,13 +30,12 @@ type SettingsState = {
 };
 
 function RiskSettings() {
-  // State to manage form inputs
   const [settings, setSettings] = useState<SettingsState>({
     lostParcelThreshold: 3,
     lostParcelPeriod: "6",
     lossRateThreshold: 40,
     matchSensitivity: "medium",
-    action: "hold",
+    primaryAction: "hold",
     requireEsignature: false,
     forceSignedDelivery: false,
     requirePhoto: false,
@@ -44,8 +43,6 @@ function RiskSettings() {
     includeWaiverLink: false,
   });
 
-  // Hooks for fetching and updating settings
-  // const { data: fetchedSettings, isLoading: isLoadingSettings } = useGetSettings();
   const { mutate: saveSettings, isPending: isSaving } = useCreateSettings();
 
   const handleChange = (key: keyof SettingsState, value: any) => {
@@ -53,12 +50,16 @@ function RiskSettings() {
   };
 
   const handleSave = () => {
-    // The API only needs a subset of fields, so we send just those.
     const payload = {
       lostParcelThreshold: Number(settings.lostParcelThreshold),
       lostParcelPeriod: settings.lostParcelPeriod,
       lossRateThreshold: Number(settings.lossRateThreshold),
       matchSensitivity: settings.matchSensitivity,
+      primaryAction: settings.primaryAction,
+      requireESignature: settings.requireEsignature,
+      forceCourierSignedDelivery: settings.forceSignedDelivery,
+      photoOnDelivery: settings.requirePhoto,
+      sendCancellationEmail: settings.sendCancellationEmail,
     };
     saveSettings(payload);
   };
@@ -149,8 +150,8 @@ function RiskSettings() {
           <Box>
             <Label>Primary Action</Label>
             <Select
-              value={settings.action}
-              onValueChange={(val) => handleChange("action", val)}
+              value={settings.primaryAction}
+              onValueChange={(val) => handleChange("primaryAction", val)}
             >
               <SelectTrigger className="w-56 mt-2 border-0 shadow">
                 <SelectValue />
