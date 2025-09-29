@@ -23,6 +23,7 @@ import { ForgotPasswordForm } from "./pages/forgotpassword.page";
 import ResetPasswordPage from "./pages/reset.page";
 import AcceptInvitation from "./pages/acceptinvitation.page";
 import CreateStore from "./pages/createstores.page";
+import UserReport from "./pages/userreport.page";
 
 export const Router = () => {
   return (
@@ -64,6 +65,7 @@ export const Router = () => {
             element={<CustomerManagement />}
           />
           <Route path="/user/notification" element={<NotificationsPage />} />
+          <Route path="/user/report" element={<UserReport />} />
           <Route path="/user/settings" element={<RiskSettings />} />
           <Route path="/user/order-management" element={<OrderManagement />} />
           <Route path="/user/create-staff" element={<CreateStaff />} />

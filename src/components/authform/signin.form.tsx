@@ -20,9 +20,6 @@ import { Box } from "../ui/box";
 import { authClient } from "../../providers/user.provider";
 import toast from "react-hot-toast";
 import { Spinner } from "../ui/spinner";
-// import { Separator } from "../ui/separator";
-// import { FcGoogle } from "react-icons/fc";
-// import fbIcon from "/images/fb_icon.png";
 
 const formSchema = z.object({
   email: z.string().email({
@@ -67,13 +64,9 @@ export const SigninForm = () => {
         onRequest: () => {
           setLoading(true);
         },
-        onSuccess: async (data) => {
-          console.log("Initial sign-in data:", data);
-
+        onSuccess: async () => {
           console.log("Refreshed session data:", session);
           setLoading(false);
-
-          // Optional: Navigate or update UI
           navigate("/user/customer-management");
         },
         onError: (error) => {
@@ -87,7 +80,6 @@ export const SigninForm = () => {
 
   return (
     <Flex className=" h-full flex-col justify-center">
-      {/* Removed padding from here to be controlled by the parent page */}
       <Flex className="flex-col items-center justify-center space-y-6">
         <Box className="w-full max-w-md space-y-4">
           <Box className="space-y-1">

@@ -2,6 +2,7 @@ import {
   AlertCircle,
   LayoutGrid,
   PackagePlus,
+  Paperclip,
   Settings,
   // ShoppingBag,
   Store,
@@ -78,6 +79,7 @@ export function AppSidebar({ role }: AppSidebarProps) {
   ];
 
   const userSecondaryMenuItems = [
+    { title: "Report", url: "/user/report", icon: Paperclip },
     { title: "Settings", url: "/user/settings", icon: Settings },
   ];
 
