@@ -6,7 +6,13 @@ import icon from "/icons/logo_icon.png";
 import waveIcon from "/icons/wave_icon.svg";
 import { authClient } from "../../providers/user.provider";
 import { useNotificationContext } from "@/providers/notification.provider";
-import { Link } from "react-router-dom";
+import {
+  Link,
+  useLocation,
+  useNavigate,
+  useSearchParams,
+} from "react-router-dom";
+import { useEffect, useState } from "react";
 
 interface NavbarDashboardProps {
   userType: "admin" | "user";
@@ -14,13 +20,40 @@ interface NavbarDashboardProps {
 
 export const NavbarDashboard = ({ userType }: NavbarDashboardProps) => {
   const { data: session } = authClient.useSession();
+  const { unreadCount } = useNotificationContext();
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+
+  const [searchValue, setSearchValue] = useState(
+    searchParams.get("search") || ""
+  );
 
   const welcomeMessage =
     userType === "admin"
       ? "Welcome to, Admin Panel"
       : "Welcome to the Dashboard";
 
-  const { unreadCount } = useNotificationContext();
+  const allowedPaths = [
+    "/user/customer-management",
+    "/admin/customer-management",
+    "/admin/store-management",
+  ];
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      if (allowedPaths.includes(location.pathname)) {
+        navigate(
+          `${location.pathname}?search=${encodeURIComponent(searchValue)}`,
+          {
+            replace: true,
+          }
+        );
+      }
+    }, 300);
+
+    return () => clearTimeout(timeout);
+  }, [searchValue, location.pathname, navigate]);
 
   return (
     <header className="flex items-center justify-between rounded-xl bg-card p-4 shadow-sm bg-white">
@@ -32,18 +65,20 @@ export const NavbarDashboard = ({ userType }: NavbarDashboardProps) => {
         <p className="text-sm text-muted-foreground">{session?.user.email}</p>
       </div>
 
-      {/* {userType === "user" && ( */}
-      <div className="relative w-full max-w-lg mx-4">
-        <Search
-          className="absolute text-web-grey left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
-          size={20}
-        />
-        <Input
-          placeholder="Search user by ID"
-          className="w-full pl-10 py-5 bg-transparent border-web-grey rounded-full  focus:border-blue-500 focus:bg-white"
-        />
-      </div>
-      {/* )} */}
+      {allowedPaths.includes(location.pathname) && (
+        <div className="relative w-full max-w-lg mx-4">
+          <Search
+            className="absolute text-web-grey left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+            size={20}
+          />
+          <Input
+            value={searchValue}
+            onChange={(e) => setSearchValue(e.target.value)}
+            placeholder="Search..."
+            className="w-full pl-10 py-5 bg-transparent border-web-grey rounded-full focus:border-blue-500 focus:bg-white"
+          />
+        </div>
+      )}
 
       {/* Right side: Action Icons */}
       <div className="flex items-center gap-2">
@@ -51,23 +86,34 @@ export const NavbarDashboard = ({ userType }: NavbarDashboardProps) => {
           variant="ghost"
           size="icon"
           aria-label="Settings"
-          className="bg-gray-100 rounded-full p-2"
+          className="bg-gray-100 rounded-full p-2 cursor-pointer"
+          onClick={() => {
+            if (userType === "admin") {
+              navigate("/admin/settings");
+            } else {
+              navigate("/user/settings");
+            }
+          }}
         >
           <Settings className="size-5" />
         </Button>
-        <Button
-          variant="ghost"
-          size="icon"
-          aria-label="Notifications"
-          className="bg-gray-100 rounded-full p-2 relative"
-        >
-          <Link to="/user/notification">
-            <Bell className="size-5" />
-            {unreadCount > 0 && (
-              <span className="absolute top-1 right-1 h-2 w-2 bg-red-500 rounded-full" />
-            )}
-          </Link>
-        </Button>
+
+        {userType === "user" && (
+          <Button
+            variant="ghost"
+            size="icon"
+            aria-label="Notifications"
+            className="bg-gray-100 rounded-full p-2 relative"
+          >
+            <Link to="/user/notification">
+              <Bell className="size-5" />
+              {unreadCount > 0 && (
+                <span className="absolute top-1 right-1 h-2 w-2 bg-red-500 rounded-full" />
+              )}
+            </Link>
+          </Button>
+        )}
+
         <Button
           size="icon"
           aria-label="App"

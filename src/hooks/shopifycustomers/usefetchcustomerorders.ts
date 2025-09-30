@@ -12,6 +12,12 @@ export interface RiskyOrderResponse {
     reasons: string[];
     createdAt: string;
   }[];
+
+  forceCourierSignedDelivery: boolean;
+  photoOnDelivery: boolean;
+  primaryAction: string;
+  requireESignature: boolean;
+  sendCancellationEmail: boolean;
 }
 
 export const useGetRiskyOrders = (customerId: string | null) => {
@@ -29,7 +35,7 @@ export const useGetRiskyOrders = (customerId: string | null) => {
           },
         }
       );
-      console.log("This is RESPONSE:___", res.data);
+      console.log("LOL:-", res);
       return res.data;
     },
     enabled: !!customerId,

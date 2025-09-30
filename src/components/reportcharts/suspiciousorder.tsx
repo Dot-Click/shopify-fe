@@ -28,6 +28,8 @@ const chartConfig = {
 } as const;
 
 export function SuspiciousOrdersReport() {
+  const { mutate: generateReport, isPending: isDownloading } =
+    useGenerateReportMutation();
   const [dateRange, setDateRange] = useState<DateRange | undefined>();
 
   const { data, isLoading, error } = useFetchSuspiciousOrders(
@@ -54,8 +56,6 @@ export function SuspiciousOrdersReport() {
     preventedValue: 0,
     totalOrders: 0,
   };
-  const { mutate: generateReport, isPending: isDownloading } =
-    useGenerateReportMutation();
 
   const handleDownloadReport = () => {
     const formattedDate = format(new Date(), "yyyy-MM-dd");

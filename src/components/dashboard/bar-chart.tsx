@@ -1,5 +1,5 @@
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
-import { Button } from "../../components/ui/button";
+// import { Button } from "../../components/ui/button";
 import {
   Card,
   CardContent,
@@ -14,11 +14,11 @@ import {
   ChartTooltipContent,
 } from "../../components/ui/chart";
 import { Box } from "../ui/box";
-import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
-import { CalendarIcon } from "lucide-react";
-import { Calendar } from "../ui/calendar";
-import { useState } from "react";
-import { cn } from "../../lib/utils";
+// import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
+// import { CalendarIcon } from "lucide-react";
+// import { Calendar } from "../ui/calendar";
+// import { useState } from "react";
+// import { cn } from "../../lib/utils";
 import { eachMonthOfInterval, format } from "date-fns";
 import underline from "/images/underline_2.svg";
 import { useFetchMonthlyIncidents } from "@/hooks/shopifycustomers/usefetchincidents";
@@ -31,7 +31,7 @@ const incidentsConfig = {
 };
 
 export function IncidentsBarChart() {
-  const [date, setDate] = useState<Date | undefined>(new Date());
+  // const [date, setDate] = useState<Date | undefined>(new Date());
 
   const { data, isLoading, isError } = useFetchMonthlyIncidents();
 
@@ -43,7 +43,6 @@ export function IncidentsBarChart() {
     incidents: 0,
   }));
 
-  // merge API data into base
   const chartData = allMonths.map((m) => {
     const apiMonth = data?.find(
       (item: { month: string; count: number }) =>
@@ -63,7 +62,7 @@ export function IncidentsBarChart() {
             <CardTitle>Analytic</CardTitle>
             <CardDescription>(Flagged Incidents By Months)</CardDescription>
           </Box>
-          <Popover>
+          {/* <Popover>
             <PopoverTrigger asChild>
               <Button
                 variant="outline"
@@ -84,7 +83,7 @@ export function IncidentsBarChart() {
                 className={"bg-white border-web-grey"}
               />
             </PopoverContent>
-          </Popover>
+          </Popover> */}
         </Box>
         <img src={underline} />
       </CardHeader>

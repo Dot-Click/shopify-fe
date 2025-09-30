@@ -1,17 +1,17 @@
 import * as React from "react";
-import { format } from "date-fns";
-import {
-  Calendar as CalendarIcon,
-  // Flag,
-  // HardHat,
-  // Network,
-  // Store,
-} from "lucide-react";
+// import { format } from "date-fns";
+// import {
+//   Calendar as CalendarIcon,
+//   // Flag,
+//   // HardHat,
+//   // Network,
+//   // Store,
+// } from "lucide-react";
 
-import { Button } from "../ui/button";
-import { Calendar } from "../ui/calendar";
+// import { Button } from "../ui/button";
+// import { Calendar } from "../ui/calendar";
+// import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
-import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { cn } from "../../lib/utils";
 import IPLogo from "/icons/ip.svg";
 import Store from "/icons/retailer.svg";
@@ -66,7 +66,7 @@ StatCardProps) {
 }
 
 export function OverviewSection() {
-  const [date, setDate] = useState<Date | undefined>(new Date());
+  // const [date, setDate] = useState<Date | undefined>(new Date());
 
   const { data: TotalFlagged } = useFetchTotalFlaggedCustomers();
   const { data: RiskyIPs } = useFetchRiskyIPs();
@@ -131,7 +131,7 @@ export function OverviewSection() {
       <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle className="text-lg">Overview</CardTitle>
 
-        <Popover>
+        {/* <Popover>
           <PopoverTrigger asChild>
             <Button
               variant="outline"
@@ -153,7 +153,7 @@ export function OverviewSection() {
               // initialFocus
             />
           </PopoverContent>
-        </Popover>
+        </Popover> */}
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">

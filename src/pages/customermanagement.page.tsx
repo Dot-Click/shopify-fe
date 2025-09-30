@@ -34,6 +34,7 @@ import { cn } from "../lib/utils";
 
 import { useFetchAllCustomers } from "../hooks/shopifycustomers/usefetchcustomers";
 import { ViewOrderModal } from "../components/modals/vieworder.modal";
+import { useSearchParams } from "react-router-dom";
 
 interface Customer {
   id: string;
@@ -86,6 +87,22 @@ const RefundsBadge = ({ level, count }: { level: number; count: number }) => (
 );
 
 function CustomerManagement() {
+  const { data: customers, isLoading: isLoadingCustomers } =
+    useFetchAllCustomers();
+
+  const [searchParams] = useSearchParams();
+  const search = searchParams.get("search")?.toLowerCase() || "";
+
+  const filteredCustomers = (customers || []).filter((c) => {
+    const id = c.id?.toLowerCase() || "";
+    const name = c.name?.toLowerCase() || "";
+    const email = c.customerEmail?.toLowerCase() || "";
+
+    return (
+      id.includes(search) || name.includes(search) || email.includes(search)
+    );
+  });
+
   const columns: ColumnDef<Customer>[] = [
     {
       id: "select",
@@ -155,9 +172,6 @@ function CustomerManagement() {
     },
   ];
 
-  const { data: customers, isLoading: isLoadingCustomers } =
-    useFetchAllCustomers();
-
   return (
     <Box className="rounded-lg bg-white shadow-sm">
       {/* Page Header */}
@@ -194,7 +208,7 @@ function CustomerManagement() {
       {/* Table Section */}
       <Box className="mt-6">
         <TableProvider
-          data={customers || []}
+          data={filteredCustomers}
           columns={columns as ColumnDef<any, any>[]}
         >
           {() => <TableComponent isLoading={isLoadingCustomers} />}

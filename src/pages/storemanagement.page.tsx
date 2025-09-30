@@ -27,6 +27,7 @@ import {
 import { useFetchAllStores } from "../hooks/users/usefetchstore";
 
 import { useUpdateUserVerification } from "../hooks/users/useupdatestorestatus";
+import { useSearchParams } from "react-router-dom";
 
 export type Store = {
   id: string;
@@ -43,6 +44,19 @@ function StoreManagement() {
   const { data: stores, isLoading: isLoadingStores } = useFetchAllStores();
   const { mutate: updateUser, isPending: isUpdating } =
     useUpdateUserVerification();
+
+  const [searchParams] = useSearchParams();
+  const search = searchParams.get("search")?.toLowerCase() || "";
+
+  const filteredCustomers = (stores || []).filter((c) => {
+    const id = c.id?.toLowerCase() || "";
+    const name = c.company_name?.toLowerCase() || "";
+    const email = c.email?.toLowerCase() || "";
+
+    return (
+      id.includes(search) || name.includes(search) || email.includes(search)
+    );
+  });
 
   const columns: ColumnDef<Store>[] = React.useMemo(
     () => [
@@ -170,7 +184,7 @@ function StoreManagement() {
 
       {/* Table Section */}
       <main className="mt-6">
-        <TableProvider data={stores || []} columns={columns}>
+        <TableProvider data={filteredCustomers} columns={columns}>
           {() => <TableComponent isLoading={isLoading} />}
         </TableProvider>
       </main>

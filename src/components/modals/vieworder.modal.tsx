@@ -92,10 +92,9 @@ export const ViewOrderModal = ({ user }: { user: Customer }) => {
   const { mutate: deleteFlag } = useDeleteFlag();
   const { mutate: block } = useBlockCustomer();
 
-  console.log("From modal:-", data);
-  const orders = data?.orders ?? [];
+  const orders = data ?? [];
 
-  const columns: ColumnDef<RiskyOrderResponse["orders"][number]>[] = [
+  const columns: ColumnDef<RiskyOrderResponse>[] = [
     {
       accessorKey: "id",
       header: (info) => <SortedHeader header={info.header} label="User ID" />,
@@ -111,7 +110,9 @@ export const ViewOrderModal = ({ user }: { user: Customer }) => {
       header: "Created At",
       cell: ({ row }) => {
         return (
-          <Box>{new Date(row.original.createdAt).toLocaleDateString()}</Box>
+          <Box>
+            {new Date(row.original.createdAt).toLocaleDateString()}
+          </Box>
         );
       },
     },
@@ -121,13 +122,49 @@ export const ViewOrderModal = ({ user }: { user: Customer }) => {
       cell: ({ row }) => {
         return (
           <Box>
-            {row.original.flagged || row.original.manualFlag ? (
+            {row.original.flagged ||
+            row.original.manualFlag ? (
               <ShieldAlert className="h-7 w-7 text-red-500" />
             ) : (
               <CircleCheckBig className="h-5 w-5 text-green-500" />
             )}
           </Box>
         );
+      },
+    },
+    {
+      accessorKey: "sendCancellationEmail",
+      header: "Cancel Email",
+      cell: ({ row }) => {
+        return <Box>{row.original.result[0].sendCancellationEmail}</Box>;
+      },
+    },
+    {
+      accessorKey: "forceCourierSignedDelivery",
+      header: "Force Signed Delivery",
+      cell: ({ row }) => {
+        return <Box>{row.original.forceCourierSignedDelivery}</Box>;
+      },
+    },
+    {
+      accessorKey: "photoOnDelivery",
+      header: "Photo On Delivery",
+      cell: ({ row }) => {
+        return <Box>{row.original.photoOnDelivery}</Box>;
+      },
+    },
+    {
+      accessorKey: "primaryAction",
+      header: "Primary Action",
+      cell: ({ row }) => {
+        return <Box>{row.original.primaryAction}</Box>;
+      },
+    },
+    {
+      accessorKey: "requireESignature",
+      header: "Reqiure E Signature",
+      cell: ({ row }) => {
+        return <Box>{row.original.requireESignature}</Box>;
       },
     },
     {
@@ -142,7 +179,10 @@ export const ViewOrderModal = ({ user }: { user: Customer }) => {
               onClick={() => {
                 addFlag({ orderId: row.original.id, flag: true });
               }}
-              disabled={row.original.flagged || row.original.manualFlag}
+              disabled={
+                row.original.flagged ||
+                row.original.manualFlag
+              }
               className="cursor-pointer bg-red-500 border-0 text-white text-center"
             >
               <Flag className="h-4 w-4" />

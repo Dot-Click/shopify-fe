@@ -1,17 +1,13 @@
 import { useState, useEffect } from "react";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Box } from "@/components/ui/box";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Library, Lock, Eye, EyeOff, Loader2 } from "lucide-react";
-import logoIcon from "/icons/logo_icon.png";
-import { Stack } from "@/components/ui/stack";
-import { authClient } from "@/providers/user.provider"; // Assuming your authClient exports a User type
+import { Lock, Eye, EyeOff, Loader2 } from "lucide-react";
+import { authClient } from "@/providers/user.provider";
 
-// A small component for displaying feedback messages
 const FormMessage = ({
   type,
   message,
@@ -161,7 +157,7 @@ export const Settings = () => {
       <form onSubmit={handleSubmit}>
         <Box className="mx-auto">
           <header className="flex justify-between items-center mb-8 px-5 pt-10">
-            <h1 className="text-2xl font-bold text-web-dark-grey">Setting</h1>
+            <h1 className="text-3xl font-bold text-web-dark-grey">Settings</h1>
             <Button
               type="submit"
               className="bg-blue-600 text-white py-5 px-6 rounded-lg hover:bg-blue-700 min-w-[150px]"
@@ -184,38 +180,6 @@ export const Settings = () => {
           <Card className="border-none shadow-none w-full md:w-[80%]">
             <CardContent className="p-0">
               <div className="space-y-6 px-5">
-                {/* --- AVATAR SECTION --- */}
-                <Box className="flex flex-col sm:flex-row items-start sm:items-center gap-6 pb-6">
-                  <Avatar className="h-22 w-22 bg-blue-600">
-                    <AvatarImage
-                      src={logoIcon}
-                      className="p-4"
-                      alt="Company Logo"
-                    />
-                    <AvatarFallback>
-                      <Library className="h-10 w-10" />
-                    </AvatarFallback>
-                  </Avatar>
-                  <Stack>
-                    <Label
-                      htmlFor="file-upload"
-                      className="cursor-pointer bg-blue-600 text-white hover:bg-blue-700 px-6 py-2.5 rounded-md text-sm font-medium flex items-center"
-                    >
-                      Choose File
-                    </Label>
-                    <input id="file-upload" type="file" className="hidden" />
-                    <Button
-                      variant="outline"
-                      type="button"
-                      className="text-gray-700 border-gray-300 hover:bg-gray-50"
-                    >
-                      Remove
-                    </Button>
-                  </Stack>
-                </Box>
-                <Separator />
-
-                {/* --- USER INFO SECTION --- */}
                 <Box className="space-y-6 pt-2">
                   <Box className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <Box className="space-y-2">

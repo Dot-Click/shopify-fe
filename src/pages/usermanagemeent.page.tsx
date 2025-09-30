@@ -29,6 +29,7 @@ import {
   TooltipTrigger,
   TooltipContent,
 } from "../components/ui/tooltip";
+import { useSearchParams } from "react-router-dom";
 
 // --- 1. Data Structure and Mock Data ---
 
@@ -136,6 +137,19 @@ const columns: ColumnDef<Customer>[] = [
 function UserManagement() {
   const { data: customers, isLoading, error } = useFetchDashboardCustomers();
 
+  const [searchParams] = useSearchParams();
+  const search = searchParams.get("search")?.toLowerCase() || "";
+
+  const filteredCustomers = (customers || []).filter((c) => {
+    const id = c.id?.toLowerCase() || "";
+    const name = c.name?.toLowerCase() || "";
+    const email = c.email?.toLowerCase() || "";
+
+    return (
+      id.includes(search) || name.includes(search) || email.includes(search)
+    );
+  });
+
   if (error) {
     return (
       <Box className="rounded-xl bg-white shadow-sm p-7">
@@ -183,7 +197,7 @@ function UserManagement() {
 
       {/* Table Section */}
       <main className="mt-6">
-        <TableProvider data={customers ?? []} columns={columns}>
+        <TableProvider data={filteredCustomers} columns={columns}>
           {() => <TableComponent isLoading={isLoading} />}
         </TableProvider>
       </main>
