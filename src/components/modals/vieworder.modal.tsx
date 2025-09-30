@@ -82,7 +82,11 @@ const InfoItem = ({
   </div>
 );
 
-// The main modal component
+
+type Order = RiskyOrderResponse["orders"][number];
+type OrderRowData = Order & Omit<RiskyOrderResponse, "orders">;
+
+
 export const ViewOrderModal = ({ user }: { user: Customer }) => {
   const isHighRisk = user.riskLevel > 50;
   const [open, setOpen] = useState(false);
@@ -92,12 +96,22 @@ export const ViewOrderModal = ({ user }: { user: Customer }) => {
   const { mutate: deleteFlag } = useDeleteFlag();
   const { mutate: block } = useBlockCustomer();
 
-  const orders = data ?? [];
 
-  const columns: ColumnDef<RiskyOrderResponse>[] = [
+  const tableData: OrderRowData[] = data
+    ? data.orders.map((order) => ({
+      ...order,
+      forceCourierSignedDelivery: data.forceCourierSignedDelivery,
+      photoOnDelivery: data.photoOnDelivery,
+      primaryAction: data.primaryAction,
+      requireESignature: data.requireESignature,
+      sendCancellationEmail: data.sendCancellationEmail,
+    }))
+    : [];
+
+ const columns: ColumnDef<OrderRowData>[] = [
     {
       accessorKey: "id",
-      header: (info) => <SortedHeader header={info.header} label="User ID" />,
+      header: (info) => <SortedHeader header={info.header} label="Order ID" />,
     },
     {
       accessorKey: "totalAmount",
@@ -109,101 +123,78 @@ export const ViewOrderModal = ({ user }: { user: Customer }) => {
       accessorKey: "createdAt",
       header: "Created At",
       cell: ({ row }) => {
-        return (
-          <Box>
-            {new Date(row.original.createdAt).toLocaleDateString()}
-          </Box>
-        );
+        return <Box>{new Date(row.original.createdAt).toLocaleDateString()}</Box>;
       },
     },
     {
       accessorKey: "flagged",
       header: "Flagged",
-      cell: ({ row }) => {
-        return (
-          <Box>
-            {row.original.flagged ||
-            row.original.manualFlag ? (
-              <ShieldAlert className="h-7 w-7 text-red-500" />
-            ) : (
-              <CircleCheckBig className="h-5 w-5 text-green-500" />
-            )}
-          </Box>
-        );
-      },
+      cell: ({ row }) => (
+        <Box>
+          {row.original.flagged || row.original.manualFlag ? (
+            <ShieldAlert className="h-7 w-7 text-red-500" />
+          ) : (
+            <CircleCheckBig className="h-5 w-5 text-green-500" />
+          )}
+        </Box>
+      ),
     },
     {
       accessorKey: "sendCancellationEmail",
       header: "Cancel Email",
-      cell: ({ row }) => {
-        return <Box>{row.original.result[0].sendCancellationEmail}</Box>;
-      },
+      cell: ({ row }) => <Box>{String(row.original.sendCancellationEmail)}</Box>,
     },
     {
       accessorKey: "forceCourierSignedDelivery",
       header: "Force Signed Delivery",
-      cell: ({ row }) => {
-        return <Box>{row.original.forceCourierSignedDelivery}</Box>;
-      },
+      cell: ({ row }) => (
+        <Box>{String(row.original.forceCourierSignedDelivery)}</Box>
+      ),
     },
     {
       accessorKey: "photoOnDelivery",
       header: "Photo On Delivery",
-      cell: ({ row }) => {
-        return <Box>{row.original.photoOnDelivery}</Box>;
-      },
+      cell: ({ row }) => <Box>{String(row.original.photoOnDelivery)}</Box>,
     },
     {
       accessorKey: "primaryAction",
       header: "Primary Action",
-      cell: ({ row }) => {
-        return <Box>{row.original.primaryAction}</Box>;
-      },
+      cell: ({ row }) => <Box>{String(row.original.primaryAction)}</Box>,
     },
     {
       accessorKey: "requireESignature",
-      header: "Reqiure E Signature",
-      cell: ({ row }) => {
-        return <Box>{row.original.requireESignature}</Box>;
-      },
+      header: "Require E Signature",
+      cell: ({ row }) => <Box>{String(row.original.requireESignature)}</Box>,
     },
     {
       accessorKey: "actions",
       header: "Actions",
-      cell: ({ row }) => {
-        return (
-          <Box className="space-x-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => {
-                addFlag({ orderId: row.original.id, flag: true });
-              }}
-              disabled={
-                row.original.flagged ||
-                row.original.manualFlag
-              }
-              className="cursor-pointer bg-red-500 border-0 text-white text-center"
-            >
-              <Flag className="h-4 w-4" />
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              className="cursor-pointer bg-blue-400 border-0 text-white text-center"
-              onClick={() => {
-                deleteFlag({ orderId: row.original.id });
-              }}
-              disabled={
-                row.original.flagged === false ||
-                row.original.manualFlag === false
-              }
-            >
-              <FlagOff className="h-4 w-4" />
-            </Button>
-          </Box>
-        );
-      },
+      cell: ({ row }) => (
+        <Box className="space-x-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => {
+              addFlag({ orderId: row.original.id, flag: true });
+            }}
+            disabled={row.original.flagged || row.original.manualFlag}
+            className="cursor-pointer bg-red-500 border-0 text-white text-center"
+          >
+            <Flag className="h-4 w-4" />
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            className="cursor-pointer bg-blue-400 border-0 text-white text-center"
+            onClick={() => {
+              deleteFlag({ orderId: row.original.id });
+            }}
+            disabled={!row.original.flagged && !row.original.manualFlag}
+          >
+            <FlagOff className="h-4 w-4" />
+          </Button>
+        </Box>
+      ),
     },
   ];
 
@@ -231,7 +222,6 @@ export const ViewOrderModal = ({ user }: { user: Customer }) => {
             <Box className="flex items-center justify-between">
               <Box className="flex items-center gap-4">
                 <Avatar className="h-16 w-16">
-                  {/* Using a generic avatar, replace with user.avatarUrl if available */}
                   <AvatarImage
                     src={`https://i.pravatar.cc/150?u=${user.id}`}
                     alt={user.name}
@@ -323,13 +313,13 @@ export const ViewOrderModal = ({ user }: { user: Customer }) => {
           </Card>
 
           {/* Transaction History Section */}
-          <Box className="bg-white rounded-lg shadow-sm">
+          <Box className="bg-white max-w-[52rem] rounded-lg shadow-sm">
             <Box className="p-6">
               <h3 className="text-lg font-semibold mb-4 text-slate-800">
                 Transaction & Refund History
               </h3>
             </Box>
-            <TableProvider data={orders} columns={columns}>
+            <TableProvider data={tableData} columns={columns}>
               {() => <TableComponent isLoading={isLoading} />}
             </TableProvider>
           </Box>

@@ -2,6 +2,7 @@ import { AlertTriangle, CheckCircle2 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { cn } from "../../lib/utils";
 import underline from "/images/underline_2.svg";
+import { useRecentActivities } from "@/hooks/activity/usefetchactivity";
 
 type ActivityItemProps = {
   icon: React.ElementType;
@@ -22,57 +23,59 @@ function ActivityItem({
   );
 }
 
-const invoiceActivities = [
-  { text: "John Doe — IP flagged in 3 stores" },
-  { text: "jane@mail.com — Refund flagged 2 times" },
-  { text: "192.168.1.21 — Used across 4 shops" },
-];
-
-const retailerActivities = [
-  { text: "Dior synced 4 flagged users" },
-  { text: "Gucci exported report" },
-  { text: "Zara updated flagged tag settings" },
-];
-
 export function RecentActivitySection() {
+  const { data: activities, isLoading, error } = useRecentActivities(10);
+
+  // split or filter as you like:
+  const invoiceActivities = activities?.filter((a) =>
+    a.for === "customer"
+  ) ?? [];
+  const retailerActivities = activities?.filter((a) =>
+    a.for === "store"
+  ) ?? [];
+
   return (
-    // Use a grid to create the two-column layout
     <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
-      {/* 1. Most Recent Invoice Activities Card */}
       <Card className="border-0 bg-white">
         <CardHeader>
-          <CardTitle className="text-lg">
-            Most Recent Invoice Activities
-          </CardTitle>
+          <CardTitle className="text-lg">Recent Customer Activities</CardTitle>
           <img src={underline} />
         </CardHeader>
         <CardContent className="space-y-3">
-          {invoiceActivities.map((activity) => (
+          {isLoading && <p>Loading...</p>}
+          {error && <p className="text-red-500">Error: {error.message}</p>}
+          {invoiceActivities.map((act) => (
             <ActivityItem
-              key={activity.text}
+              key={act.id}
               icon={AlertTriangle}
               iconClassName="text-red-500"
             >
-              {activity.text}
+              {`${act.action} — ${
+                act.meta?.reason ??
+                act.meta?.ip ??
+                act.customerId ??
+                ""
+              }`}
             </ActivityItem>
           ))}
         </CardContent>
       </Card>
 
-      {/* 2. Recent Retailer Activity Card */}
       <Card className="border-0 bg-white">
         <CardHeader className="w-full">
-          <CardTitle className="text-lg">Recent Retailer Activity</CardTitle>
+          <CardTitle className="text-lg">Recent Store Activities</CardTitle>
           <img src={underline} />
         </CardHeader>
         <CardContent className="space-y-3">
-          {retailerActivities.map((activity) => (
+          {isLoading && <p>Loading...</p>}
+          {error && <p className="text-red-500">Error: {error.message}</p>}
+          {retailerActivities.map((act) => (
             <ActivityItem
-              key={activity.text}
+              key={act.id}
               icon={CheckCircle2}
               iconClassName="text-green-600"
             >
-              {activity.text}
+              {`${act.action} — Store ${act.storeId}`}
             </ActivityItem>
           ))}
         </CardContent>
