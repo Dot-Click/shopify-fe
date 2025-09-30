@@ -24,6 +24,8 @@ import ResetPasswordPage from "./pages/reset.page";
 import AcceptInvitation from "./pages/acceptinvitation.page";
 import CreateStore from "./pages/createstores.page";
 import UserReport from "./pages/userreport.page";
+import { ProtectedRoute } from "./layout/protectroute";
+import { AdminProtectedRoute } from "./layout/adminprotectroute";
 
 export const Router = () => {
   return (
@@ -46,20 +48,22 @@ export const Router = () => {
         {/* Protected Routes with Sidebar Layout */}
         <Route
           element={
-            <Layout>
-              <Outlet />
-            </Layout>
+            <ProtectedRoute>
+              <Layout>
+                <Outlet />
+              </Layout>
+            </ProtectedRoute>
           }
         >
-          <Route path="/admin/dashboard" element={<Dashboard />} />
+          <Route path="/admin/dashboard" element={<AdminProtectedRoute> <Dashboard /></AdminProtectedRoute>} />
           <Route
             path="/admin/customer-management"
             element={<UserManagement />}
           />
-          <Route path="/admin/store-management" element={<StoreManagement />} />
-          <Route path="/admin/report-analysis" element={<ReportAnalysis />} />
-          <Route path="/admin/create-store" element={<CreateStore />} />
-          <Route path="/admin/settings" element={<Settings />} />
+          <Route path="/admin/store-management" element={<AdminProtectedRoute> <StoreManagement /></AdminProtectedRoute>} />
+          <Route path="/admin/report-analysis" element={<AdminProtectedRoute> <ReportAnalysis /></AdminProtectedRoute>} />
+          <Route path="/admin/create-store" element={<AdminProtectedRoute> <CreateStore /></AdminProtectedRoute>} />
+          <Route path="/admin/settings" element={<AdminProtectedRoute> <Settings /></AdminProtectedRoute>} />
           <Route
             path="/user/customer-management"
             element={<CustomerManagement />}

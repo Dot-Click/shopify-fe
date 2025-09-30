@@ -2,8 +2,8 @@ import { type ColumnDef } from "@tanstack/react-table";
 import {
   ArrowUpDown,
   //   Eye,
+  // MoreVertical,
   Filter as FilterIcon,
-  MoreVertical,
 } from "lucide-react";
 
 import { Box } from "../components/ui/box";
@@ -17,12 +17,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../components/ui/select";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "../components/ui/dropdown-menu";
+
 
 import { TableProvider } from "../providers/table.provider";
 import {
@@ -35,6 +30,7 @@ import { cn } from "../lib/utils";
 import { useFetchAllCustomers } from "../hooks/shopifycustomers/usefetchcustomers";
 import { ViewOrderModal } from "../components/modals/vieworder.modal";
 import { useSearchParams } from "react-router-dom";
+import { useBlockCustomer } from "@/hooks/shopifycustomers/useblockcustomer";
 
 interface Customer {
   id: string;
@@ -92,6 +88,8 @@ function CustomerManagement() {
 
   const [searchParams] = useSearchParams();
   const search = searchParams.get("search")?.toLowerCase() || "";
+  const { mutate: block } = useBlockCustomer();
+
 
   const filteredCustomers = (customers || []).filter((c) => {
     const id = c.id?.toLowerCase() || "";
@@ -151,22 +149,15 @@ function CustomerManagement() {
       cell: ({ row }) => (
         <Box className="flex items-center gap-2">
           <ViewOrderModal user={row.original} />
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="destructive"
-                size="sm"
-                className="bg-red-600 hover:bg-red-700 text-white"
-              >
-                Block
-                <MoreVertical className="ml-2 h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="bg-white">
-              <DropdownMenuItem>Block from this store</DropdownMenuItem>
-              <DropdownMenuItem>Block from all stores</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <Button
+            variant="destructive"
+            size="sm"
+            className="bg-red-600 hover:bg-red-700 text-white py-4.5 px-5w"
+            onClick={() => block(row.original.id)}
+          >
+            Block
+            {/* <MoreVertical className="ml-2 h-4 w-4" /> */}
+          </Button>
         </Box>
       ),
     },
