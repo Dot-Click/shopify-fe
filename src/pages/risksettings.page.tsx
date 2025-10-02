@@ -65,7 +65,7 @@ function RiskSettings() {
   };
 
   return (
-    <Box>
+    <Box className="bg-white p-4 shadow-sm rounded-lg">
       <h1 className="text-2xl font-bold text-slate-800 mb-6">
         Risk Detection Settings
       </h1>

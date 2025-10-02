@@ -1,10 +1,5 @@
 import { type ColumnDef } from "@tanstack/react-table";
-import {
-  ArrowUpDown,
-  //   Eye,
-  // MoreVertical,
-  Filter as FilterIcon,
-} from "lucide-react";
+import { ArrowUpDown, Filter as FilterIcon } from "lucide-react";
 
 import { Box } from "../components/ui/box";
 import { Button } from "../components/ui/button";
@@ -18,7 +13,6 @@ import {
   SelectValue,
 } from "../components/ui/select";
 
-
 import { TableProvider } from "../providers/table.provider";
 import {
   TableComponent,
@@ -31,6 +25,7 @@ import { useFetchAllCustomers } from "../hooks/shopifycustomers/usefetchcustomer
 import { ViewOrderModal } from "../components/modals/vieworder.modal";
 import { useSearchParams } from "react-router-dom";
 import { useBlockCustomer } from "@/hooks/shopifycustomers/useblockcustomer";
+import { useState, useMemo } from "react";
 
 interface Customer {
   id: string;
@@ -42,6 +37,7 @@ interface Customer {
     url: string;
   };
   riskLevel: number;
+  blocked: boolean;
   refundsFromStores: number;
 }
 
@@ -72,7 +68,6 @@ const RiskLevelIndicator = ({ level }: { level: number }) => (
   </div>
 );
 
-// Refunds Badge Component
 const RefundsBadge = ({ level, count }: { level: number; count: number }) => (
   <Badge
     variant="outline"
@@ -90,16 +85,41 @@ function CustomerManagement() {
   const search = searchParams.get("search")?.toLowerCase() || "";
   const { mutate: block } = useBlockCustomer();
 
+  const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
 
-  const filteredCustomers = (customers || []).filter((c) => {
-    const id = c.id?.toLowerCase() || "";
-    const name = c.name?.toLowerCase() || "";
-    const email = c.customerEmail?.toLowerCase() || "";
+  const [sortRisk, setSortRisk] = useState<"asc" | "desc" | null>(null);
+  const [blockedFilter, setBlockedFilter] = useState<
+    "all" | "blocked" | "unblocked"
+  >("all");
 
-    return (
-      id.includes(search) || name.includes(search) || email.includes(search)
-    );
-  });
+  // Filtering + Sorting
+  const filteredCustomers = useMemo(() => {
+    let result = (customers || []).filter((c) => {
+      const id = c.id?.toLowerCase() || "";
+      const name = c.name?.toLowerCase() || "";
+      const email = c.customerEmail?.toLowerCase() || "";
+
+      const matchesSearch =
+        id.includes(search) || name.includes(search) || email.includes(search);
+
+      const matchesBlocked =
+        blockedFilter === "all" ||
+        (blockedFilter === "blocked" && c.blocked) ||
+        (blockedFilter === "unblocked" && !c.blocked);
+
+      return matchesSearch && matchesBlocked;
+    });
+
+    if (sortRisk) {
+      result = [...result].sort((a, b) =>
+        sortRisk === "asc"
+          ? a.riskLevel - b.riskLevel
+          : b.riskLevel - a.riskLevel
+      );
+    }
+
+    return result;
+  }, [customers, search, blockedFilter, sortRisk]);
 
   const columns: ColumnDef<Customer>[] = [
     {
@@ -124,7 +144,6 @@ function CustomerManagement() {
         </Box>
       ),
     },
-
     {
       accessorKey: "riskLevel",
       header: (info) => (
@@ -142,22 +161,31 @@ function CustomerManagement() {
         />
       ),
     },
-    // Actions column with View and Block buttons
     {
       id: "actions",
       header: (info) => <SortedHeader header={info.header} label="Actions" />,
       cell: ({ row }) => (
         <Box className="flex items-center gap-2">
           <ViewOrderModal user={row.original} />
-          <Button
-            variant="destructive"
-            size="sm"
-            className="bg-red-600 hover:bg-red-700 text-white py-4.5 px-5w"
-            onClick={() => block(row.original.id)}
-          >
-            Block
-            {/* <MoreVertical className="ml-2 h-4 w-4" /> */}
-          </Button>
+          {row.original.blocked ? (
+            <Button
+              variant="destructive"
+              size="sm"
+              className="bg-red-600 hover:bg-red-700 text-white"
+              onClick={() => block(row.original.id)}
+            >
+              Block
+            </Button>
+          ) : (
+            <Button
+              variant="destructive"
+              size="sm"
+              className="bg-blue-400 hover:bg-blue-700 text-white"
+              onClick={() => block(row.original.id)}
+            >
+              Unblock
+            </Button>
+          )}
         </Box>
       ),
     },
@@ -165,38 +193,80 @@ function CustomerManagement() {
 
   return (
     <Box className="rounded-lg bg-white shadow-sm">
-      {/* Page Header */}
       <header className="flex flex-wrap items-center p-6 justify-between gap-4">
         <h1 className="text-2xl font-bold text-slate-800">
           Customer Management
         </h1>
         <div className="flex items-center gap-3">
-          <div className="flex items-center gap-2 text-sm text-slate-600">
-            <span>Showing</span>
-            <Select defaultValue="10">
-              <SelectTrigger className="w-24 border-slate-300">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent className="bg-white">
-                <SelectItem value="10">10</SelectItem>
-                <SelectItem value="25">25</SelectItem>
-                <SelectItem value="50">50</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <Button variant="outline" className="text-slate-700 border-slate-300">
-            <ArrowUpDown className="mr-2 h-4 w-4" /> Sort by
+          {/* Blocked Filter */}
+          <Select
+            value={blockedFilter}
+            onValueChange={(val) =>
+              setBlockedFilter(val as "all" | "blocked" | "unblocked")
+            }
+          >
+            <SelectTrigger className="w-32 border-slate-300 bg-white">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent className="bg-white">
+              <SelectItem value="all">All</SelectItem>
+              <SelectItem value="blocked">Blocked</SelectItem>
+              <SelectItem value="unblocked">Unblocked</SelectItem>
+            </SelectContent>
+          </Select>
+
+          {/* Sort by Risk */}
+          <Button
+            variant="outline"
+            className="text-slate-700 border-slate-300"
+            onClick={() =>
+              setSortRisk((prev) =>
+                prev === "asc" ? "desc" : prev === "desc" ? null : "asc"
+              )
+            }
+          >
+            <ArrowUpDown className="mr-2 h-4 w-4" />
+            {sortRisk === "asc"
+              ? "Risk ↑"
+              : sortRisk === "desc"
+              ? "Risk ↓"
+              : "Sort by Risk"}
           </Button>
+
           <Button
             size="sm"
             className="bg-blue-600 hover:bg-blue-700 text-white"
+            onClick={() => setIsFilterModalOpen(true)}
           >
-            <FilterIcon className="mr-2 h-4 w-4" /> Filter
+            <FilterIcon className="mr-2 h-4 w-4" /> More Filters
           </Button>
         </div>
       </header>
 
-      {/* Table Section */}
+      {isFilterModalOpen && (
+        <Box className="p-6 pt-0 border-b border-slate-200">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {/* Add your other filter components here */}
+            <div>
+              <label className="text-sm font-medium text-slate-600">
+                Filter by Date
+              </label>
+              <Select /* value={dateFilter} onValueChange={setDateFilter} */>
+                <SelectTrigger className="w-full border-slate-300 bg-white mt-1">
+                  <SelectValue placeholder="Select Date Range" />
+                </SelectTrigger>
+                <SelectContent className="bg-white">
+                  <SelectItem value="all-time">All Time</SelectItem>
+                  <SelectItem value="last-7-days">Last 7 Days</SelectItem>
+                  <SelectItem value="last-30-days">Last 30 Days</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            {/* Add more filters as needed */}
+          </div>
+        </Box>
+      )}
+
       <Box className="mt-6">
         <TableProvider
           data={filteredCustomers}

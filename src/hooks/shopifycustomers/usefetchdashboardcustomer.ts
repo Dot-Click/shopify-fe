@@ -10,6 +10,7 @@ export type Customer = {
   phone?: string | null;
   riskLevel: number;
   refundsFromStores: number;
+  blocked: boolean;
 };
 
 export const useFetchDashboardCustomers = () => {

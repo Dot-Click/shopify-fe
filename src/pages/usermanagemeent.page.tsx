@@ -1,6 +1,9 @@
+// NEW: Import useState and useMemo for state management and performance
+import { useState, useMemo } from "react";
 import { type ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown, Eye, Filter as FilterIcon } from "lucide-react";
 
+// --- All your other imports are unchanged ---
 import { Box } from "../components/ui/box";
 import { Button } from "../components/ui/button";
 import { Checkbox } from "../components/ui/checkbox";
@@ -11,15 +14,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../components/ui/select";
-import { TableProvider } from "../providers/table.provider"; // Adjust path if needed
+import { TableProvider } from "../providers/table.provider";
 import {
   TableComponent,
   SortedHeader,
   checkBoxProps,
-} from "../components/common/tablecomponent"; // IMPORTANT: Adjust path
+} from "../components/common/tablecomponent";
 import { cn } from "../lib/utils";
 import { Dialog, DialogTrigger } from "../components/ui/dialog";
-// import { ReportSummaryModal } from "../components/common/modal";
 import {
   useFetchDashboardCustomers,
   type Customer,
@@ -31,8 +33,7 @@ import {
 } from "../components/ui/tooltip";
 import { useSearchParams } from "react-router-dom";
 
-// --- 1. Data Structure and Mock Data ---
-
+// --- All your helper components (RiskLevelIndicator, TruncatedCell, etc.) and the 'columns' array are unchanged. ---
 const getRiskColor = (level: number) => {
   if (level > 75) return "bg-red-400";
   if (level > 40) return "bg-orange-400";
@@ -55,13 +56,10 @@ const TruncatedCell = ({ text }: { text: string | null }) => {
   if (!text) {
     return <span className="text-slate-400">N/A</span>;
   }
-
-  // Truncation logic: show first 6...last 4 for long strings
   const truncatedText =
     text.length > 15
       ? `${text.substring(0, 6)}...${text.substring(text.length - 4)}`
       : text;
-
   return (
     <Tooltip delayDuration={150}>
       <TooltipTrigger asChild>
@@ -75,14 +73,12 @@ const TruncatedCell = ({ text }: { text: string | null }) => {
 };
 
 const columns: ColumnDef<Customer>[] = [
-  // Checkbox column using the helper function
   {
     id: "select",
     header: (info) => <Checkbox {...checkBoxProps(info)} />,
     cell: (info) => <Checkbox {...checkBoxProps(info)} />,
     enableSorting: false,
   },
-  // Data columns with the SortedHeader component
   {
     accessorKey: "id",
     header: (info) => <SortedHeader header={info.header} label="User ID" />,
@@ -113,7 +109,6 @@ const columns: ColumnDef<Customer>[] = [
     header: "Risk Level",
     cell: ({ row }) => <RiskLevelIndicator level={row.original.riskLevel} />,
   },
-  // Actions column
   {
     id: "actions",
     cell: () => (
@@ -127,8 +122,6 @@ const columns: ColumnDef<Customer>[] = [
             <Eye className="mr-2 h-4 w-4" /> View Detail
           </Button>
         </DialogTrigger>
-        {/* The DialogContent is our custom modal, receiving the user data for this row */}
-        {/* <ReportSummaryModal user={row.original} /> */}
       </Dialog>
     ),
   },
@@ -136,19 +129,49 @@ const columns: ColumnDef<Customer>[] = [
 
 function UserManagement() {
   const { data: customers, isLoading, error } = useFetchDashboardCustomers();
-
   const [searchParams] = useSearchParams();
   const search = searchParams.get("search")?.toLowerCase() || "";
 
-  const filteredCustomers = (customers || []).filter((c) => {
-    const id = c.id?.toLowerCase() || "";
-    const name = c.name?.toLowerCase() || "";
-    const email = c.email?.toLowerCase() || "";
+  // --- STATE MANAGEMENT ---
+  const [sortRisk, setSortRisk] = useState<"asc" | "desc" | null>(null);
+  const [showFilterSection, setShowFilterSection] = useState(false);
+  // NEW: State for the risk filter dropdown
+  const [riskFilter, setRiskFilter] = useState<
+    "all" | "high" | "medium" | "low"
+  >("all");
 
-    return (
-      id.includes(search) || name.includes(search) || email.includes(search)
-    );
-  });
+  // --- DATA PROCESSING ---
+  const processedCustomers = useMemo(() => {
+    let result = (customers || []).filter((c) => {
+      // 1. Search filter logic (unchanged)
+      const id = c.id?.toLowerCase() || "";
+      const name = c.name?.toLowerCase() || "";
+      const email = c.email?.toLowerCase() || "";
+      const matchesSearch =
+        id.includes(search) || name.includes(search) || email.includes(search);
+
+      // 2. NEW: Risk filter logic
+      const matchesRisk =
+        riskFilter === "all" ||
+        (riskFilter === "high" && c.riskLevel > 75) ||
+        (riskFilter === "medium" && c.riskLevel > 40 && c.riskLevel <= 75) ||
+        (riskFilter === "low" && c.riskLevel <= 40);
+
+      return matchesSearch && matchesRisk;
+    });
+
+    // 3. Sorting logic (unchanged)
+    if (sortRisk) {
+      result = [...result].sort((a, b) => {
+        return sortRisk === "asc"
+          ? a.riskLevel - b.riskLevel
+          : b.riskLevel - a.riskLevel;
+      });
+    }
+
+    return result;
+    // UPDATED: Add riskFilter to the dependency array
+  }, [customers, search, sortRisk, riskFilter]);
 
   if (error) {
     return (
@@ -161,43 +184,72 @@ function UserManagement() {
 
   return (
     <Box className="rounded-xl bg-white shadow-sm">
-      {/* Page Header */}
       <header className="flex flex-wrap items-center justify-between gap-4 pt-5 px-7">
-        <h1 className="text-2xl font-semibold text-slate-800  ">
+        <h1 className="text-2xl font-semibold text-slate-800">
           Customer Management
         </h1>
         <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2 text-sm">
-            <span>Showing</span>
-            <Select defaultValue="10">
-              <SelectTrigger className="w-20 border-slate-300 text-slate-700 text-sm">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent className="bg-white">
-                <SelectItem value="10">10</SelectItem>
-                <SelectItem value="25">25</SelectItem>
-                <SelectItem value="50">50</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+          {/* ... */}
           <Button
             variant="outline"
             className="text-slate-700 border-slate-300 hover:bg-slate-100"
+            onClick={() =>
+              setSortRisk((prev) =>
+                prev === "asc" ? "desc" : prev === "desc" ? null : "asc"
+              )
+            }
           >
-            <ArrowUpDown className="mr-2 h-4 w-4" /> Sort by
+            <ArrowUpDown className="mr-2 h-4 w-4" />
+            {sortRisk === "asc"
+              ? "Risk ↑"
+              : sortRisk === "desc"
+              ? "Risk ↓"
+              : "Sort by Risk"}
           </Button>
+
           <Button
             size="sm"
             className="bg-blue-600 hover:bg-blue-700 text-white rounded-md px-4 py-1.5 text-sm"
+            onClick={() => setShowFilterSection(!showFilterSection)}
           >
             <FilterIcon className="mr-2 h-4 w-4" /> Filter
           </Button>
         </div>
       </header>
 
-      {/* Table Section */}
+      {/* UPDATED: Filter section with a functional dropdown */}
+      {showFilterSection && (
+        <Box className="p-7 pt-4 border-t border-slate-200 mt-4">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            {/* Filter control for Risk Level */}
+            <div>
+              <label className="text-sm font-medium text-slate-600 block mb-1">
+                Filter by Risk
+              </label>
+              <Select
+                value={riskFilter}
+                onValueChange={(val) =>
+                  setRiskFilter(val as "all" | "high" | "medium" | "low")
+                }
+              >
+                <SelectTrigger className="w-full border-slate-300 bg-white">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className="bg-white">
+                  <SelectItem value="all">All Risk Levels</SelectItem>
+                  <SelectItem value="high">High Risk (&gt;75%)</SelectItem>
+                  <SelectItem value="medium">Medium Risk (41-75%)</SelectItem>
+                  <SelectItem value="low">Low Risk (&le;40%)</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            {/* You can add more filter controls here */}
+          </div>
+        </Box>
+      )}
+
       <main className="mt-6">
-        <TableProvider data={filteredCustomers} columns={columns}>
+        <TableProvider data={processedCustomers} columns={columns}>
           {() => <TableComponent isLoading={isLoading} />}
         </TableProvider>
       </main>

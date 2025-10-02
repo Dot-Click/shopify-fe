@@ -23,16 +23,16 @@ export const Footer = () => {
       />
 
       {/* Main Footer Content */}
-      <Box className="relative z-10 container mx-auto px-22 pt-48">
+      <Box className="relative z-10 container mx-auto px-22 max-sm:px-6 pt-48">
         {/* CTA Section */}
         <Box className="mx-auto max-w-2xl text-center pb-24">
-          <h2 className="text-4xl font-bold">
+          <h2 className="text-4xl font-bold max-sm:text-3xl">
             <span className="bg-[#141E20] text-[#28A745] px-3 py-1">
               Ready to
             </span>{" "}
             Protect Your Store?
           </h2>
-          <p className="mt-4 text-lg text-gray-200">
+          <p className="mt-4 text-lg text-gray-200 max-sm:text-sm">
             Join the growing network of Shopify merchants using{" "}
             <b>eComProtect</b> to fight back against risk in real-time.
           </p>
@@ -45,7 +45,7 @@ export const Footer = () => {
         </Box>
 
         {/* Footer Links Grid */}
-        <Box className="grid grid-cols-1 gap-y-10 gap-x-8 pt-12 md:grid-cols-2 lg:grid-cols-5 lg:gap-x-12">
+        <Box className="grid grid-cols-1 gap-y-10 gap-x-8  pt-12 md:grid-cols-2 lg:grid-cols-5 lg:gap-x-12">
           <div className="space-y-4 lg:col-span-2">
             <img src={logo} alt="eComProtect Logo" className="h-9" />
             <p className="text-gray-300 pr-22">

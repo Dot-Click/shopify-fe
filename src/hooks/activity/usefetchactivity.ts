@@ -13,7 +13,7 @@ export interface Activity {
   createdAt: string;
 }
 
-export function useRecentActivities(limit = 10) {
+export function useRecentActivities(limit = 3) {
   return useQuery<Activity[], ErrorWithMessage>({
     queryKey: ["recentActivities", limit],
     queryFn: async () => {

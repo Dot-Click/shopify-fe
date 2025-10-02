@@ -30,7 +30,7 @@ export const Home = () => {
       <Navbar />
 
       <main className="container relative z-10 mx-auto flex h-full items-center px-6">
-        <Box className="flex w-full flex-col items-start lg:w-1/2">
+        <Box className="flex w-full flex-col items-start lg:w-11/12 px-32 max-sm:px-6">
           <h1 className="text-5xl font-bold leading-tight md:text-6xl max-sm:text-3xl">
             Stop-Parcel Risk Before <br /> It Hits Your Bottom Line.
           </h1>

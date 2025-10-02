@@ -406,7 +406,7 @@ export const SignupForm = () => {
             </Box>
 
             <Button
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white py-6 rounded-xl mt-4"
+              className="w-full cursor-pointer bg-blue-600 hover:bg-blue-700 text-white py-6 rounded-xl mt-4"
               type="submit"
               disabled={isLoading}
             >

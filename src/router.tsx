@@ -55,15 +55,50 @@ export const Router = () => {
             </ProtectedRoute>
           }
         >
-          <Route path="/admin/dashboard" element={<AdminProtectedRoute> <Dashboard /></AdminProtectedRoute>} />
+          <Route
+            path="/admin/dashboard"
+            element={
+              <AdminProtectedRoute>
+                <Dashboard />
+              </AdminProtectedRoute>
+            }
+          />
           <Route
             path="/admin/customer-management"
             element={<UserManagement />}
           />
-          <Route path="/admin/store-management" element={<AdminProtectedRoute> <StoreManagement /></AdminProtectedRoute>} />
-          <Route path="/admin/report-analysis" element={<AdminProtectedRoute> <ReportAnalysis /></AdminProtectedRoute>} />
-          <Route path="/admin/create-store" element={<AdminProtectedRoute> <CreateStore /></AdminProtectedRoute>} />
-          <Route path="/admin/settings" element={<AdminProtectedRoute> <Settings /></AdminProtectedRoute>} />
+          <Route
+            path="/admin/store-management"
+            element={
+              <AdminProtectedRoute>
+                <StoreManagement />
+              </AdminProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/report-analysis"
+            element={
+              <AdminProtectedRoute>
+                <ReportAnalysis />
+              </AdminProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/create-store"
+            element={
+              <AdminProtectedRoute>
+                <CreateStore />
+              </AdminProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/settings"
+            element={
+              <AdminProtectedRoute>
+                <Settings />
+              </AdminProtectedRoute>
+            }
+          />
           <Route
             path="/user/customer-management"
             element={<CustomerManagement />}

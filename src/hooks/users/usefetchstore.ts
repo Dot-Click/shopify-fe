@@ -7,7 +7,7 @@ export const useFetchAllStores = () => {
     queryKey: ["all-stores"],
     queryFn: async () => {
       const response = await axios.get("/user/fetch");
-      console.log(response)
+      console.log(response);
       return response.data.data;
     },
     staleTime: 1000 * 60 * 15,

@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useState, useMemo } from "react"; // Correctly imported
 import { type ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown, Filter as FilterIcon } from "lucide-react";
 import { Box } from "../components/ui/box";
@@ -25,11 +26,11 @@ import {
   checkBoxProps,
 } from "../components/common/tablecomponent";
 import { useFetchAllStores } from "../hooks/users/usefetchstore";
-
 import { useUpdateUserVerification } from "../hooks/users/useupdatestorestatus";
 import { useSearchParams } from "react-router-dom";
 
 export type Store = {
+  // ... (type is unchanged)
   id: string;
   company_name: string;
   average_orders_per_month: string;
@@ -44,22 +45,47 @@ function StoreManagement() {
   const { data: stores, isLoading: isLoadingStores } = useFetchAllStores();
   const { mutate: updateUser, isPending: isUpdating } =
     useUpdateUserVerification();
-
   const [searchParams] = useSearchParams();
   const search = searchParams.get("search")?.toLowerCase() || "";
 
-  const filteredCustomers = (stores || []).filter((c) => {
-    const id = c.id?.toLowerCase() || "";
-    const name = c.company_name?.toLowerCase() || "";
-    const email = c.email?.toLowerCase() || "";
+  // State management is correct and remains the same
+  const [showMoreFilters, setShowMoreFilters] = useState(false);
+  const [statusFilter, setStatusFilter] = useState<
+    "all" | "approved" | "pending"
+  >("all");
+  const [sortDate, setSortDate] = useState<"asc" | "desc" | null>(null);
 
-    return (
-      id.includes(search) || name.includes(search) || email.includes(search)
-    );
-  });
+  // Data processing logic is correct and remains the same
+  const processedStores = useMemo(() => {
+    let result = (stores || []).filter((c) => {
+      const id = c.id?.toLowerCase() || "";
+      const name = c.company_name?.toLowerCase() || "";
+      const email = c.email?.toLowerCase() || "";
+      const matchesSearch =
+        id.includes(search) || name.includes(search) || email.includes(search);
+
+      const matchesStatus =
+        statusFilter === "all" ||
+        (statusFilter === "approved" && c.emailVerified) ||
+        (statusFilter === "pending" && !c.emailVerified);
+
+      return matchesSearch && matchesStatus;
+    });
+
+    if (sortDate) {
+      result = [...result].sort((a, b) => {
+        const dateA = new Date(a.createdAt).getTime();
+        const dateB = new Date(b.createdAt).getTime();
+        return sortDate === "asc" ? dateA - dateB : dateB - dateA;
+      });
+    }
+
+    return result;
+  }, [stores, search, statusFilter, sortDate]);
 
   const columns: ColumnDef<Store>[] = React.useMemo(
     () => [
+      // Column definitions are unchanged
       {
         id: "select",
         header: (info) => <Checkbox {...checkBoxProps(info)} />,
@@ -103,7 +129,7 @@ function StoreManagement() {
         ),
         cell: (info) => {
           const createdAt = info.getValue() as string;
-          return <span>{new Date(createdAt).toLocaleDateString()}</span>;
+          return <span>{new Date(createdAt).toDateString()}</span>;
         },
       },
       {
@@ -118,7 +144,7 @@ function StoreManagement() {
                   store.emailVerified ? "bg-green-400" : "bg-red-400"
                 } text-[#fff] px-2 py-1 rounded-md`}
               >
-                {store.emailVerified ? "Approve" : "Pending"}
+                {store.emailVerified ? "Approved" : "Pending"}
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="bg-white border-0">
                 {store.emailVerified ? (
@@ -157,34 +183,67 @@ function StoreManagement() {
           Store Management
         </h1>
         <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2 text-sm">
-            <span>Showing</span>
-            <Select defaultValue="10">
-              <SelectTrigger className="w-20 border-slate-300 text-slate-700 text-sm">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent className="bg-white">
-                <SelectItem value="10">10</SelectItem>
-                <SelectItem value="25">25</SelectItem>
-                <SelectItem value="50">50</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+          {/* Main filter dropdown has been REMOVED from here */}
+
           <Button
             variant="outline"
             className="text-slate-700 border-slate-300 hover:bg-slate-100"
+            onClick={() =>
+              setSortDate((prev) =>
+                prev === "desc" ? "asc" : prev === "asc" ? null : "desc"
+              )
+            }
           >
-            <ArrowUpDown className="mr-2 h-4 w-4" /> Sort by
+            <ArrowUpDown className="mr-2 h-4 w-4" />
+            {sortDate === "desc"
+              ? "Newest"
+              : sortDate === "asc"
+              ? "Oldest"
+              : "Sort by Date"}
           </Button>
-          <Button className="bg-blue-600 hover:bg-blue-700 text-white">
+
+          <Button
+            className="bg-blue-600 hover:bg-blue-700 text-white"
+            onClick={() => setShowMoreFilters(!showMoreFilters)}
+          >
             <FilterIcon className="mr-2 h-4 w-4" /> Filter
           </Button>
         </div>
       </header>
 
+      {/* Conditionally rendered filter section */}
+      {showMoreFilters && (
+        <Box className="p-5 border-t border-slate-200 mt-4">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            {/* The Status Filter dropdown is now MOVED here */}
+            <div>
+              <label className="text-sm font-medium text-slate-600 block mb-1">
+                Filter by Status
+              </label>
+              <Select
+                value={statusFilter}
+                onValueChange={(value) =>
+                  setStatusFilter(value as "all" | "approved" | "pending")
+                }
+              >
+                <SelectTrigger className="w-full border-slate-300 bg-white">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className="bg-white">
+                  <SelectItem value="all">All</SelectItem>
+                  <SelectItem value="approved">Approved</SelectItem>
+                  <SelectItem value="pending">Pending</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            {/* You can add more filters here in the future */}
+          </div>
+        </Box>
+      )}
+
       {/* Table Section */}
       <main className="mt-6">
-        <TableProvider data={filteredCustomers} columns={columns}>
+        <TableProvider data={processedStores} columns={columns}>
           {() => <TableComponent isLoading={isLoading} />}
         </TableProvider>
       </main>

@@ -12,6 +12,7 @@ export type Customer = {
   };
   riskLevel: number;
   refundsFromStores: number;
+  blocked?: boolean;
 };
 
 export const useFetchAllCustomers = () => {

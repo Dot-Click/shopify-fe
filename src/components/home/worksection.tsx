@@ -32,8 +32,8 @@ const steps = [
 
 export const HowItWorksSection = () => {
   return (
-    <Box className="w-full bg-white py-24">
-      <Box className="container mx-auto grid grid-cols-1 items-center gap-16 px-6 lg:grid-cols-2">
+    <Box id="how-it-works" className="w-full bg-white py-24">
+      <Box className="container mx-auto grid grid-cols-1 items-center gap-16 px-32 max-sm:px-8 lg:grid-cols-2">
         {/* Left Column: Text Content */}
         <Box className="flex flex-col justify-center">
           <h2 className="text-5xl font-bold leading-tight text-gray-800 max-sm:text-3xl">

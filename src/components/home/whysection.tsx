@@ -29,37 +29,35 @@ export const WhySection = () => {
   return (
     <Box className="relative w-full bg-white">
       <Box
-        className="absolute inset-0 z-0 bg-cover bg-center opacity-40"
+        className="absolute inset-0 z-0 bg-cover bg-center opacity-100"
         style={{ backgroundImage: `url(${bgTexture})` }}
         aria-hidden="true"
       />
 
       <Box className="container relative z-10 mx-auto px-6 py-24">
         <Box className="mx-auto max-w-3xl text-center">
-          <h2 className="text-4xl font-bold text-gray-800">
+          <h2 className="text-4xl max-sm:text-3xl font-bold text-gray-800">
             Why
             <span className="bg-blue-600 px-3 py-1 text-white">
               eComProtect
             </span>
           </h2>
-          <p className="mt-4 text-lg text-gray-600">
+          <p className="mt-4 text-lg max-sm:text-sm text-gray-600">
             eComProtect delivers speed, accuracy, and peace of mind — empowering
             Shopify merchants to fight risk with total confidence.
           </p>
         </Box>
 
         {/* Features Grid */}
-        <Box className="mt-16 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4 px-16">
+        <Box className="mt-16 grid justify-items-center grid-cols-1 md:grid-cols-2 lg:grid-cols-4 px-64 max-sm:px-8">
           {features.map((feature, index) => (
-            // Card Container: No fixed height, flex-col for structure
             <Box
               key={index}
-              className="flex flex-col h-80 rounded-2xl bg-gradient-to-b from-[#fff] to-[#FFF6FA] shadow-lg"
+              className="flex flex-col h-72 w-52 rounded-2xl bg-gradient-to-b from-[#fff] to-[#FFF6FA] shadow-lg"
             >
-              {/* This inner div adds padding and controls the content layout */}
               <div className="flex flex-grow flex-col">
-                <div className="w-max border-l-8 border-blue-600 bg-[#18181B] p-4 text-white mt-8 ">
-                  <h3 className="font-semibold">{feature.title}</h3>
+                <div className="mr-10 border-l-8 pl-2 h-16  border-blue-600 bg-[#18181B] flex items-center p-1.5 text-white mt-8 ">
+                  <h3 className="font-medium">{feature.title}</h3>
                 </div>
 
                 <div className="flex-grow pt-6 px-4">

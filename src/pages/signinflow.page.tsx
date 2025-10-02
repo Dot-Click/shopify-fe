@@ -4,7 +4,7 @@ import { Button } from "../components/ui/button";
 import { ShieldCheck, BarChart2, Briefcase, Loader2 } from "lucide-react";
 import { axios } from "../configs/axios.config";
 import { authClient } from "../providers/user.provider";
-import underreview from "/images/bg_profile.png";
+import underreview from "/images/bg_profile (1).png";
 import logo from "/images/logo.png";
 import { Box } from "@/components/ui/box";
 import { Flex } from "@/components/ui/flex";
@@ -244,7 +244,7 @@ const PackageSelectionComponent = ({
 };
 
 const PaymentComponent = () => (
-  <div className="flex flex-col items-center border-0 text-center space-y-6 p-10">
+  <div className="flex flex-col justify-center mx-auto items-center border-0 text-center space-y-6 p-10">
     <Loader2 className="h-16 w-16 text-blue-600 animate-spin" />
     <h1 className="text-3xl font-bold">Redirecting to Payment Setup</h1>
     <p className="text-gray-600">
@@ -282,7 +282,7 @@ const EnterpriseReviewComponent = () => {
   }, [userEmail]);
 
   return (
-    <div className="flex flex-col items-center justify-center text-center space-y-6 p-10">
+    <div className="flex flex-col items-center justify-items-center mx-auto justify-center text-center space-y-6 p-10">
       <img src={underreview} alt="underreview" className="w-1/3" />
 
       <h1 className="text-3xl font-bold">Thank You for Your Application</h1>

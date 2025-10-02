@@ -10,7 +10,7 @@ export const AheadSection = () => {
         backgroundImage: `url(${bgSection})`,
       }}
     >
-      <Box className="container mx-auto grid grid-cols-1 items-center gap-12 px-6 lg:grid-cols-2">
+      <Box className="container mx-auto grid grid-cols-1 items-center gap-12 px-32 lg:grid-cols-2">
         {/* Left Column: Text Content */}
         <Box className="flex flex-col items-start">
           <h2 className="text-5xl font-bold leading-tight max-sm:text-3xl">

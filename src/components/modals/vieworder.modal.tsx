@@ -82,10 +82,8 @@ const InfoItem = ({
   </div>
 );
 
-
 type Order = RiskyOrderResponse["orders"][number];
 type OrderRowData = Order & Omit<RiskyOrderResponse, "orders">;
-
 
 export const ViewOrderModal = ({ user }: { user: Customer }) => {
   const isHighRisk = user.riskLevel > 50;
@@ -96,19 +94,18 @@ export const ViewOrderModal = ({ user }: { user: Customer }) => {
   const { mutate: deleteFlag } = useDeleteFlag();
   const { mutate: block } = useBlockCustomer();
 
-
   const tableData: OrderRowData[] = data
     ? data.orders.map((order) => ({
-      ...order,
-      forceCourierSignedDelivery: data.forceCourierSignedDelivery,
-      photoOnDelivery: data.photoOnDelivery,
-      primaryAction: data.primaryAction,
-      requireESignature: data.requireESignature,
-      sendCancellationEmail: data.sendCancellationEmail,
-    }))
+        ...order,
+        forceCourierSignedDelivery: data.forceCourierSignedDelivery,
+        photoOnDelivery: data.photoOnDelivery,
+        primaryAction: data.primaryAction,
+        requireESignature: data.requireESignature,
+        sendCancellationEmail: data.sendCancellationEmail,
+      }))
     : [];
 
- const columns: ColumnDef<OrderRowData>[] = [
+  const columns: ColumnDef<OrderRowData>[] = [
     {
       accessorKey: "id",
       header: (info) => <SortedHeader header={info.header} label="Order ID" />,
@@ -123,7 +120,9 @@ export const ViewOrderModal = ({ user }: { user: Customer }) => {
       accessorKey: "createdAt",
       header: "Created At",
       cell: ({ row }) => {
-        return <Box>{new Date(row.original.createdAt).toLocaleDateString()}</Box>;
+        return (
+          <Box>{new Date(row.original.createdAt).toLocaleDateString()}</Box>
+        );
       },
     },
     {
@@ -142,7 +141,9 @@ export const ViewOrderModal = ({ user }: { user: Customer }) => {
     {
       accessorKey: "sendCancellationEmail",
       header: "Cancel Email",
-      cell: ({ row }) => <Box>{String(row.original.sendCancellationEmail)}</Box>,
+      cell: ({ row }) => (
+        <Box>{String(row.original.sendCancellationEmail)}</Box>
+      ),
     },
     {
       accessorKey: "forceCourierSignedDelivery",
@@ -249,13 +250,23 @@ export const ViewOrderModal = ({ user }: { user: Customer }) => {
                 </Box>
               </Box>
               <div className="flex gap-2">
-                <Button
-                  className="bg-red-600 text-white hover:bg-red-700 hover:text-white"
-                  onClick={() => block(user?.id)}
-                >
-                  <Ban className="mr-2 h-4 w-4" />
-                  Block Customer
-                </Button>
+                {user.blocked ? (
+                  <Button
+                    className="bg-blue-400 text-white hover:bg-blue-700 hover:text-white"
+                    onClick={() => block(user?.id)}
+                  >
+                    <Ban className="mr-2 h-4 w-4" />
+                    Unblock Customer
+                  </Button>
+                ) : (
+                  <Button
+                    className="bg-red-600 text-white hover:bg-red-700 hover:text-white"
+                    onClick={() => block(user?.id)}
+                  >
+                    <Ban className="mr-2 h-4 w-4" />
+                    Block Customer
+                  </Button>
+                )}
               </div>
             </Box>
             <div>

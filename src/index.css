@@ -87,6 +87,48 @@
   --web-light-red: oklch(0.7632 0.1408 20.89);
 }
 
+@font-face {
+  font-family: "Outfit-Light";
+  src: url("/fonts/Outfit-Light.ttf") format("truetype");
+  font-weight: 300;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Outfit";
+  src: url("/fonts/Outfit-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Outfit-Medium";
+  src: url("/fonts/Outfit-Medium.ttf") format("truetype");
+  font-weight: 500;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Outfit-SemiBold";
+  src: url("/fonts/Outfit-SemiBold.ttf") format("truetype");
+  font-weight: 600;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Outfit-Bold";
+  src: url("/fonts/Outfit-Bold.ttf") format("truetype");
+  font-weight: 700;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Outfit-ExtraBold";
+  src: url("/fonts/Outfit-ExtraBold.ttf") format("truetype");
+  font-weight: 800;
+  font-display: swap;
+}
+
 .dark {
   --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);
@@ -126,6 +168,10 @@
   --web-checkbox-grey: oklch(0.8297 0 0);
   --web-dark-red: oklch(0.6741 0.2136 24.96);
   --web-light-red: oklch(0.7632 0.1408 20.89);
+}
+
+body {
+  font-family: "Outfit";
 }
 
 @theme inline {

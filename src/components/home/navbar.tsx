@@ -6,16 +6,15 @@ import whiteLogo from "/images/logo_white.png";
 
 export const Navbar = () => {
   return (
-    // Using Box as the main header element
     <Box className="absolute left-0 top-0 z-50 w-full text-white">
       <Box className="flex items-center justify-center p-6">
-        <Box className="container flex items-center justify-between">
+        <Box className="container px-16 max-sm:px-6 flex items-center justify-between">
           {/* Left Side: Logo */}
           <Link to="/" className="flex items-center">
             <img
               src={whiteLogo}
               alt="eComProtect Logo"
-              className="h-14 md:h-12 max-sm:h-10"
+              className="h-14 md:h-12 max-sm:h-8"
             />
           </Link>
 
@@ -25,12 +24,26 @@ export const Navbar = () => {
             <Link to="/" className="text-md font-medium hover:text-gray-300">
               Home
             </Link>
-            <Link to="/features" className="text-md  hover:text-gray-300">
+            <button
+              onClick={() =>
+                document.getElementById("how-it-works")?.scrollIntoView({
+                  behavior: "smooth",
+                })
+              }
+              className="text-md  hover:text-gray-300"
+            >
               Features
-            </Link>
-            <Link to="/how-it-works" className="text-md  hover:text-gray-300">
+            </button>
+            <button
+              onClick={() =>
+                document.getElementById("features")?.scrollIntoView({
+                  behavior: "smooth",
+                })
+              }
+              className="text-md  hover:text-gray-300"
+            >
               How It Works
-            </Link>
+            </button>
           </Box>
 
           {/* Right Side: Action Buttons */}

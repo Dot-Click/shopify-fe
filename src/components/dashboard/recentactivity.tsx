@@ -23,27 +23,36 @@ function ActivityItem({
   );
 }
 
+function EmptyStateMessage({ message }: { message: string }) {
+  return (
+    <div className="text-center py-4">
+      <p className="text-sm text-slate-500">{message}</p>
+    </div>
+  );
+}
+
 export function RecentActivitySection() {
   const { data: activities, isLoading, error } = useRecentActivities(10);
 
-  // split or filter as you like:
-  const invoiceActivities = activities?.filter((a) =>
-    a.for === "customer"
-  ) ?? [];
-  const retailerActivities = activities?.filter((a) =>
-    a.for === "store"
-  ) ?? [];
+  const invoiceActivities =
+    activities?.filter((a) => a.for === "customer") ?? [];
+  const retailerActivities = activities?.filter((a) => a.for === "store") ?? [];
 
   return (
     <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
       <Card className="border-0 bg-white">
         <CardHeader>
           <CardTitle className="text-lg">Recent Customer Activities</CardTitle>
-          <img src={underline} />
+          <img src={underline} alt="" />{" "}
         </CardHeader>
         <CardContent className="space-y-3">
           {isLoading && <p>Loading...</p>}
           {error && <p className="text-red-500">Error: {error.message}</p>}
+
+          {!isLoading && !error && invoiceActivities.length === 0 && (
+            <EmptyStateMessage message="No recent customer activity." />
+          )}
+
           {invoiceActivities.map((act) => (
             <ActivityItem
               key={act.id}
@@ -51,10 +60,7 @@ export function RecentActivitySection() {
               iconClassName="text-red-500"
             >
               {`${act.action} — ${
-                act.meta?.reason ??
-                act.meta?.ip ??
-                act.customerId ??
-                ""
+                act.meta?.reason ?? act.meta?.ip ?? act.customerId ?? ""
               }`}
             </ActivityItem>
           ))}
@@ -64,11 +70,16 @@ export function RecentActivitySection() {
       <Card className="border-0 bg-white">
         <CardHeader className="w-full">
           <CardTitle className="text-lg">Recent Store Activities</CardTitle>
-          <img src={underline} />
+          <img src={underline} alt="" />{" "}
         </CardHeader>
         <CardContent className="space-y-3">
           {isLoading && <p>Loading...</p>}
           {error && <p className="text-red-500">Error: {error.message}</p>}
+
+          {!isLoading && !error && retailerActivities.length === 0 && (
+            <EmptyStateMessage message="No recent store activity." />
+          )}
+
           {retailerActivities.map((act) => (
             <ActivityItem
               key={act.id}
