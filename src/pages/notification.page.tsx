@@ -112,13 +112,13 @@ const NotificationItem = ({
         >
           <div className="flex-1">
             <Flex className="items-center mb-2">
-              <Avatar className="h-10 w-10 mr-3">
+              <Avatar className="h-10 w-10 mr-3 shadow-md">
                 <AvatarImage
                   src={""}
                   alt={notification.customerName}
                   className="object-cover"
                 />
-                <AvatarFallback>
+                <AvatarFallback className="bg-blue-200">
                   {notification.customerName.charAt(0)}
                 </AvatarFallback>
               </Avatar>

@@ -5,75 +5,69 @@ import { useEffect, useState, type ReactNode } from "react";
 import { Navigate } from "react-router-dom";
 
 type StaffProtectedRouteProps = {
-    children: ReactNode;
+  children: ReactNode;
 };
 
 export const AdminProtectedRoute = ({ children }: StaffProtectedRouteProps) => {
-    const [hasAccess, setHasAccess] = useState<boolean | null>(null);
+  const [hasAccess, setHasAccess] = useState<boolean | null>(null);
 
-    useEffect(() => {
-        const checkSession = async () => {
-            const session = await authClient.getSession();
-            const userRole = session?.data?.user?.role;
+  useEffect(() => {
+    const checkSession = async () => {
+      const session = await authClient.getSession();
+      const userRole = session?.data?.user?.role;
 
-            setHasAccess(
-                userRole === "admin" ||
-                userRole === "subAdmin" ||
-                userRole === "manager"
-            );
-        };
+      setHasAccess(
+        userRole === "admin" || userRole === "subAdmin" || userRole === "user"
+      );
+    };
 
-        checkSession();
-    }, []);
+    checkSession();
+  }, []);
 
-    if (hasAccess === null) {
-        return (
-            <Flex
-                className="w-full h-[100vh] justify-center items-center"
-            >
-                <Spinner size={"lg"} />
-            </Flex>
-        );
-    }
+  if (hasAccess === null) {
+    return (
+      <Flex className="w-full h-[100vh] justify-center items-center">
+        <Spinner />
+      </Flex>
+    );
+  }
 
-    if (!hasAccess) {
-        return <Navigate to="/admin-signin" replace />;
-    }
+  if (!hasAccess) {
+    return <Navigate to="/admin-signin" replace />;
+  }
 
-    return <>{children}</>;
+  return <>{children}</>;
 };
 
 type PublicAdminRouteProps = {
-    children: ReactNode;
+  children: ReactNode;
 };
 
 export const PublicAdminRoute = ({ children }: PublicAdminRouteProps) => {
-    const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
 
-    useEffect(() => {
-        const checkSession = async () => {
-            const session = await authClient.getSession();
-            const userRole = session?.data?.user?.role;
+  useEffect(() => {
+    const checkSession = async () => {
+      const session = await authClient.getSession();
+      const userRole = session?.data?.user?.role;
 
-            setIsAuthenticated(userRole === "admin" || userRole === "subAdmin");
-        };
+      setIsAuthenticated(userRole === "admin" || userRole === "subAdmin");
+    };
 
-        checkSession();
-    }, []);
+    checkSession();
+  }, []);
 
-    if (isAuthenticated === null) {
-        return (
-          <Flex
-                className="w-full h-[100vh] justify-center items-center"
-            >
-                <Spinner size={"lg"} />
-            </Flex>
-        );
-    }
+  if (isAuthenticated === null) {
+    return (
+      <Flex className="w-full h-[100vh] justify-center items-center">
+        <Spinner />
+      </Flex>
+    );
+  }
 
-    if (isAuthenticated) {
-        return <Navigate to="/dashboard" replace />;
-    }
+  if (isAuthenticated) {
+    return <Navigate to="/dashboard" replace />;
+  }
 
-    return <>{children}</>;
+  return <>{children}</>;
 };

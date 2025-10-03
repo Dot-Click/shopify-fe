@@ -80,16 +80,21 @@ function ReportOverviewChart() {
   return (
     <Card className="border-0 shadow-none">
       <CardHeader className="w-full">
-        <Box className="flex flex-row items-center justify-between">
+        <Box className="flex flex-row items-center justify-between max-sm:flex-col max-sm:items-start">
           <CardTitle className="text-lg">Overview</CardTitle>
           <div className="flex items-center gap-6">
             {Object.values(chartConfig).map((item) => (
-              <div key={item.label} className="flex items-center gap-2">
+              <div
+                key={item.label}
+                className="flex items-center gap-2 max-sm:flex-col max-sm:items-start max-sm:mt-3 "
+              >
                 <div
                   className="h-3 w-3 rounded-sm"
                   style={{ backgroundColor: item.color }}
                 />
-                <span className="text-sm text-slate-500">{item.label}</span>
+                <span className="text-sm text-slate-500 max-sm:text-xs">
+                  {item.label}
+                </span>
               </div>
             ))}
           </div>
@@ -97,7 +102,10 @@ function ReportOverviewChart() {
         <img src={underline} className="w-full" />
       </CardHeader>
       <CardContent>
-        <ChartContainer config={chartConfig} className="h-64 w-full">
+        <ChartContainer
+          config={chartConfig}
+          className="h-64 w-full max-sm:h-full"
+        >
           <BarChart
             data={chartData}
             accessibilityLayer
@@ -351,7 +359,7 @@ function ReportAnalysis() {
   return (
     <Box className="rounded-xl bg-white pt-10">
       {/* Page Header */}
-      <header className="flex items-center justify-between px-5 pb-2">
+      <header className="flex items-center justify-between px-5 pb-2 max-sm:flex-col max-sm:items-start max-sm:space-y-2">
         <h1 className="text-2xl font-bold text-slate-800">
           Report & Analytics
         </h1>

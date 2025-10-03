@@ -31,8 +31,6 @@ const incidentsConfig = {
 };
 
 export function IncidentsBarChart() {
-  // const [date, setDate] = useState<Date | undefined>(new Date());
-
   const { data, isLoading, isError } = useFetchMonthlyIncidents();
 
   const allMonths = eachMonthOfInterval({
@@ -58,7 +56,7 @@ export function IncidentsBarChart() {
     <Card className="flex h-full flex-col border-0">
       <CardHeader className="w-full">
         <Box className="flex flex-row items-center justify-between">
-          <Box className="flex text-xl pb-2 gap-x-2">
+          <Box className="flex text-xl pb-2 gap-x-2 max-sm:flex-col">
             <CardTitle>Analytic</CardTitle>
             <CardDescription>(Flagged Incidents By Months)</CardDescription>
           </Box>

@@ -14,6 +14,8 @@ import { Switch } from "@/components/ui/switch";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { useCreateSettings } from "@/hooks/settings/usecreatesettings"; // Assuming this path
 import { Flex } from "@/components/ui/flex";
+import { authClient } from "@/providers/user.provider";
+import { cn } from "@/lib/utils";
 
 // Define a type for your settings state for type safety
 type SettingsState = {
@@ -48,6 +50,12 @@ function RiskSettings() {
   const handleChange = (key: keyof SettingsState, value: any) => {
     setSettings((prev) => ({ ...prev, [key]: value }));
   };
+
+  const { data } = authClient.useSession();
+
+  const userPackage = data?.user.package;
+
+  // console.log("HEyyy:-", data?.user.package);
 
   const handleSave = () => {
     const payload = {
@@ -110,13 +118,25 @@ function RiskSettings() {
           </Flex>
 
           <Box>
-            <Label>Loss Rate Threshold (%)</Label>
+            <Label
+              className={cn(
+                "font-medium",
+                !(userPackage === "ECP Vision" || userPackage === "ECP Insight")
+                  ? "text-gray-400"
+                  : "text-slate-700"
+              )}
+            >
+              Loss Rate Threshold (%)
+            </Label>
             <Input
               type="number"
               value={settings.lossRateThreshold}
               min={1}
               max={100}
-              className="mt-2 bg-white border-0 shadow"
+              disabled={
+                !(userPackage === "ECP Vision" || userPackage === "ECP Insight")
+              }
+              className={`mt-2 bg-white border-0 shadow`}
               onChange={(e) =>
                 handleChange("lossRateThreshold", e.target.value)
               }

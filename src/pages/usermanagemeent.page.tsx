@@ -1,9 +1,7 @@
-// NEW: Import useState and useMemo for state management and performance
 import { useState, useMemo } from "react";
 import { type ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown, Eye, Filter as FilterIcon } from "lucide-react";
 
-// --- All your other imports are unchanged ---
 import { Box } from "../components/ui/box";
 import { Button } from "../components/ui/button";
 import { Checkbox } from "../components/ui/checkbox";
@@ -32,8 +30,8 @@ import {
   TooltipContent,
 } from "../components/ui/tooltip";
 import { useSearchParams } from "react-router-dom";
+import { ReportSummaryModal } from "@/components/common/modal";
 
-// --- All your helper components (RiskLevelIndicator, TruncatedCell, etc.) and the 'columns' array are unchanged. ---
 const getRiskColor = (level: number) => {
   if (level > 75) return "bg-red-400";
   if (level > 40) return "bg-orange-400";
@@ -111,19 +109,25 @@ const columns: ColumnDef<Customer>[] = [
   },
   {
     id: "actions",
-    cell: () => (
-      <Dialog>
-        <DialogTrigger asChild>
-          <Button
-            variant="outline"
-            size="sm"
-            className="bg-blue-600 text-white hover:bg-blue-700 hover:text-white py-5"
-          >
-            <Eye className="mr-2 h-4 w-4" /> View Detail
-          </Button>
-        </DialogTrigger>
-      </Dialog>
-    ),
+    cell: ({ row }) => {
+      const user = row.original;
+
+      return (
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button
+              variant="outline"
+              size="sm"
+              className="bg-blue-600 text-white hover:bg-blue-700 hover:text-white py-5"
+            >
+              <Eye className="mr-2 h-4 w-4" /> View Detail
+            </Button>
+          </DialogTrigger>
+
+          <ReportSummaryModal user={user} />
+        </Dialog>
+      );
+    },
   },
 ];
 
@@ -132,18 +136,15 @@ function UserManagement() {
   const [searchParams] = useSearchParams();
   const search = searchParams.get("search")?.toLowerCase() || "";
 
-  // --- STATE MANAGEMENT ---
   const [sortRisk, setSortRisk] = useState<"asc" | "desc" | null>(null);
   const [showFilterSection, setShowFilterSection] = useState(false);
-  // NEW: State for the risk filter dropdown
+
   const [riskFilter, setRiskFilter] = useState<
     "all" | "high" | "medium" | "low"
   >("all");
 
-  // --- DATA PROCESSING ---
   const processedCustomers = useMemo(() => {
     let result = (customers || []).filter((c) => {
-      // 1. Search filter logic (unchanged)
       const id = c.id?.toLowerCase() || "";
       const name = c.name?.toLowerCase() || "";
       const email = c.email?.toLowerCase() || "";
@@ -170,7 +171,6 @@ function UserManagement() {
     }
 
     return result;
-    // UPDATED: Add riskFilter to the dependency array
   }, [customers, search, sortRisk, riskFilter]);
 
   if (error) {
@@ -217,7 +217,6 @@ function UserManagement() {
         </div>
       </header>
 
-      {/* UPDATED: Filter section with a functional dropdown */}
       {showFilterSection && (
         <Box className="p-7 pt-4 border-t border-slate-200 mt-4">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -243,7 +242,6 @@ function UserManagement() {
                 </SelectContent>
               </Select>
             </div>
-            {/* You can add more filter controls here */}
           </div>
         </Box>
       )}

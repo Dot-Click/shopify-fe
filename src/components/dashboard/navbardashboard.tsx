@@ -56,17 +56,17 @@ export const NavbarDashboard = ({ userType }: NavbarDashboardProps) => {
   }, [searchValue, location.pathname, navigate]);
 
   return (
-    <header className="flex items-center justify-between rounded-xl bg-card p-4 shadow-sm bg-white">
+    <header className="flex items-center justify-between rounded-xl bg-card p-4 shadow-sm bg-white max-sm:flex-col max-sm:items-start max-sm:space-y-3 ">
       <div>
         <Box className="flex gap-x-2 items-center">
-          <h1 className="text-xl font-semibold">{welcomeMessage}</h1>
+          <h1 className="text-lg font-semibold">{welcomeMessage}</h1>
           <img src={waveIcon} alt="wave-icon" className="w-6 h-6" />
         </Box>
-        <p className="text-sm text-muted-foreground">{session?.user.email}</p>
+        <p className="text-xs text-muted-foreground">{session?.user.email}</p>
       </div>
 
       {allowedPaths.includes(location.pathname) && (
-        <div className="relative w-full max-w-lg mx-4">
+        <div className="relative w-full max-w-lg mx-4 max-sm:mx-1">
           <Search
             className="absolute text-web-grey left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
             size={20}
@@ -75,7 +75,7 @@ export const NavbarDashboard = ({ userType }: NavbarDashboardProps) => {
             value={searchValue}
             onChange={(e) => setSearchValue(e.target.value)}
             placeholder="Search..."
-            className="w-full pl-10 py-5 bg-transparent border-web-grey rounded-full focus:border-blue-500 focus:bg-white"
+            className="w-full pl-10 py-5 max-sm:py-3 max-sm:text-xs bg-transparent border-web-grey rounded-full focus:border-blue-500 focus:bg-white "
           />
         </div>
       )}

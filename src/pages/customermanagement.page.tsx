@@ -26,6 +26,8 @@ import { ViewOrderModal } from "../components/modals/vieworder.modal";
 import { useSearchParams } from "react-router-dom";
 import { useBlockCustomer } from "@/hooks/shopifycustomers/useblockcustomer";
 import { useState, useMemo } from "react";
+import { useUnBlockCustomer } from "@/hooks/shopifycustomers/useunblockcustomer";
+import { Spinner } from "@/components/ui/spinner";
 
 interface Customer {
   id: string;
@@ -83,7 +85,8 @@ function CustomerManagement() {
 
   const [searchParams] = useSearchParams();
   const search = searchParams.get("search")?.toLowerCase() || "";
-  const { mutate: block } = useBlockCustomer();
+  const { mutate: block, isPending: isBlocking } = useBlockCustomer();
+  const { mutate: unblock, isPending: isUnblocking } = useUnBlockCustomer();
 
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
 
@@ -169,21 +172,21 @@ function CustomerManagement() {
           <ViewOrderModal user={row.original} />
           {row.original.blocked ? (
             <Button
-              variant="destructive"
+              variant="outline"
               size="sm"
-              className="bg-red-600 hover:bg-red-700 text-white"
-              onClick={() => block(row.original.id)}
+              className="bg-blue-500 hover:bg-blue-600 text-white"
+              onClick={() => unblock(row.original.id)}
             >
-              Block
+              {isUnblocking ? <Spinner /> : "Unblock"}
             </Button>
           ) : (
             <Button
               variant="destructive"
               size="sm"
-              className="bg-blue-400 hover:bg-blue-700 text-white"
+              className="bg-red-600 hover:bg-red-700 text-white"
               onClick={() => block(row.original.id)}
             >
-              Unblock
+              {isBlocking ? <Spinner /> : "Block"}
             </Button>
           )}
         </Box>

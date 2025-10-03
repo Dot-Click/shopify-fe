@@ -11,13 +11,15 @@ export type Customer = {
   riskLevel: number;
   refundsFromStores: number;
   blocked: boolean;
+  flaggedStoresCount: number;
+  storeId: string;
 };
 
 export const useFetchDashboardCustomers = () => {
   return useQuery<Customer[], ErrorWithMessage>({
     queryFn: async () => {
       const response = await axios.get("/customer/admin-customers");
-      console.log("This is the RESPONSE:", response?.data);
+      console.log("FETCH DASHBOARD:", response?.data);
       return response?.data ?? [];
     },
     queryKey: ["dashboard-customers"],

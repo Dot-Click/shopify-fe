@@ -127,7 +127,6 @@ export const Settings = () => {
         name: `${formData.firstName} ${formData.lastName}`.trim(),
       };
 
-      // Only include password fields if the user has entered a new password
       if (passwordData.newPassword) {
         updatePayload.currentPassword = passwordData.currentPassword;
         updatePayload.password = passwordData.newPassword;
@@ -136,7 +135,6 @@ export const Settings = () => {
       await authClient.updateUser(updatePayload);
 
       setSuccess("Your settings have been saved successfully!");
-      // Reset password fields for security after a successful update
       setPasswordData({
         currentPassword: "",
         newPassword: "",
@@ -155,8 +153,8 @@ export const Settings = () => {
     <Box className="bg-white rounded-2xl">
       {/* The form now wraps the entire settings area */}
       <form onSubmit={handleSubmit}>
-        <Box className="mx-auto">
-          <header className="flex justify-between items-center mb-8 px-5 pt-10">
+        <Box className="mx-auto max-sm:mx-0">
+          <header className="flex justify-between items-center mb-8 px-5 pt-10 max-sm:flex-col max-sm:items-start max-sm:gap-y-4">
             <h1 className="text-3xl font-bold text-web-dark-grey">Settings</h1>
             <Button
               type="submit"

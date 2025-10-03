@@ -18,7 +18,7 @@ export type ReportData = {
   ipAddress: string;
   location: string;
   detectedOn: string;
-  riskLevel: number; // e.g. 100, 25, etc.
+  riskLevel: number;
   flaggedBehaviors: string[];
   suggestedActions: string[];
 };
@@ -114,9 +114,9 @@ export function ReportSummaryModal({ user }: ReportSummaryModalProps) {
             Close
           </Button>
         </DialogClose>
-        <Button variant="destructive" className="bg-red-600 hover:bg-red-700">
+        {/* <Button variant="destructive" className="bg-red-600 hover:bg-red-700">
           Block User
-        </Button>
+        </Button> */}
       </div>
     </DialogContent>
   );

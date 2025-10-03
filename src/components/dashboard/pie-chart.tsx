@@ -108,7 +108,7 @@ export function FlaggedReasonsChart() {
         </ChartContainer>
       </CardContent>
 
-      <CardFooter className="flex-col items-start gap-4 p-6 text-sm">
+      <CardFooter className="flex-col items-start gap-4 p-6 text-xs">
         <div className="grid w-full grid-cols-2 gap-x-6 gap-y-2">
           {Object.values(chartConfig).map((config) => (
             <div key={config.label} className="flex items-center gap-2">

@@ -49,7 +49,7 @@ export const WhySection = () => {
         </Box>
 
         {/* Features Grid */}
-        <Box className="mt-16 grid justify-items-center grid-cols-1 md:grid-cols-2 lg:grid-cols-4 px-64 max-sm:px-8">
+        <Box className="mt-16 grid justify-items-center grid-cols-1 md:grid-cols-2 lg:grid-cols-4 space-y-4 px-64 max-sm:px-8">
           {features.map((feature, index) => (
             <Box
               key={index}

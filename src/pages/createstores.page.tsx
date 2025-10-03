@@ -75,8 +75,8 @@ export default function CreateStore() {
         </CardHeader>
         <CardContent>
           <form className="space-y-6">
-            <Flex className="w-full">
-              <Box className="w-2/4 pr-2">
+            <Flex className="w-full max-sm:flex-col max-sm:space-y-2">
+              <Box className="w-2/4 pr-2 max-sm:w-full">
                 <label className="block text-sm font-medium mb-2">
                   Full Name
                 </label>
@@ -89,7 +89,7 @@ export default function CreateStore() {
                   className="border-0 bg-white shadow"
                 />
               </Box>
-              <Box className="w-2/4 pl-2">
+              <Box className="w-2/4 pl-2 max-sm:w-full max-sm:pl-0">
                 <label className="block text-sm font-medium mb-2">
                   Email Address
                 </label>
@@ -104,8 +104,8 @@ export default function CreateStore() {
               </Box>
             </Flex>
 
-            <Flex className="w-full">
-              <Box className="w-2/4 pr-2">
+            <Flex className="w-full max-sm:flex-col max-sm:space-y-2">
+              <Box className="w-2/4 pr-2 max-sm:w-full">
                 <label className="block text-sm font-medium mb-2">
                   Company Name
                 </label>
@@ -118,7 +118,7 @@ export default function CreateStore() {
                   className="border-0 bg-white shadow"
                 />
               </Box>
-              <Box className="w-2/4 pl-2">
+              <Box className="w-2/4 pl-2 max-sm:w-full max-sm:pl-0">
                 <label className="block text-sm font-medium mb-2">
                   Company Registration Number
                 </label>
@@ -133,8 +133,8 @@ export default function CreateStore() {
               </Box>
             </Flex>
 
-            <Flex className="w-full">
-              <Box className="w-2/4 pr-2">
+            <Flex className="w-full max-sm:flex-col max-sm:space-y-2">
+              <Box className="w-2/4 pr-2 max-sm:w-full">
                 <label className="block text-sm font-medium mb-2">
                   Average Orders Per Month
                 </label>
@@ -147,7 +147,7 @@ export default function CreateStore() {
                   className="border-0 bg-white shadow"
                 />
               </Box>
-              <Box className="w-2/4 pl-2">
+              <Box className="w-2/4 pl-2 max-sm:w-full max-sm:pl-0">
                 <label className="block text-sm font-medium mb-2">
                   Store URL
                 </label>
@@ -162,8 +162,8 @@ export default function CreateStore() {
               </Box>
             </Flex>
 
-            <Flex className="w-full">
-              <Box className="w-2/4 pr-2">
+            <Flex className="w-full max-sm:flex-col max-sm:space-y-2">
+              <Box className="w-2/4 pr-2 max-sm:w-full">
                 <label className="block text-sm font-medium mb-2">
                   Shopify Access Token
                 </label>
@@ -176,7 +176,7 @@ export default function CreateStore() {
                   className="border-0 bg-white shadow"
                 />
               </Box>
-              <Box className="w-2/4 pl-2">
+              <Box className="w-2/4 pl-2 max-sm:w-full max-sm:pl-0">
                 <label className="block text-sm font-medium mb-2">
                   Shopify API Key
                 </label>
@@ -191,8 +191,8 @@ export default function CreateStore() {
               </Box>
             </Flex>
 
-            <Flex className="w-full">
-              <Box className="w-2/4 pr-2">
+            <Flex className="w-full max-sm:flex-col max-sm:space-y-2">
+              <Box className="w-2/4 pr-2 max-sm:w-full">
                 <label className="block text-sm font-medium mb-2">
                   Password
                 </label>
@@ -205,7 +205,7 @@ export default function CreateStore() {
                   className="border-0 bg-white shadow"
                 />
               </Box>
-              <Box className="w-2/4 pl-2">
+              <Box className="w-2/4 pl-2 max-sm:w-full max-sm:pl-0">
                 <label className="block text-sm font-medium mb-2">Phone</label>
                 <Input
                   type="tel"

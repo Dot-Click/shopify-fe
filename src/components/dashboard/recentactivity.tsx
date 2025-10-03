@@ -18,7 +18,7 @@ function ActivityItem({
   return (
     <div className="flex items-center gap-3 rounded-xl bg-slate-100 p-4">
       <Icon className={cn("h-5 w-5 flex-shrink-0", iconClassName)} />
-      <p className="text-sm text-slate-700">{children}</p>
+      <p className="text-sm text-slate-700 truncate">{children}</p>
     </div>
   );
 }

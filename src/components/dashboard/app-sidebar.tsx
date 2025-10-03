@@ -4,7 +4,6 @@ import {
   PackagePlus,
   Paperclip,
   Settings,
-  // ShoppingBag,
   Store,
   Users,
 } from "lucide-react";
@@ -19,6 +18,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  useSidebar,
 } from "../../components/ui/sidebar";
 import logo from "/images/logo_white.png";
 import { IoMdLogOut } from "react-icons/io";
@@ -28,10 +28,8 @@ import { FaBell } from "react-icons/fa";
 import { authClient } from "../../providers/user.provider";
 import { toast } from "react-hot-toast";
 import { FaUserPlus } from "react-icons/fa6";
+import whiteLogo from "/icons/logo_icon.png";
 
-// --- Menu definitions ---
-
-// Define the component's props
 interface AppSidebarProps {
   role: "admin" | "user";
 }
@@ -83,21 +81,30 @@ export function AppSidebar({ role }: AppSidebarProps) {
     { title: "Settings", url: "/user/settings", icon: Settings },
   ];
 
+  const { state } = useSidebar();
+
   const renderMenuItems = (items: typeof userMenuItems) => {
-    return items.map((item) => (
-      <SidebarMenuItem key={item.title} className="px-2">
-        <SidebarMenuButton
-          asChild
-          isActive={pathname === item.url}
-          className="data-[active=true]:bg-white data-[active=true]:text-blue-800 hover:bg-blue-800"
-        >
-          <Link to={item.url}>
-            <item.icon className="size-4" />
-            <span>{item.title}</span>
-          </Link>
-        </SidebarMenuButton>
-      </SidebarMenuItem>
-    ));
+    return items.map((item) => {
+      const isActive = pathname === item.url;
+      return (
+        <SidebarMenuItem key={item.title}>
+          <SidebarMenuButton
+            asChild
+            isActive={isActive}
+            className={`hover:bg-blue-800 flex items-center gap-3 
+            ${isActive ? "bg-white !text-black" : "text-white"}`}
+          >
+            <Link to={item.url} className="flex gap-3">
+              <item.icon className="size-4 shrink-0" />
+              <span className="block md:hidden ">{item.title}</span>
+              {state === "expanded" && (
+                <span className="hidden md:block">{item.title}</span>
+              )}
+            </Link>
+          </SidebarMenuButton>
+        </SidebarMenuItem>
+      );
+    });
   };
 
   const handleLogout = async () => {
@@ -111,15 +118,18 @@ export function AppSidebar({ role }: AppSidebarProps) {
   };
 
   return (
-    <Sidebar className="bg-[#1E40AF] text-white ">
+    <Sidebar collapsible="icon" className="bg-[#1E40AF] text-white ">
       <SidebarHeader className="p-4">
-        <div className="flex items-center gap-3 px-4 mt-6">
-          <img src={logo} alt="eComProtect Logo" />
+        <div className="flex items-center gap-3 mt-6">
+          {state === "expanded" ? (
+            <img src={logo} alt="eComProtect Logo" className="h-10" />
+          ) : (
+            <img src={whiteLogo} alt="eComProtect Logo Icon" className="h-4" />
+          )}
         </div>
       </SidebarHeader>
 
       <SidebarContent className="flex-1 overflow-auto">
-        {/* === Conditional Rendering Based on Role === */}
         {role === "admin" ? (
           <>
             <SidebarGroup>
@@ -167,17 +177,15 @@ export function AppSidebar({ role }: AppSidebarProps) {
         )}
       </SidebarContent>
 
-      <SidebarFooter className="p-4">
+      <SidebarFooter className="">
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton
-              // asChild
               className="bg-linear-to-r from-web-dark-red to-web-light-red py-5 cursor-pointer mb-4 text-white hover:bg-red-500"
               onClick={handleLogout}
             >
-              {/* <Link to="/signin"> */} <IoMdLogOut />
-              <span>Logout</span>
-              {/* </Link> */}
+              <IoMdLogOut />
+              {state === "expanded" && <span>Logout</span>}
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
