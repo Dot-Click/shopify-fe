@@ -41,6 +41,8 @@ interface Customer {
   riskLevel: number;
   blocked: boolean;
   refundsFromStores: number;
+  flaggedStoresCount: number;
+  storeId: string;
 }
 
 const getRiskColor = (level: number) => {
