@@ -65,6 +65,13 @@ export const SignupForm = () => {
 
   async function onSubmit(values: FormData) {
     console.log("this is the values", values);
+
+    if (!values.shopifyUrl.includes(".myshopify.com")) {
+      toast.error(
+        "Invalid Shopify store URL. It must contain '.myshopify.com'"
+      );
+      return;
+    }
     await authClient.signUp.email(
       {
         name: `${values.firstName} ${values.surname}`,
@@ -77,6 +84,7 @@ export const SignupForm = () => {
         shopify_url: values.shopifyUrl,
         shopify_api_key: values.shopifyApiKey,
         shopify_access_token: values.shopifyAccessToken,
+        role: "sub-admin",
         package: "free",
         plan: "free",
       },
@@ -103,7 +111,7 @@ export const SignupForm = () => {
           setIsLoading(false);
         },
         onError: (error) => {
-          toast.error(error.error.message);
+          toast.error(error.error.message || error.error.error);
           console.log("this is the error", error);
           setIsLoading(false);
         },

@@ -84,7 +84,7 @@ export const SigninForm = () => {
         <Box className="w-full max-w-md space-y-4">
           <Box className="space-y-1">
             <h1 className="text-3xl font-bold">Sign In</h1>
-            <p className="text-gray-500">
+            <p className="text-gray-500 max-sm:text-xs">
               Don't have an account?{" "}
               <Link
                 to="/signup" // Link to the signup page
@@ -109,7 +109,7 @@ export const SigninForm = () => {
                       <Input
                         placeholder="Enter you email address"
                         {...field}
-                        className="border-0 py-6 rounded-xl"
+                        className="border-0 py-6 rounded-xl max-sm:text-sm"
                       />
                     </FormControl>
                     <FormMessage />
@@ -128,7 +128,7 @@ export const SigninForm = () => {
                           type={showPassword ? "text" : "password"}
                           placeholder="Enter your password"
                           // className="py-6 pr-10"
-                          className="border-0 py-6 rounded-xl"
+                          className="border-0 py-6 rounded-xl max-sm:text-sm"
                           {...field}
                           rightIcon={
                             <Button
@@ -195,7 +195,7 @@ export const SigninForm = () => {
                       <div className="leading-none">
                         <FormLabel
                           htmlFor="authorisation"
-                          className="font-normal leading-4.5 text-web-dark-grey text-xs "
+                          className="font-normal leading-4.5 text-web-dark-grey text-xs max-sm:text-[10px] "
                         >
                           Unauthorised access is prohibited. Attempting to log
                           in without proper authorisation may constitute a

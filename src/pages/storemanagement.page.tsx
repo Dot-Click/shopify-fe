@@ -129,7 +129,22 @@ function StoreManagement() {
         ),
         cell: (info) => {
           const createdAt = info.getValue() as string;
-          return <span>{new Date(createdAt).toDateString()}</span>;
+          return (
+            <span>
+              {(() => {
+                const d = new Date(createdAt);
+                const dayName = d.toLocaleDateString("en-US", {
+                  weekday: "short",
+                }); // “Tue”
+                const monthName = d.toLocaleDateString("en-US", {
+                  month: "short",
+                }); // “Oct”
+                const dayNum = d.getDate(); // e.g. 6
+                const year = d.getFullYear(); // e.g. 2025
+                return `${dayName}, ${monthName} ${dayNum}, ${year}`;
+              })()}
+            </span>
+          );
         },
       },
       {

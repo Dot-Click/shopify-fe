@@ -41,6 +41,7 @@ export const authClient = createAuthClient({
         shopify_url: {
           type: "string",
         },
+        role: { type: "string" },
         plan: { type: "string" },
         package: { type: "string" },
       },

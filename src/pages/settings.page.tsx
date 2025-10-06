@@ -5,8 +5,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Lock, Eye, EyeOff, Loader2 } from "lucide-react";
+import { Lock, Eye, EyeOff, Loader2, Library } from "lucide-react";
 import { authClient } from "@/providers/user.provider";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Stack } from "@/components/ui/stack";
+import logoIcon from "/icons/logo_icon.png";
+import { useUploadProfileImage } from "@/hooks/users/useupdateprofilepic";
 
 const FormMessage = ({
   type,
@@ -74,6 +78,23 @@ export const Settings = () => {
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [preview, setPreview] = useState<string | null>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+
+  const uploadMutation = useUploadProfileImage();
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setSelectedFile(file);
+      setPreview(URL.createObjectURL(file));
+    }
+  };
+
+  const handleRemove = () => {
+    setPreview(null);
+    setSelectedFile(null);
+  };
 
   const { data } = authClient.useSession();
   const user = data?.user;
@@ -103,6 +124,18 @@ export const Settings = () => {
     setIsLoading(true);
     setError(null);
     setSuccess(null);
+
+    let imageUrl: string | undefined;
+    if (selectedFile) {
+      const resp = await uploadMutation.mutateAsync(selectedFile);
+      imageUrl = resp.url;
+    }
+
+    if (imageUrl) {
+      await authClient.updateUser({
+        image: imageUrl,
+      });
+    }
 
     if (
       passwordData.newPassword &&
@@ -178,6 +211,41 @@ export const Settings = () => {
           <Card className="border-none shadow-none w-full md:w-[80%]">
             <CardContent className="p-0">
               <div className="space-y-6 px-5">
+                <Box className="flex flex-col sm:flex-row items-start sm:items-center gap-6 pb-6">
+                  <Avatar className="h-28 w-28 p-4 bg-blue-600">
+                    <AvatarImage
+                      src={preview || logoIcon}
+                      className="object-cover"
+                      alt="Company Logo"
+                    />
+                    <AvatarFallback>
+                      <Library className="h-10 w-10" />
+                    </AvatarFallback>
+                  </Avatar>
+                  <Stack>
+                    <Label
+                      htmlFor="file-upload"
+                      className="cursor-pointer bg-blue-600 text-white hover:bg-blue-700 px-6 py-2.5 rounded-md text-sm font-medium flex items-center"
+                    >
+                      Choose File
+                    </Label>
+                    <input
+                      id="file-upload"
+                      type="file"
+                      className="hidden"
+                      onChange={handleFileChange}
+                    />
+                    <Button
+                      variant="outline"
+                      type="button"
+                      className="text-gray-700 border-gray-300 hover:bg-gray-50"
+                      onClick={handleRemove}
+                    >
+                      Remove
+                    </Button>
+                  </Stack>
+                </Box>
+                <Separator />
                 <Box className="space-y-6 pt-2">
                   <Box className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <Box className="space-y-2">

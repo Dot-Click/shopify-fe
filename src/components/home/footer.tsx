@@ -1,8 +1,8 @@
 import { Box } from "../ui/box";
 import { Link } from "react-router-dom";
-import { Button } from "../ui/button";
+// import { Button } from "../ui/button";
 import {
-  FaShopify,
+  // FaShopify,
   FaPhoneAlt,
   FaFacebookF,
   FaInstagram,
@@ -36,12 +36,12 @@ export const Footer = () => {
             Join the growing network of Shopify merchants using{" "}
             <b>eComProtect</b> to fight back against risk in real-time.
           </p>
-          <Button className="mt-8 rounded-full bg-[#28A745] px-6 py-6 text-base font-semibold text-white hover:bg-[#298d5c]">
+          {/* <Button className="mt-8 rounded-full bg-[#28A745] px-6 py-6 text-base font-semibold text-white hover:bg-[#298d5c]">
             <Link to="/install" className="flex items-center">
               <FaShopify className="mr-2 h-5 w-5" />
               Install on Shopify
             </Link>
-          </Button>
+          </Button> */}
         </Box>
 
         {/* Footer Links Grid */}
@@ -68,14 +68,28 @@ export const Footer = () => {
                 </Link>
               </li>
               <li>
-                <Link to="/features" className="hover:text-white">
+                <button
+                  onClick={() =>
+                    document.getElementById("how-it-works")?.scrollIntoView({
+                      behavior: "smooth",
+                    })
+                  }
+                  className="hover:text-white"
+                >
                   Features
-                </Link>
+                </button>
               </li>
               <li>
-                <Link to="/how-it-works" className="hover:text-white">
+                <button
+                  onClick={() =>
+                    document.getElementById("features")?.scrollIntoView({
+                      behavior: "smooth",
+                    })
+                  }
+                  className="hover:text-white"
+                >
                   How It Works
-                </Link>
+                </button>
               </li>
             </ul>
           </div>

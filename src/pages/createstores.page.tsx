@@ -7,6 +7,13 @@ import toast from "react-hot-toast";
 import { authClient } from "@/providers/user.provider";
 import { Spinner } from "@/components/ui/spinner";
 import { Flex } from "@/components/ui/flex";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export default function CreateStore() {
   const [form, setForm] = useState({
@@ -30,6 +37,20 @@ export default function CreateStore() {
   const [loading, setLoading] = useState(false);
 
   const HandleSubmit = async () => {
+    if (!form.storeUrl.includes(".myshopify.com")) {
+      toast.error(
+        "Invalid Shopify store URL. It must contain '.myshopify.com'"
+      );
+      return;
+    }
+
+    if (form.companyRegNo.length < 8) {
+      toast.error(
+        "Company registration number must be at least 6 characters long"
+      );
+      return;
+    }
+
     await authClient.admin.createUser(
       {
         name: form.name,
@@ -69,7 +90,7 @@ export default function CreateStore() {
     <Box>
       <Card className="bg-white border-0 mx-auto shadow-lg">
         <CardHeader>
-          <CardTitle className="text-xl font-bold text-web-dark-grey">
+          <CardTitle className="text-2xl font-bold text-web-dark-grey">
             Create Store
           </CardTitle>
         </CardHeader>
@@ -86,7 +107,7 @@ export default function CreateStore() {
                   placeholder="Enter full name"
                   value={form.name}
                   onChange={handleChange}
-                  className="border-0 bg-white shadow"
+                  className="border-0 bg-[#f1f1f1] shadow"
                 />
               </Box>
               <Box className="w-2/4 pl-2 max-sm:w-full max-sm:pl-0">
@@ -99,7 +120,7 @@ export default function CreateStore() {
                   placeholder="Enter email"
                   value={form.email}
                   onChange={handleChange}
-                  className="border-0 bg-white shadow"
+                  className="border-0 bg-[#f1f1f1] shadow"
                 />
               </Box>
             </Flex>
@@ -115,7 +136,7 @@ export default function CreateStore() {
                   placeholder="Enter company name"
                   value={form.companyName}
                   onChange={handleChange}
-                  className="border-0 bg-white shadow"
+                  className="border-0 bg-[#f1f1f1] shadow"
                 />
               </Box>
               <Box className="w-2/4 pl-2 max-sm:w-full max-sm:pl-0">
@@ -128,7 +149,7 @@ export default function CreateStore() {
                   placeholder="Enter registration number"
                   value={form.companyRegNo}
                   onChange={handleChange}
-                  className="border-0 bg-white shadow"
+                  className="border-0 bg-[#f1f1f1] shadow"
                 />
               </Box>
             </Flex>
@@ -138,14 +159,22 @@ export default function CreateStore() {
                 <label className="block text-sm font-medium mb-2">
                   Average Orders Per Month
                 </label>
-                <Input
-                  type="text"
-                  name="avgOrders"
-                  placeholder="Enter average orders"
+                <Select
+                  onValueChange={(value) =>
+                    setForm({ ...form, avgOrders: value })
+                  }
                   value={form.avgOrders}
-                  onChange={handleChange}
-                  className="border-0 bg-white shadow"
-                />
+                >
+                  <SelectTrigger className="border-gray-200 w-full bg-[#f1f1f1] py-5">
+                    <SelectValue placeholder="Select a range" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-[#f1f1f1] border-0 shadow-lg">
+                    <SelectItem value="0-300">0 - 300</SelectItem>
+                    <SelectItem value="301-2000">301 - 2,000</SelectItem>
+                    <SelectItem value="2001-5000">2,001 - 5,000</SelectItem>
+                    <SelectItem value="5000+">5,000+</SelectItem>
+                  </SelectContent>
+                </Select>
               </Box>
               <Box className="w-2/4 pl-2 max-sm:w-full max-sm:pl-0">
                 <label className="block text-sm font-medium mb-2">
@@ -157,7 +186,7 @@ export default function CreateStore() {
                   placeholder="Enter Shopify store URL"
                   value={form.storeUrl}
                   onChange={handleChange}
-                  className="border-0 bg-white shadow"
+                  className="border-0 bg-[#f1f1f1] shadow"
                 />
               </Box>
             </Flex>
@@ -173,7 +202,7 @@ export default function CreateStore() {
                   placeholder="Enter Shopify access token"
                   value={form.shopifyAccessToken}
                   onChange={handleChange}
-                  className="border-0 bg-white shadow"
+                  className="border-0 bg-[#f1f1f1] shadow"
                 />
               </Box>
               <Box className="w-2/4 pl-2 max-sm:w-full max-sm:pl-0">
@@ -186,7 +215,7 @@ export default function CreateStore() {
                   placeholder="Enter Shopify API Key"
                   value={form.shopifyApiKey}
                   onChange={handleChange}
-                  className="border-0 bg-white shadow"
+                  className="border-0 bg-[#f1f1f1] shadow"
                 />
               </Box>
             </Flex>
@@ -202,7 +231,7 @@ export default function CreateStore() {
                   placeholder="Enter password"
                   value={form.password}
                   onChange={handleChange}
-                  className="border-0 bg-white shadow"
+                  className="border-0 bg-[#f1f1f1] shadow"
                 />
               </Box>
               <Box className="w-2/4 pl-2 max-sm:w-full max-sm:pl-0">
@@ -213,7 +242,7 @@ export default function CreateStore() {
                   placeholder="Enter phone number"
                   value={form.phone}
                   onChange={handleChange}
-                  className="border-0 bg-white shadow"
+                  className="border-0 bg-[#f1f1f1] shadow"
                 />
               </Box>
             </Flex>

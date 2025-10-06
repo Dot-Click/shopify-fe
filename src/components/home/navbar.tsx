@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { FaShopify } from "react-icons/fa";
+// import { FaShopify } from "react-icons/fa";
 import { FiMenu, FiX } from "react-icons/fi";
 import { Button } from "../../components/ui/button";
 import { Box } from "../../components/ui/box";
@@ -84,12 +84,12 @@ export const Navbar = () => {
             >
               <Link to="/signin">Sign In</Link>
             </Button>
-            <Button className="rounded-full bg-[#30A46C] text-white hover:bg-[#298d5c] py-5.5">
+            {/* <Button className="rounded-full bg-[#30A46C] text-white hover:bg-[#298d5c] py-5.5">
               <Link to="/install" className="flex items-center">
                 <FaShopify className="mr-2 h-5 w-5" />
                 Install on Shopify
               </Link>
-            </Button>
+            </Button> */}
           </Box>
 
           <Box className="md:hidden z-20">
@@ -160,14 +160,6 @@ export const Navbar = () => {
                       className="border-2 border-white text-sm rounded-full py-2 px-6"
                     >
                       Sign In
-                    </Link>
-                    <Link
-                      to="/install"
-                      onClick={() => setIsMenuOpen(false)}
-                      className="flex items-center bg-[#30A46C] text-sm rounded-full py-3 px-6"
-                    >
-                      <FaShopify className="mr-2 h-5 w-5" />
-                      Install on Shopify
                     </Link>
                   </div>
                 </motion.div>

@@ -20,7 +20,7 @@ export const Signin = () => {
 
         {/* Bottom: Footer */}
         <footer className="w-full">
-          <Box className="flex items-center justify-between text-sm max-sm:flex-col max-sm:text-xs text-gray-500">
+          <Box className="flex items-center justify-between text-sm max-sm:flex-col max-sm:items-start max-sm:text-xs text-gray-500">
             <p>© 2025 eComProtect. All rights reserved.</p>
             <Box className="space-x-6 max-sm:text-xs">
               <Link to="" className="hover:underline">
