@@ -110,7 +110,12 @@ export function AppSidebar({ role }: AppSidebarProps) {
   const handleLogout = async () => {
     try {
       await authClient.signOut();
-      navigate("/signin");
+
+      if (role === "admin") {
+        navigate("/admin-signin");
+      } else {
+        navigate("/signin");
+      }
     } catch (error) {
       toast.error("Error logging out");
       console.error("Error logging out:", error);

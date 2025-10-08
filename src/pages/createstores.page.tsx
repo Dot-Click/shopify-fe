@@ -57,7 +57,7 @@ export default function CreateStore() {
         email: form.email,
         password: form.password,
         data: {
-          role: "sub-admin",
+          role: "subadmin",
           mobileNumber: form.phone,
           company_name: form.companyName,
           company_registration_number: form.companyRegNo,

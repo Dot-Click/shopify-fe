@@ -16,9 +16,10 @@ export const AdminProtectedRoute = ({ children }: StaffProtectedRouteProps) => {
       const session = await authClient.getSession();
       const userRole = session?.data?.user?.role;
 
-      setHasAccess(
-        userRole === "admin" || userRole === "subAdmin" || userRole === "user"
-      );
+      console.log("userRole", userRole);
+      console.log("SESSION:-", session);
+
+      setHasAccess(userRole === "admin");
     };
 
     checkSession();
@@ -51,7 +52,7 @@ export const PublicAdminRoute = ({ children }: PublicAdminRouteProps) => {
       const session = await authClient.getSession();
       const userRole = session?.data?.user?.role;
 
-      setIsAuthenticated(userRole === "admin" || userRole === "subAdmin");
+      setIsAuthenticated(userRole === "user" || userRole === "sub-admin");
     };
 
     checkSession();

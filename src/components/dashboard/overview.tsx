@@ -76,17 +76,20 @@ export function OverviewSection() {
   useEffect(() => {
     const fetchAccounts = async () => {
       try {
-        const { data: store } = await authClient.admin.listUsers({
+        const store = await authClient.admin.listUsers({
           query: {
+            limit: 100,
             filterField: "role",
             filterValue: "sub-admin",
             filterOperator: "contains",
           },
         });
 
-        const extractingTotalStore =
-          store?.users.filter((c) => c.banned === false).length || 0;
-        setTotalStores(extractingTotalStore);
+        const extractingTotalStore = store.data?.users.filter(
+          (c) => c.banned === false
+        );
+
+        setTotalStores(extractingTotalStore?.length || 0);
       } catch (error) {
         console.error("Failed to fetch accounts:", error);
       }

@@ -168,7 +168,7 @@ export const AdminSigninForm = () => {
               </Flex>
               <Flex className="items-center justify-between"></Flex>
               <Button
-                className="w-full bg-blue-600 py-6 text-base hover:bg-blue-700 text-white"
+                className="w-full bg-blue-600 py-6 cursor-pointer text-base hover:bg-blue-700 text-white"
                 type="submit"
                 // disabled={!authChecked}
               >

@@ -46,8 +46,8 @@ export function SuspiciousOrdersReport() {
 
   const chartData =
     data?.chartData?.map((d: any) => ({
-      label: d.date, // 👈 map "date" → "label"
-      count: d.count, // 👈 rename "count"
+      label: d.date,
+      count: d.count,
     })) ?? [];
 
   const metrics = data?.metrics ?? {

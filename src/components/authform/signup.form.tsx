@@ -84,7 +84,7 @@ export const SignupForm = () => {
         shopify_url: values.shopifyUrl,
         shopify_api_key: values.shopifyApiKey,
         shopify_access_token: values.shopifyAccessToken,
-        role: "sub-admin",
+        role: "subadmin",
         package: "free",
         plan: "free",
       },
@@ -93,7 +93,6 @@ export const SignupForm = () => {
           setIsLoading(true);
         },
         onSuccess: async (data) => {
-          console.log("this is the data", data);
           const user = data.data.user;
           const nextStep =
             values.averageOrdersPerMonth === "5000+"

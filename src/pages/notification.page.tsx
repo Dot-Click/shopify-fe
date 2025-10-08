@@ -211,9 +211,18 @@ function NotificationsPage() {
         </Button>
       </header>
       <main>
-        {notifications.map((notification) => (
-          <NotificationItem key={notification.id} notification={notification} />
-        ))}
+        {notifications.length === 0 ? (
+          <Box className="flex items-center justify-center h-[60vh] text-slate-500 text-lg font-medium">
+            No notifications yet
+          </Box>
+        ) : (
+          notifications.map((notification) => (
+            <NotificationItem
+              key={notification.id}
+              notification={notification}
+            />
+          ))
+        )}
       </main>
     </Box>
   );
