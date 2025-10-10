@@ -97,6 +97,7 @@ export const Settings = () => {
   };
 
   const { data } = authClient.useSession();
+
   const user = data?.user;
 
   useEffect(() => {
@@ -212,9 +213,9 @@ export const Settings = () => {
             <CardContent className="p-0">
               <div className="space-y-6 px-5">
                 <Box className="flex flex-col sm:flex-row items-start sm:items-center gap-6 pb-6">
-                  <Avatar className="h-28 w-28 p-4 bg-blue-600">
+                  <Avatar className="h-28 w-28  bg-blue-600">
                     <AvatarImage
-                      src={preview || logoIcon}
+                      src={data?.user.image || preview || logoIcon}
                       className="object-cover"
                       alt="Company Logo"
                     />

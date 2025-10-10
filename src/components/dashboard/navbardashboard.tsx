@@ -117,12 +117,12 @@ export const NavbarDashboard = ({ userType }: NavbarDashboardProps) => {
         <Button
           size="icon"
           aria-label="App"
-          className="bg-blue-600 p-1 hover:bg-blue-700 rounded-full"
+          className="bg-blue-600 hover:bg-blue-700 rounded-full"
         >
           <img
             src={session?.user.image || icon}
             alt="Company Logo Icon"
-            className=" w-full h-full object-cover"
+            className=" w-full h-full object-cover rounded-full"
           />
         </Button>
       </div>

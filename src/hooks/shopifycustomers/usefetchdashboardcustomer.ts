@@ -13,6 +13,7 @@ export type Customer = {
   blocked: boolean;
   flaggedStoresCount: number;
   storeId: string;
+  createdAt: string;
 };
 
 export const useFetchDashboardCustomers = () => {

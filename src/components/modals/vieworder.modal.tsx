@@ -13,7 +13,7 @@ import {
   Ban,
   CalendarDays,
   CircleCheckBig,
-  Clock,
+  // Clock,
   Eye,
   Flag,
   FlagOff,
@@ -38,11 +38,6 @@ import { useState } from "react";
 import { useAddFlag } from "@/hooks/shopifycustomers/useaddflag";
 import { useDeleteFlag } from "@/hooks/shopifycustomers/usedeleteflag";
 import { useBlockCustomer } from "@/hooks/shopifycustomers/useblockcustomer";
-
-const mockDetails = {
-  registrationDate: "Mar 15, 2024",
-  lastActive: "2 hours ago",
-};
 
 const getRiskColor = (level: number) => {
   if (level > 75) return "bg-red-400";
@@ -222,10 +217,11 @@ export const ViewOrderModal = ({ user }: { user: Customer }) => {
           <Box className="flex flex-col gap-4 p-6 bg-gray-100 rounded-lg shadow-sm">
             <Box className="flex items-center justify-between">
               <Box className="flex items-center gap-4">
-                <Avatar className="h-16 w-16">
+                <Avatar className="h-16 w-16 shadow-md border-2 border-gray-300">
                   <AvatarImage
-                    src={`https://i.pravatar.cc/150?u=${user.id}`}
+                    src={``}
                     alt={user.name}
+                    className="object-cover"
                   />
                   <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
                 </Avatar>
@@ -312,13 +308,13 @@ export const ViewOrderModal = ({ user }: { user: Customer }) => {
                 <InfoItem
                   icon={<CalendarDays size={18} />}
                   label="Registration Date"
-                  value={mockDetails.registrationDate}
+                  value={new Date(user.createdAt).toISOString().split("T")[0]}
                 />
-                <InfoItem
+                {/* <InfoItem
                   icon={<Clock size={18} />}
                   label="Last Active"
                   value={mockDetails.lastActive}
-                />
+                /> */}
               </div>
             </CardContent>
           </Card>

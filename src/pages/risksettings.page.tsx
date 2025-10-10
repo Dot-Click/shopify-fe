@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Box } from "@/components/ui/box";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,12 +12,12 @@ import {
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { useCreateSettings } from "@/hooks/settings/usecreatesettings"; // Assuming this path
+import { useCreateSettings } from "@/hooks/settings/usecreatesettings";
 import { Flex } from "@/components/ui/flex";
 import { authClient } from "@/providers/user.provider";
 import { cn } from "@/lib/utils";
+import { useFetchSettings } from "@/hooks/settings/usefetchsettings";
 
-// Define a type for your settings state for type safety
 type SettingsState = {
   lostParcelThreshold: number;
   lostParcelPeriod: string;
@@ -46,16 +46,32 @@ function RiskSettings() {
   });
 
   const { mutate: saveSettings, isPending: isSaving } = useCreateSettings();
+  const { data: fetchedData, isLoading } = useFetchSettings();
 
   const handleChange = (key: keyof SettingsState, value: any) => {
     setSettings((prev) => ({ ...prev, [key]: value }));
   };
 
   const { data } = authClient.useSession();
-
   const userPackage = data?.user.package;
 
-  // console.log("HEyyy:-", data?.user.package);
+  useEffect(() => {
+    if (fetchedData) {
+      const f = fetchedData;
+      setSettings({
+        lostParcelThreshold: f.lostParcelThreshold ?? 3,
+        lostParcelPeriod: f.lostParcelPeriod?.toString() ?? "6",
+        lossRateThreshold: f.lossRateThreshold ?? 40,
+        matchSensitivity: f.matchSensitivity ?? "medium",
+        primaryAction: f.primaryAction ?? "hold",
+        requireEsignature: f.requireESignature ?? false,
+        forceSignedDelivery: f.forceCourierSignedDelivery ?? false,
+        requirePhoto: f.photoOnDelivery ?? false,
+        sendCancellationEmail: f.sendCancellationEmail ?? false,
+        includeWaiverLink: false,
+      });
+    }
+  }, [fetchedData]);
 
   const handleSave = () => {
     const payload = {
@@ -71,6 +87,8 @@ function RiskSettings() {
     };
     saveSettings(payload);
   };
+
+  if (isLoading) return <p>Loading settings...</p>;
 
   return (
     <Box className="bg-white p-4 shadow-sm rounded-lg">
@@ -105,7 +123,7 @@ function RiskSettings() {
                 onValueChange={(val) => handleChange("lostParcelPeriod", val)}
               >
                 <SelectTrigger className="mt-2 bg-white border-0 shadow w-96">
-                  <SelectValue />
+                  <SelectValue placeholder="Select period" />
                 </SelectTrigger>
                 <SelectContent className="bg-white border-0 shadow">
                   <SelectItem value="1">1 Month</SelectItem>
@@ -150,7 +168,7 @@ function RiskSettings() {
               onValueChange={(val) => handleChange("matchSensitivity", val)}
             >
               <SelectTrigger className="w-40 mt-2 border-0 bg-white shadow">
-                <SelectValue />
+                <SelectValue placeholder="Select" />
               </SelectTrigger>
               <SelectContent className="bg-white border-0 shadow">
                 <SelectItem value="low">Low</SelectItem>
@@ -174,7 +192,7 @@ function RiskSettings() {
               onValueChange={(val) => handleChange("primaryAction", val)}
             >
               <SelectTrigger className="w-56 mt-2 border-0 shadow">
-                <SelectValue />
+                <SelectValue placeholder="Select action" />
               </SelectTrigger>
               <SelectContent className="bg-white border-0 shadow">
                 <SelectItem value="hold">
