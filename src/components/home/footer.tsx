@@ -17,7 +17,7 @@ export const Footer = () => {
     <Box className="relative w-full text-white">
       {/* Background Image Layer */}
       <Box
-        className="absolute inset-0 z-0 bg-cover   bg-no-repeat"
+        className="absolute inset-0 z-0 bg-cover max-sm:bg-center bg-no-repeat"
         style={{ backgroundImage: `url(${footerImage})` }}
         aria-hidden="true"
       />
@@ -36,19 +36,13 @@ export const Footer = () => {
             Join the growing network of Shopify merchants using{" "}
             <b>eComProtect</b> to fight back against risk in real-time.
           </p>
-          {/* <Button className="mt-8 rounded-full bg-[#28A745] px-6 py-6 text-base font-semibold text-white hover:bg-[#298d5c]">
-            <Link to="/install" className="flex items-center">
-              <FaShopify className="mr-2 h-5 w-5" />
-              Install on Shopify
-            </Link>
-          </Button> */}
         </Box>
 
         {/* Footer Links Grid */}
-        <Box className="grid grid-cols-1 gap-y-10 gap-x-8  pt-12 md:grid-cols-2 lg:grid-cols-5 lg:gap-x-12">
+        <Box className="grid grid-cols-1 max-sm:w-full gap-y-10 gap-x-8  pt-12 md:grid-cols-2 lg:grid-cols-5 lg:gap-x-12">
           <div className="space-y-4 lg:col-span-2">
             <img src={logo} alt="eComProtect Logo" className="h-9" />
-            <p className="text-gray-300 pr-22">
+            <p className="text-gray-300 pr-22 max-sm:pr-0">
               <b>
                 e<span className="font-normal">Com</span>Protect
               </b>{" "}

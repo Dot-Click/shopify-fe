@@ -129,6 +129,39 @@
   font-display: swap;
 }
 
+@keyframes marquee-left {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes marquee-right {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(50%);
+  }
+}
+
+/* Animation utilities */
+.animate-marquee-left {
+  animation: marquee-left 10s linear infinite;
+}
+
+.animate-marquee-right {
+  animation: marquee-right 10s linear infinite;
+}
+
+/* Pause animation on hover (optional & nice touch) */
+.group:hover .animate-marquee-left,
+.group:hover .animate-marquee-right {
+  animation-play-state: paused;
+}
+
 .dark {
   --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);

@@ -34,7 +34,7 @@ export const WhySection = () => {
         aria-hidden="true"
       />
 
-      <Box className="container relative z-10 mx-auto px-6 py-24">
+      <Box className="container relative z-10 mx-auto px-6 max-sm:px-3 py-24">
         <Box className="mx-auto max-w-3xl text-center">
           <h2 className="text-4xl max-sm:text-3xl font-bold text-gray-800">
             Why
@@ -49,19 +49,23 @@ export const WhySection = () => {
         </Box>
 
         {/* Features Grid */}
-        <Box className="mt-16 grid justify-items-center grid-cols-1 md:grid-cols-2 lg:grid-cols-4 space-y-4 px-64 max-sm:px-8">
+        <Box className="mt-16 grid justify-items-center grid-cols-2 md:grid-cols-2 lg:grid-cols-4 space-y-4 px-64 max-sm:px-0">
           {features.map((feature, index) => (
             <Box
               key={index}
-              className="flex flex-col h-72 w-52 rounded-2xl bg-gradient-to-b from-[#fff] to-[#FFF6FA] shadow-lg"
+              className="flex flex-col h-72 w-52 max-sm:w-32 max-sm:h-64 rounded-2xl bg-gradient-to-b from-[#fff] to-[#FFF6FA] shadow-lg"
             >
               <div className="flex flex-grow flex-col">
-                <div className="mr-10 border-l-8 pl-2 h-16  border-blue-600 bg-[#18181B] flex items-center p-1.5 text-white mt-8 ">
-                  <h3 className="font-medium">{feature.title}</h3>
+                <div className="mr-10 max-sm:mr-0 border-l-8 pl-2 h-16  border-blue-600 bg-[#18181B] flex items-center p-1.5 text-white mt-8 ">
+                  <h3 className="font-medium max-sm:text-sm">
+                    {feature.title}
+                  </h3>
                 </div>
 
                 <div className="flex-grow pt-6 px-4">
-                  <p className="text-gray-600">{feature.description}</p>
+                  <p className="text-gray-600 max-sm:text-xs ">
+                    {feature.description}
+                  </p>
                 </div>
               </div>
             </Box>

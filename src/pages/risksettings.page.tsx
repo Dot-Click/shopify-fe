@@ -28,7 +28,7 @@ type SettingsState = {
   forceSignedDelivery: boolean;
   requirePhoto: boolean;
   sendCancellationEmail: boolean;
-  includeWaiverLink: boolean;
+  includeWavierLink: boolean;
 };
 
 function RiskSettings() {
@@ -42,7 +42,7 @@ function RiskSettings() {
     forceSignedDelivery: false,
     requirePhoto: false,
     sendCancellationEmail: false,
-    includeWaiverLink: false,
+    includeWavierLink: false,
   });
 
   const { mutate: saveSettings, isPending: isSaving } = useCreateSettings();
@@ -68,7 +68,7 @@ function RiskSettings() {
         forceSignedDelivery: f.forceCourierSignedDelivery ?? false,
         requirePhoto: f.photoOnDelivery ?? false,
         sendCancellationEmail: f.sendCancellationEmail ?? false,
-        includeWaiverLink: false,
+        includeWavierLink: f.includeWavierLink ?? false,
       });
     }
   }, [fetchedData]);
@@ -84,6 +84,7 @@ function RiskSettings() {
       forceCourierSignedDelivery: settings.forceSignedDelivery,
       photoOnDelivery: settings.requirePhoto,
       sendCancellationEmail: settings.sendCancellationEmail,
+      includeWavierLink: settings.includeWavierLink,
     };
     saveSettings(payload);
   };
@@ -244,8 +245,8 @@ function RiskSettings() {
           <Box className="flex items-center justify-between">
             <Label>Include waiver link</Label>
             <Switch
-              checked={settings.includeWaiverLink}
-              onCheckedChange={(val) => handleChange("includeWaiverLink", val)}
+              checked={settings.includeWavierLink}
+              onCheckedChange={(val) => handleChange("includeWavierLink", val)}
             />
           </Box>
         </CardContent>

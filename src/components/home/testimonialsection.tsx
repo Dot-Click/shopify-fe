@@ -1,57 +1,56 @@
 import { Box } from "../ui/box";
+import { motion } from "framer-motion";
 import { Star } from "lucide-react";
 
 const testimonialsRow1 = [
   {
     quote:
-      "Lorem ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.",
+      "Lorem ipsum is simply dummy text of the printing and typesetting industry.",
     name: "Jacob Hooper",
     title: "Student in Panadomte Christian College",
-    avatar: "https://randomuser.me/api/portraits/men/32.jpg", // Replaced path
+    avatar: "https://randomuser.me/api/portraits/men/32.jpg",
     rating: 4,
   },
   {
     quote:
-      "It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.",
+      "It has survived not only five centuries, but also the leap into electronic typesetting.",
     name: "Esther Howard",
     title: "CEO, Tech Solutions",
-    avatar: "https://randomuser.me/api/portraits/women/44.jpg", // Replaced path
+    avatar: "https://randomuser.me/api/portraits/women/44.jpg",
     rating: 5,
   },
   {
-    quote:
-      "Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC.",
+    quote: "Contrary to popular belief, Lorem Ipsum is not simply random text.",
     name: "Maxi Williams",
     title: "Product Manager, Innovate Co.",
-    avatar: "https://randomuser.me/api/portraits/men/36.jpg", // Replaced path
+    avatar: "https://randomuser.me/api/portraits/men/36.jpg",
     rating: 5,
   },
 ];
 
-// --- UPDATED with real image URLs ---
 const testimonialsRow2 = [
   {
     quote:
-      "This is a fantastic tool that has saved us countless hours and prevented significant losses. Highly recommended for any Shopify merchant.",
+      "This is a fantastic tool that has saved us countless hours. Highly recommended!",
     name: "Sarah Jenkins",
     title: "Owner, The Boutique Hub",
-    avatar: "https://randomuser.me/api/portraits/women/68.jpg", // Replaced path
+    avatar: "https://randomuser.me/api/portraits/women/68.jpg",
     rating: 5,
   },
   {
     quote:
-      "The accuracy is unmatched. We've tried other solutions, but eComProtect's cross-checking gives us the confidence we need.",
+      "The accuracy is unmatched. We've tried other solutions but this stands out.",
     name: "Michael Chen",
     title: "Operations Director, GadgetFlow",
-    avatar: "https://randomuser.me/api/portraits/men/75.jpg", // Replaced path
+    avatar: "https://randomuser.me/api/portraits/men/75.jpg",
     rating: 5,
   },
   {
     quote:
-      "The standard chunk of Lorem Ipsum used since the 1500s is reproduced below for those interested. A must have!",
+      "The standard chunk of Lorem Ipsum used since the 1500s is reproduced below for those interested.",
     name: "Johnathan Doe",
     title: "Lead Developer, CodeCrafters",
-    avatar: "https://randomuser.me/api/portraits/men/9.jpg", // Replaced path
+    avatar: "https://randomuser.me/api/portraits/men/9.jpg",
     rating: 4,
   },
 ];
@@ -74,9 +73,11 @@ const TestimonialCard = ({
 }: {
   testimonial: (typeof testimonialsRow1)[0];
 }) => (
-  <Box className="mx-4 h-full w-[400px] flex-shrink-0">
+  <Box className="mx-4 h-full w-[400px] max-sm:w-[260px] flex-shrink-0">
     <Box className="flex h-full flex-col justify-between rounded-2xl bg-white p-6 shadow-md">
-      <p className="italic text-gray-600">"{testimonial.quote}"</p>
+      <p className="italic text-gray-600 max-sm:text-xs">
+        "{testimonial.quote}"
+      </p>
       <hr className="my-4" />
       <div className="flex items-center gap-4">
         <img
@@ -86,7 +87,9 @@ const TestimonialCard = ({
         />
         <div>
           <h3 className="font-bold text-gray-900">{testimonial.name}</h3>
-          <p className="text-sm text-gray-500">{testimonial.title}</p>
+          <p className="text-sm text-gray-500 max-sm:text-xs">
+            {testimonial.title}
+          </p>
           <StarRating rating={testimonial.rating} />
         </div>
       </div>
@@ -96,9 +99,8 @@ const TestimonialCard = ({
 
 export const TestimonialsSection = () => {
   return (
-    <Box className="w-full pt-24 pb-16">
+    <Box className="w-full pt-24 pb-16 overflow-hidden">
       <Box className="container mx-auto px-6">
-        {/* Section Header */}
         <Box className="mx-auto max-w-2xl text-center">
           <h2 className="text-4xl font-bold text-gray-800">
             <span className="bg-blue-600 px-3 py-1 text-white">What Our</span>{" "}
@@ -112,30 +114,36 @@ export const TestimonialsSection = () => {
         </Box>
       </Box>
 
-      {/* Marquee Container */}
-      {/* 'group' is used for pausing animation on hover */}
-      <Box className="group mt-16 flex flex-col gap-8 overflow-hidden">
-        {/* Row 1: Scrolls Left */}
-        <div className="flex animate-marquee-left">
-          {testimonialsRow1.map((t, i) => (
+      <Box className="mt-16 flex flex-col gap-8">
+        {/* Row 1 */}
+        <motion.div
+          className="flex"
+          animate={{ x: ["0%", "-100%"] }}
+          transition={{
+            duration: 20,
+            ease: "linear",
+            repeat: Infinity,
+          }}
+        >
+          {[...testimonialsRow1, ...testimonialsRow1].map((t, i) => (
             <TestimonialCard key={`r1-${i}`} testimonial={t} />
           ))}
-          {/* Duplicate the content for a seamless loop */}
-          {testimonialsRow1.map((t, i) => (
-            <TestimonialCard key={`r1-dup-${i}`} testimonial={t} />
-          ))}
-        </div>
+        </motion.div>
 
-        {/* Row 2: Scrolls Right */}
-        <div className="flex animate-marquee-right">
-          {testimonialsRow2.map((t, i) => (
+        {/* Row 2 (opposite direction) */}
+        <motion.div
+          className="flex"
+          animate={{ x: ["-100%", "0%"] }}
+          transition={{
+            duration: 20,
+            ease: "linear",
+            repeat: Infinity,
+          }}
+        >
+          {[...testimonialsRow2, ...testimonialsRow2].map((t, i) => (
             <TestimonialCard key={`r2-${i}`} testimonial={t} />
           ))}
-          {/* Duplicate the content for a seamless loop */}
-          {testimonialsRow2.map((t, i) => (
-            <TestimonialCard key={`r2-dup-${i}`} testimonial={t} />
-          ))}
-        </div>
+        </motion.div>
       </Box>
     </Box>
   );

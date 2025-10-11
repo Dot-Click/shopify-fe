@@ -10,7 +10,9 @@ export const Signin = () => {
       {/* Left Column: Contains logo, form, and footer */}
       <Box className="flex w-full flex-col p-10 lg:w-4/5">
         <Box>
-          <img src={logo} alt="eComProtect Logo" className="h-14" />
+          <Link to={"/"}>
+            <img src={logo} alt="eComProtect Logo" className="h-14" />
+          </Link>
         </Box>
         <Box className="flex flex-grow items-center justify-center">
           <Box className="w-full max-w-md">
