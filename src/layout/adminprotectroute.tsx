@@ -19,7 +19,7 @@ export const AdminProtectedRoute = ({ children }: StaffProtectedRouteProps) => {
       console.log("userRole", userRole);
       console.log("SESSION:-", session);
 
-      setHasAccess(userRole === "admin");
+      setHasAccess(userRole === "superadmin");
     };
 
     checkSession();

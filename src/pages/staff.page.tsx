@@ -37,6 +37,10 @@ export default function CreateStaff() {
 
   const [loading, setLoading] = useState(false);
 
+  const user = authClient.useSession()
+
+  console.log("user:-", user)
+
   const HandleSubmit = async () => {
     await authClient.admin.createUser(
       {
@@ -46,6 +50,14 @@ export default function CreateStaff() {
         data: {
           role: form.role,
           phone: form.phone,
+          shopify_url: user.data?.user.shopify_url,
+          average_orders_per_month: user.data?.user.average_orders_per_month,
+          shopify_api_key: user.data?.user.shopify_api_key,
+          shopify_access_token: user.data?.user.shopify_access_token,
+          package: user.data?.user.package,
+          plan: user.data?.user.plan,
+          company_name: user.data?.user.company_name,
+          company_registration_number: user.data?.user.company_registration_number,
         },
       },
       {
@@ -54,7 +66,7 @@ export default function CreateStaff() {
         },
         onSuccess: async () => {
           // console.log(ctx);
-          toast.success("Personal creado exitosamente");
+          toast.success("Created staff member");
           await authClient.emailOtp.sendVerificationOtp({
             email: form.email,
             type: "email-verification",
