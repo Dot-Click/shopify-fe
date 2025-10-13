@@ -84,7 +84,7 @@ export const SignupForm = () => {
         shopify_url: values.shopifyUrl,
         shopify_api_key: values.shopifyApiKey,
         shopify_access_token: values.shopifyAccessToken,
-        role: "subadmin",
+        role: "admin",
         package: "free",
         plan: "free",
       },
