@@ -24,6 +24,7 @@ import { Eye, EyeOff } from "lucide-react";
 import { Box } from "../ui/box";
 import { authClient } from "../../providers/user.provider";
 import { toast } from "react-hot-toast";
+import { wordsToNumber } from "../../lib/wordtonumber";
 
 // Form Schema
 const formSchema = z
@@ -64,7 +65,7 @@ export const SignupForm = () => {
   });
 
   async function onSubmit(values: FormData) {
-    console.log("this is the values", values);
+    const valRegNum = wordsToNumber(values.companyRegistrationNumber);
 
     if (!values.shopifyUrl.includes(".myshopify.com")) {
       toast.error(
@@ -72,6 +73,7 @@ export const SignupForm = () => {
       );
       return;
     }
+
     await authClient.signUp.email(
       {
         name: `${values.firstName} ${values.surname}`,
@@ -79,7 +81,7 @@ export const SignupForm = () => {
         password: values.password,
         company_name: values.companyName,
         mobile_number: values.mobileNumber,
-        company_registration_number: values.companyRegistrationNumber,
+        company_registration_number: String(valRegNum),
         average_orders_per_month: values.averageOrdersPerMonth,
         shopify_url: values.shopifyUrl,
         shopify_api_key: values.shopifyApiKey,
@@ -121,7 +123,6 @@ export const SignupForm = () => {
     );
   }
 
-  // The full JSX for the form component
   return (
     <Box className="flex h-full flex-col mx-auto w-full max-w-xl justify-center">
       <Box className="w-full space-y-4">
@@ -242,19 +243,21 @@ export const SignupForm = () => {
               <FormField
                 control={form.control}
                 name="companyRegistrationNumber"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Company Registration Number</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="12345678"
-                        {...field}
-                        className="border-gray-200 bg-gray-50 py-5"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
+                render={({ field }) => {
+                  return (
+                    <FormItem>
+                      <FormLabel>Company Registration Number</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="12345678"
+                          {...field}
+                          className="border-gray-200 bg-gray-50 py-5"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  );
+                }}
               />
             </Box>
 

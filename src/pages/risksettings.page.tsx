@@ -17,6 +17,7 @@ import { Flex } from "@/components/ui/flex";
 import { authClient } from "@/providers/user.provider";
 import { cn } from "@/lib/utils";
 import { useFetchSettings } from "@/hooks/settings/usefetchsettings";
+import { wordsToNumber } from "@/lib/wordtonumber";
 
 type SettingsState = {
   lostParcelThreshold: number;
@@ -47,6 +48,14 @@ function RiskSettings() {
 
   const { mutate: saveSettings, isPending: isSaving } = useCreateSettings();
   const { data: fetchedData, isLoading } = useFetchSettings();
+  const [thresholdInput, setThresholdInput] = useState<string>(
+    settings.lostParcelThreshold.toString()
+  );
+
+  const [lossRateInput, setLossRateInput] = useState<string>(
+    settings.lossRateThreshold.toString()
+  );
+  const [lossRateError, setLossRateError] = useState<string>("");
 
   const handleChange = (key: keyof SettingsState, value: any) => {
     setSettings((prev) => ({ ...prev, [key]: value }));
@@ -89,6 +98,35 @@ function RiskSettings() {
     saveSettings(payload);
   };
 
+  const handleThresholdBlur = () => {
+    const processedValue = wordsToNumber(thresholdInput);
+
+    let finalValue = settings.lostParcelThreshold;
+
+    if (typeof processedValue === "number" && !isNaN(processedValue)) {
+      finalValue = Math.max(1, processedValue);
+    }
+
+    handleChange("lostParcelThreshold", finalValue);
+    setThresholdInput(finalValue.toString());
+  };
+
+  const handleLossRateBlur = () => {
+    const processedValue = wordsToNumber(lossRateInput);
+    setLossRateError("");
+
+    if (typeof processedValue === "number" && !isNaN(processedValue)) {
+      if (processedValue >= 1 && processedValue <= 100) {
+        handleChange("lossRateThreshold", processedValue);
+        setLossRateInput(processedValue.toString());
+      } else {
+        setLossRateError("Value must be between 1 and 100.");
+      }
+    } else {
+      setLossRateError("Please enter a valid number.");
+    }
+  };
+
   if (isLoading) return <p>Loading settings...</p>;
 
   return (
@@ -106,14 +144,13 @@ function RiskSettings() {
             <Box className="w-2/5">
               <Label>Lost Parcel Threshold</Label>
               <Input
-                type="number"
-                value={settings.lostParcelThreshold}
-                min={1}
-                max={10}
+                // type="number"
+                // min={1}
+                // max={10}
+                value={settings.lostParcelThreshold || thresholdInput}
                 className="mt-2 bg-white border-0 shadow py-5"
-                onChange={(e) =>
-                  handleChange("lostParcelThreshold", e.target.value)
-                }
+                onChange={(e) => setThresholdInput(e.target.value)}
+                onBlur={handleThresholdBlur}
               />
             </Box>
 
@@ -156,9 +193,11 @@ function RiskSettings() {
                 !(userPackage === "ECP Vision" || userPackage === "ECP Insight")
               }
               className={`mt-2 bg-white border-0 shadow`}
-              onChange={(e) =>
-                handleChange("lossRateThreshold", e.target.value)
-              }
+              onChange={(e) => {
+                setLossRateInput(e.target.value);
+                if (lossRateError) setLossRateError("");
+              }}
+              onBlur={handleLossRateBlur}
             />
           </Box>
 

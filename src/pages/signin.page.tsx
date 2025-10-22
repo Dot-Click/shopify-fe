@@ -36,7 +36,7 @@ export const Signin = () => {
         </footer>
       </Box>
 
-      <Box className="hidden items-center justify-center bg-white p-2 lg:flex lg:w-2/5">
+      <Box className="hidden items-center justify-center bg-white p-2 lg:flex lg:w-3/5">
         <img
           src={SiginImage}
           alt="A seamless way to manage your profile"

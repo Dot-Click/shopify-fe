@@ -2,6 +2,8 @@ import { axios } from "@/configs/axios.config";
 import { useQuery } from "@tanstack/react-query";
 
 export const useFetchNotification = () => {
+  const isUserPage = window.location.href.includes("/user");
+
   return useQuery({
     queryKey: ["get-notification"],
     queryFn: async () => {
@@ -14,5 +16,6 @@ export const useFetchNotification = () => {
     staleTime: 0,
     refetchOnWindowFocus: true,
     refetchOnMount: true,
+    enabled: isUserPage,
   });
 };
