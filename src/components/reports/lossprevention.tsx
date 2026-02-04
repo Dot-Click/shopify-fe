@@ -15,7 +15,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
-import { format } from "date-fns";
+import { format, subDays } from "date-fns"; // Added subDays
 
 // chart config
 const chartConfig = {
@@ -27,25 +27,41 @@ const chartConfig = {
 
 /* ---------------- Parent Container ---------------- */
 export function LossPreventionDashboard() {
-  const [dateRange, setDateRange] = useState<DateRange | undefined>();
+  // FIX: Initialize with a default range (e.g., Last 30 Days)
+  const [dateRange, setDateRange] = useState<DateRange | undefined>({
+    from: subDays(new Date(), 30),
+    to: new Date(),
+  });
 
   return (
     <div className="space-y-6">
       {/* Date Range Picker (shared for both) */}
       <Popover>
         <PopoverTrigger asChild>
-          <Button variant="outline" size="sm" className="border-0 shadow-md">
-            {dateRange?.from && dateRange?.to
-              ? `${format(dateRange.from, "MMM d, yyyy")} - ${format(
-                  dateRange.to,
-                  "MMM d, yyyy"
-                )}`
-              : "Select Date Range"}
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="border-0 shadow-md min-w-[240px] justify-start text-left font-normal"
+          >
+             {dateRange?.from ? (
+                  dateRange.to ? (
+                    <>
+                      {format(dateRange.from, "MMM d, yyyy")} -{" "}
+                      {format(dateRange.to, "MMM d, yyyy")}
+                    </>
+                  ) : (
+                    format(dateRange.from, "MMM d, yyyy")
+                  )
+                ) : (
+                  <span>Pick a date</span>
+                )}
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-auto p-0">
+        <PopoverContent className="w-auto p-0" align="end">
           <Calendar
+            initialFocus
             mode="range"
+            defaultMonth={dateRange?.from}
             selected={dateRange}
             onSelect={setDateRange}
             numberOfMonths={2}
@@ -75,7 +91,7 @@ function LossPreventionKPIs({ dateRange }: { dateRange?: DateRange }) {
 
   return (
     <div className="grid grid-cols-2 gap-6">
-      <Card className="border-0 shadow-md">
+      <Card className="border-1 border-gray-200 shadow-xs">
         <CardHeader>
           <CardTitle>Orders Prevented/Flagged</CardTitle>
         </CardHeader>
@@ -83,7 +99,7 @@ function LossPreventionKPIs({ dateRange }: { dateRange?: DateRange }) {
           {data?.numPreventedOrFlagged ?? 0}
         </CardContent>
       </Card>
-      <Card className="border-0 shadow-md">
+      <Card className="border-1 border-gray-200 shadow-xs">
         <CardHeader>
           <CardTitle>Revenue Saved (£)</CardTitle>
         </CardHeader>
@@ -124,18 +140,32 @@ function LossPreventionChart({ dateRange }: { dateRange?: DateRange }) {
       </CardHeader>
 
       <CardContent>
-        <ChartContainer config={chartConfig} className="h-64 w-full">
-          <BarChart data={chartData}>
-            <CartesianGrid vertical={false} />
-            <XAxis dataKey="label" />
-            <YAxis />
-            <ChartTooltip
-              cursor={false}
-              content={<ChartTooltipContent indicator="dashed" />}
-            />
-            <Bar dataKey="value" fill="var(--color-orders)" radius={4} />
-          </BarChart>
-        </ChartContainer>
+        {chartData.length > 0 ? (
+          <ChartContainer config={chartConfig} className="h-64 w-full">
+            <BarChart data={chartData}>
+              <CartesianGrid vertical={false} />
+              <XAxis 
+                dataKey="label" 
+                tickLine={false}
+                tickMargin={10}
+                axisLine={false}
+              />
+              <YAxis 
+                tickLine={false}
+                axisLine={false}
+              />
+              <ChartTooltip
+                cursor={false}
+                content={<ChartTooltipContent indicator="dashed" />}
+              />
+              <Bar dataKey="value" fill="var(--color-orders)" radius={4} />
+            </BarChart>
+          </ChartContainer>
+        ) : (
+          <div className="h-64 w-full flex items-center justify-center text-gray-400">
+            No data available for this period.
+          </div>
+        )}
       </CardContent>
     </Card>
   );

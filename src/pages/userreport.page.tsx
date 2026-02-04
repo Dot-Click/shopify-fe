@@ -1,5 +1,6 @@
-import { LossPreventionDashboard } from "@/components/reportcharts/lossprevention";
-import { SuspiciousOrdersReport } from "@/components/reportcharts/suspiciousorder";
+import { LossPreventionDashboard } from "@/components/reports/lossprevention";
+import { HighRiskCustomerList } from "@/components/reports/riskycustomer";
+import { SuspiciousOrdersReport } from "@/components/reports/suspiciousorder";
 import { Box } from "@/components/ui/box";
 import { Separator } from "@/components/ui/separator";
 
@@ -8,8 +9,15 @@ function UserReport() {
     <>
       <Box className="bg-white p-8">
         <SuspiciousOrdersReport />
+
         <Separator className="bg-web-checkbox-grey mb-5" />
+
         <LossPreventionDashboard />
+
+        <Separator className="bg-web-checkbox-grey mb-5" />
+
+
+        <HighRiskCustomerList />
       </Box>
     </>
   );

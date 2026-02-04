@@ -36,6 +36,7 @@ import { eachMonthOfInterval, format } from "date-fns";
 import { useFetchFlaggedCustomerAndStore } from "@/hooks/shopifycustomers/usefetchflaggedcustomer";
 import { useGenerateReportMutation } from "@/hooks/reports/usefetchstoreactivity";
 import { Spinner } from "@/components/ui/spinner";
+import { StoreGrowthDashboard } from "@/components/reports/dbgrowth";
 
 const chartConfig = {
   riskIncidents: {
@@ -208,9 +209,8 @@ function ReportTable() {
 
   const handleDownloadStoreReport = () => {
     generateReport({
-      fileName: `Store_Activity_Report_${
-        new Date().toISOString().split("T")[0]
-      }.pdf`,
+      fileName: `Store_Activity_Report_${new Date().toISOString().split("T")[0]
+        }.pdf`,
       url: "/reports/store-activity-report",
     });
   };
@@ -388,8 +388,11 @@ function ReportAnalysis() {
         </div>
       </header>
 
+      <StoreGrowthDashboard />
+     
       {/* Chart Section */}
       <ReportOverviewChart />
+
 
       {/* Table Section */}
       <ReportTable />
