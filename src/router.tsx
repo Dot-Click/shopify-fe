@@ -26,6 +26,9 @@ import CreateStore from "./pages/createstores.page";
 import UserReport from "./pages/userreport.page";
 import { ProtectedRoute } from "./layout/protectroute";
 import { AdminProtectedRoute } from "./layout/adminprotectroute";
+import WideNetworkReport from "./pages/widenetworkreport.page";
+import OnboardingReport from "./pages/onboardingreport.page";
+import SystemEffectivenessReport from "./pages/effectivenesreport.page";
 
 export const Router = () => {
   return (
@@ -83,6 +86,38 @@ export const Router = () => {
               </AdminProtectedRoute>
             }
           />
+
+          {/* Reports */}
+
+          <Route
+            path="/admin/wide-network-report"
+            element={
+              <AdminProtectedRoute>
+                <WideNetworkReport />
+              </AdminProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/admin/onboarding-report"
+            element={
+              <AdminProtectedRoute>
+                <OnboardingReport />
+              </AdminProtectedRoute>
+            }
+          />
+
+
+          <Route
+            path="/admin/effectiveness-report"
+            element={
+              <AdminProtectedRoute>
+                <SystemEffectivenessReport />
+              </AdminProtectedRoute>
+            }
+          />
+
+
           <Route
             path="/admin/create-store"
             element={

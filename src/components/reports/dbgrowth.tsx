@@ -14,7 +14,7 @@ export function StoreGrowthDashboard() {
 
   return (
     <div className="space-y-6">
-      
+
       {/* KPIs */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 px-6">
         <Card className="border-1 border-gray-200 shadow-xs">
@@ -42,7 +42,7 @@ export function StoreGrowthDashboard() {
 
       {/* Charts Row */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 px-6 ">
-        
+
         {/* Monthly Growth Line Chart */}
         <Card className="border-1 border-gray-200 shadow-xs">
           <CardHeader>
@@ -52,10 +52,10 @@ export function StoreGrowthDashboard() {
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={data?.growthTrend}>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                <XAxis dataKey="month" tick={{fontSize: 12}} />
+                <XAxis dataKey="month" tick={{ fontSize: 12 }} />
                 <YAxis allowDecimals={false} />
                 <Tooltip />
-                <Line type="monotone" dataKey="count" stroke="#2563eb" strokeWidth={2} dot={{r: 4}} />
+                <Line type="monotone" dataKey="count" stroke="#2563eb" strokeWidth={2} dot={{ r: 4 }} />
               </LineChart>
             </ResponsiveContainer>
           </CardContent>
@@ -79,7 +79,7 @@ export function StoreGrowthDashboard() {
                   dataKey="count"
                   nameKey="plan"
                 >
-                  {data?.storesByPlan.map((entry, index) => (
+                  {data?.storesByPlan.map((_entry, index) => (
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                   ))}
                 </Pie>
@@ -88,12 +88,12 @@ export function StoreGrowthDashboard() {
             </ResponsiveContainer>
           </CardContent>
           <div className="flex justify-center gap-4 pb-4 flex-wrap">
-              {data?.storesByPlan.map((entry, index) => (
-                <div key={entry.plan} className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded-full" style={{ backgroundColor: COLORS[index % COLORS.length] }}></div>
-                  <span className="text-sm text-slate-600">{entry.plan || "Free"} ({entry.count})</span>
-                </div>
-              ))}
+            {data?.storesByPlan.map((entry, index) => (
+              <div key={entry.plan} className="flex items-center gap-2">
+                <div className="w-3 h-3 rounded-full" style={{ backgroundColor: COLORS[index % COLORS.length] }}></div>
+                <span className="text-sm text-slate-600">{entry.plan || "Free"} ({entry.count})</span>
+              </div>
+            ))}
           </div>
         </Card>
 

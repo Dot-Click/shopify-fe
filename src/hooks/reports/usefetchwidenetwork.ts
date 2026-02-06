@@ -1,14 +1,14 @@
-// src/hooks/useRiskDashboardData.ts
+import { useQuery } from "@tanstack/react-query";
+import { axios, type ErrorWithMessage } from "../../configs/axios.config";
 
-import { useState, useEffect } from 'react';
 
 // --- Types based on the controller's output ---
-interface TopDomain {
+export interface TopDomain {
     domain: string;
     count: number;
 }
 
-interface MonthlyData {
+export interface MonthlyData {
     month: string; // date_trunc returns a string in ISO format
     count: number;
 }
@@ -16,8 +16,6 @@ interface MonthlyData {
 interface FlaggedLocation {
     postcode: string;
     count: number;
-    // In a real app, you would fetch lat/lng for these postcodes 
-    // or store them in the database for the map
 }
 
 interface RiskDashboardData {
@@ -27,52 +25,29 @@ interface RiskDashboardData {
     flaggedLocations: FlaggedLocation[];
 }
 
-interface DashboardState {
-    data: RiskDashboardData | null;
-    loading: boolean;
-    error: string | null;
-}
+// The API endpoint from your Express router: reportsRouter.get("/widenetwork-report", ...)
+const RISK_DASHBOARD_ENDPOINT = "/reports/widenetwork-report";
 
-const API_ENDPOINT = '/api/risk-dashboard-data'; // Assuming a new endpoint
+/**
+ * Hook to fetch all data required for the Risk Dashboard.
+ * Data includes total flags, top domains, monthly risk trend, and flagged locations.
+ */
+export const useFetchRiskDashboardData = () => {
+    return useQuery<RiskDashboardData, ErrorWithMessage>({
+        queryKey: ["risk-dashboard-data"],
+        queryFn: async () => {
+            // Makes the GET request to the backend endpoint
+            const response = await axios.get<RiskDashboardData>(RISK_DASHBOARD_ENDPOINT);
 
-export const useRiskDashboardData = () => {
-    const [state, setState] = useState<DashboardState>({
-        data: null,
-        loading: true,
-        error: null,
+            console.log("Risk Dashboard Data Fetched Successfully.");
+
+            // The API returns the main object directly, so we return the whole data object
+            return response.data;
+        },
+
+        // Configuration for caching/stale data:
+        staleTime: 1000 * 60 * 10, // Data is considered fresh for 10 minutes
+        retry: 1,
+        refetchOnWindowFocus: false,
     });
-
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await fetch(API_ENDPOINT);
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                const result: RiskDashboardData = await response.json();
-                
-                // Format monthly data for chart consumption (optional but good practice)
-                const formattedData = {
-                    ...result,
-                    monthlyRepeatRisk: result.monthlyRepeatRisk.map(item => ({
-                        ...item,
-                        // Convert the month string to a readable format for chart labels
-                        month: new Date(item.month).toLocaleDateString('en-US', { 
-                            year: 'numeric', 
-                            month: 'short' 
-                        }),
-                    })),
-                };
-
-                setState({ data: formattedData, loading: false, error: null });
-            } catch (err: any) {
-                console.error("Failed to fetch dashboard data:", err);
-                setState({ data: null, loading: false, error: err.message || 'An unknown error occurred' });
-            }
-        };
-
-        fetchData();
-    }, []);
-
-    return state;
 };
