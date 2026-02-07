@@ -21,7 +21,7 @@ export const AdminSignin = () => {
         {/* Bottom: Footer */}
         <footer className="w-full">
           <Box className="flex items-center justify-between text-sm text-gray-500">
-            <p>© 2025 eComProtect. All rights reserved.</p>
+            <p>© {new Date().getFullYear()} eComProtect. All rights reserved.</p>
             <Box className="space-x-6">
               <Link to="" className="hover:underline">
                 Privacy Policy

@@ -30,6 +30,12 @@ type SettingsState = {
   requirePhoto: boolean;
   sendCancellationEmail: boolean;
   includeWavierLink: boolean;
+
+  emailNotificationsEnabled: boolean;
+  notificationEmail: string;
+  includeOrderDetails: boolean;
+  includeReasonForFlag: boolean;
+  includeRecommendedAction: boolean;
 };
 
 function RiskSettings() {
@@ -44,6 +50,12 @@ function RiskSettings() {
     requirePhoto: false,
     sendCancellationEmail: false,
     includeWavierLink: false,
+
+    emailNotificationsEnabled: true,
+    notificationEmail: "info@example.com",
+    includeOrderDetails: true,
+    includeReasonForFlag: true,
+    includeRecommendedAction: true,
   });
 
   const { mutate: saveSettings, isPending: isSaving } = useCreateSettings();
@@ -67,7 +79,8 @@ function RiskSettings() {
   useEffect(() => {
     if (fetchedData) {
       const f = fetchedData;
-      setSettings({
+       setSettings((prev) => ({ 
+        ...prev,
         lostParcelThreshold: f.lostParcelThreshold ?? 3,
         lostParcelPeriod: f.lostParcelPeriod?.toString() ?? "6",
         lossRateThreshold: f.lossRateThreshold ?? 40,
@@ -78,7 +91,7 @@ function RiskSettings() {
         requirePhoto: f.photoOnDelivery ?? false,
         sendCancellationEmail: f.sendCancellationEmail ?? false,
         includeWavierLink: f.includeWavierLink ?? false,
-      });
+      }));
     }
   }, [fetchedData]);
 
@@ -135,7 +148,9 @@ function RiskSettings() {
         Risk Detection Settings
       </h1>
 
-      <Card className="mb-6 bg-white shadow-sm border-slate-200">
+
+      {/* Detection Rules */}
+      <Card className="mb-6 bg-white shadow-xs border-slate-200">
         <CardHeader>
           <CardTitle>Detection Rules</CardTitle>
         </CardHeader>
@@ -148,7 +163,7 @@ function RiskSettings() {
                 // min={1}
                 // max={10}
                 value={settings.lostParcelThreshold || thresholdInput}
-                className="mt-2 bg-white border-0 shadow py-5"
+                className="mt-2 bg-white border border-gray-200  py-5"
                 onChange={(e) => setThresholdInput(e.target.value)}
                 onBlur={handleThresholdBlur}
               />
@@ -160,10 +175,10 @@ function RiskSettings() {
                 value={settings.lostParcelPeriod}
                 onValueChange={(val) => handleChange("lostParcelPeriod", val)}
               >
-                <SelectTrigger className="mt-2 bg-white border-0 shadow w-96">
+                <SelectTrigger className="mt-2 bg-white border border-gray-200 w-96">
                   <SelectValue placeholder="Select period" />
                 </SelectTrigger>
-                <SelectContent className="bg-white border-0 shadow">
+                <SelectContent className="bg-white border border-gray-200">
                   <SelectItem value="1">1 Month</SelectItem>
                   <SelectItem value="3">3 Months</SelectItem>
                   <SelectItem value="6">6 Months</SelectItem>
@@ -192,7 +207,7 @@ function RiskSettings() {
               disabled={
                 !(userPackage === "ECP Vision" || userPackage === "ECP Insight")
               }
-              className={`mt-2 bg-white border-0 shadow`}
+              className={`mt-2 bg-white border border-gray-200 `}
               onChange={(e) => {
                 setLossRateInput(e.target.value);
                 if (lossRateError) setLossRateError("");
@@ -207,10 +222,10 @@ function RiskSettings() {
               value={settings.matchSensitivity}
               onValueChange={(val) => handleChange("matchSensitivity", val)}
             >
-              <SelectTrigger className="w-40 mt-2 border-0 bg-white shadow">
+              <SelectTrigger className="w-40 mt-2 border border-gray-200 bg-white ">
                 <SelectValue placeholder="Select" />
               </SelectTrigger>
-              <SelectContent className="bg-white border-0 shadow">
+              <SelectContent className="bg-white border-0 ">
                 <SelectItem value="low">Low</SelectItem>
                 <SelectItem value="medium">Medium</SelectItem>
                 <SelectItem value="high">High</SelectItem>
@@ -220,7 +235,9 @@ function RiskSettings() {
         </CardContent>
       </Card>
 
-      <Card className="mb-6 bg-white shadow-sm border-slate-200">
+
+      {/* Risky Orders */}
+      <Card className="mb-6 bg-white shadow-xs border-slate-200">
         <CardHeader>
           <CardTitle>Action on Risky Orders</CardTitle>
         </CardHeader>
@@ -287,6 +304,83 @@ function RiskSettings() {
               checked={settings.includeWavierLink}
               onCheckedChange={(val) => handleChange("includeWavierLink", val)}
             />
+          </Box>
+        </CardContent>
+      </Card>
+
+      {/* Notifications */}
+      <Card className="mb-6 bg-white shadow-xs border-slate-200">
+        <CardHeader>
+          {/* Title from image */}
+          <CardTitle className="text-2xl font-bold text-slate-800">
+            Notifications & Alerts
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <Box className="flex items-start justify-between">
+            {/* Checkbox and Label */}
+            <Label className="flex items-start text-base font-normal">
+              <Switch
+                checked={settings.emailNotificationsEnabled}
+                onCheckedChange={(val) =>
+                  handleChange("emailNotificationsEnabled", val)
+                }
+                // Adjust switch styling to look like a checked box from the image
+                // The Switch component is usually a toggle, but here we use it as a custom checkbox
+                className="mt-1 mr-3"
+              />
+              Email Notifications to Retailer (On Risky Order Detection)
+            </Label>
+          </Box>
+
+          <Box className="ml-8 w-1/2">
+            <Input
+              type="email"
+              value={settings.notificationEmail}
+              className="mt-2 bg-white border border-gray-300 py-3"
+              onChange={(e) => handleChange("notificationEmail", e.target.value)}
+            />
+          </Box>
+
+
+          <Box className="pt-4 space-y-3">
+            <Label className="text-base font-normal">Include in email:</Label>
+
+            {/* Order details */}
+            <Box className="flex items-center ml-4">
+              <Switch
+                checked={settings.includeOrderDetails}
+                onCheckedChange={(val) => handleChange("includeOrderDetails", val)}
+                className="mr-3"
+              />
+              <Label className="text-base font-normal">
+                Order details (iname, email, address, items)
+              </Label>
+            </Box>
+
+            {/* Reason for flag */}
+            <Box className="flex items-center ml-4">
+              <Switch
+                checked={settings.includeReasonForFlag}
+                onCheckedChange={(val) => handleChange("includeReasonForFlag", val)}
+                className="mr-3"
+              />
+              <Label className="text-base font-normal">
+                Reason for flag (lost count, loss rate, time window)
+              </Label>
+            </Box>
+
+            {/* Recommended action */}
+            <Box className="flex items-center ml-4">
+              <Switch
+                checked={settings.includeRecommendedAction}
+                onCheckedChange={(val) => handleChange("includeRecommendedAction", val)}
+                className="mr-3"
+              />
+              <Label className="text-base font-normal">
+                Recommended action
+              </Label>
+            </Box>
           </Box>
         </CardContent>
       </Card>

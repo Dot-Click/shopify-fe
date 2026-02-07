@@ -170,7 +170,7 @@ export const AdminSigninForm = () => {
               <Button
                 className="w-full bg-blue-600 py-6 cursor-pointer text-base hover:bg-blue-700 text-white"
                 type="submit"
-                // disabled={!authChecked}
+                disabled={authChecked}
               >
                 {authChecked ? <Spinner /> : "Sign In"}
               </Button>

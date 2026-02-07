@@ -24,7 +24,7 @@ export const Signup = () => {
         {/* Bottom: Footer */}
         <footer className="w-full mt-1 max-sm:mt-4">
           <div className="flex items-center justify-between text-sm text-gray-500 max-sm:flex-col max-sm:items-start max-sm:text-xs">
-            <p>© 2025 eComProtect. All rights reserved.</p>
+            <p>© {new Date().getFullYear()} eComProtect. All rights reserved.</p>
             <div className="space-x-6 max-sm:space-x-3">
               <Link to="" className="hover:underline">
                 Privacy Policy
