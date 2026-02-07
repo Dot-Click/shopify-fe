@@ -79,7 +79,7 @@ function RiskSettings() {
   useEffect(() => {
     if (fetchedData) {
       const f = fetchedData;
-       setSettings((prev) => ({ 
+      setSettings((prev) => ({
         ...prev,
         lostParcelThreshold: f.lostParcelThreshold ?? 3,
         lostParcelPeriod: f.lostParcelPeriod?.toString() ?? "6",
@@ -107,6 +107,12 @@ function RiskSettings() {
       photoOnDelivery: settings.requirePhoto,
       sendCancellationEmail: settings.sendCancellationEmail,
       includeWavierLink: settings.includeWavierLink,
+
+      emailNotificationsEnabled: settings.emailNotificationsEnabled,
+      notificationEmail: settings.notificationEmail,
+      includeOrderDetails: settings.includeOrderDetails,
+      includeReasonForFlag: settings.includeReasonForFlag,
+      includeRecommendedAction: settings.includeRecommendedAction,
     };
     saveSettings(payload);
   };
