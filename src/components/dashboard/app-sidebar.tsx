@@ -3,7 +3,7 @@ import {
   ChevronDown,
   Globe,
   LayoutGrid,
-  Loader2, // New: For loading spinner on logout
+  Loader2,
   PackagePlus,
   Paperclip,
   Settings,
@@ -25,6 +25,12 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "../../components/ui/sidebar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "../../components/ui/dropdown-menu";
 import logo from "/images/logo_white.png";
 import { IoMdLogOut } from "react-icons/io";
 import { PiDotsNineBold } from "react-icons/pi";
@@ -34,7 +40,7 @@ import { authClient } from "../../providers/user.provider";
 import { toast } from "react-hot-toast";
 import { FaUserPlus } from "react-icons/fa6";
 import whiteLogo from "/icons/logo_icon.png";
-import React, { useState } from "react"; // New: useState imported
+import React, { useState, useRef } from "react";
 
 interface MenuItem {
   title: string;
@@ -51,10 +57,9 @@ export function AppSidebar({ role }: AppSidebarProps) {
   const { pathname } = useLocation();
   const navigate = useNavigate();
 
-  // --- New State for Logout Loading ---
   const [isLoading, setIsLoading] = useState(false);
-  // --- New State for Dropdown Control ---
-  const [openDropdown, setOpenDropdown] = useState(""); // Stores the title of the currently open dropdown
+  // State for expanded sidebar accordion
+  const [openDropdown, setOpenDropdown] = useState("");
 
   const adminMainMenuItems: MenuItem[] = [
     { title: "Dashboard", url: "/admin/dashboard", icon: LayoutGrid },
@@ -80,22 +85,22 @@ export function AppSidebar({ role }: AppSidebarProps) {
         {
           title: "General Reports",
           url: "/admin/report-analysis",
-          icon: AlertCircle, // Icon for Wide Network
+          icon: AlertCircle,
         },
         {
           title: "Wide Network Report",
           url: "/admin/wide-network-report",
-          icon: Globe, // Icon for Wide Network
+          icon: Globe,
         },
         {
           title: "Onboarding Report",
           url: "/admin/onboarding-report",
-          icon: UserCheck, // Icon for Onboarding
+          icon: UserCheck,
         },
         {
-          title: "System Effectiveness", // Shortened title
+          title: "System Effectiveness",
           url: "/admin/effectiveness-report",
-          icon: TrendingUp, // Icon for System Effectiveness
+          icon: TrendingUp,
         },
       ],
     },
@@ -130,34 +135,41 @@ export function AppSidebar({ role }: AppSidebarProps) {
       const isSubItemActive = item.subItems?.some(
         (subItem) => pathname === subItem.url
       );
-      // Item is active if its path or any sub-item's path matches the current location
       const isParentActive = isActivePath || isSubItemActive;
 
-      // Dropdown open control: Only the one matching the state should be open
-      const isDropdownOpen = hasSubItems && openDropdown === item.title;
+      // Dropdown open control for expanded state
+      const isExpandedDropdownOpen = hasSubItems && openDropdown === item.title;
 
       const Icon = item.icon;
 
-      // Handle click for dropdown toggle
+      // --- LOGIC FOR COLLAPSED HOVER MENU ---
+      if (state === "collapsed" && hasSubItems) {
+        // We use a separate logic inside the map for the hover state of this specific item
+        return (
+          <HoverableSubMenu
+            key={item.title}
+            item={item}
+            pathname={pathname}
+            isParentActive={isParentActive || false}
+          />
+        );
+      }
+
+      // --- LOGIC FOR EXPANDED STATE (Or collapsed items with no children) ---
       const handleItemClick = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
         if (hasSubItems && state === "expanded") {
-          e.preventDefault(); // Prevent navigating to the parent URL
-          // Toggle the dropdown state
-          setOpenDropdown(isDropdownOpen ? "" : item.title);
+          e.preventDefault();
+          setOpenDropdown(isExpandedDropdownOpen ? "" : item.title);
         }
       };
 
       return (
         <React.Fragment key={item.title}>
-          <SidebarMenuItem
-            // For Collapsed State: Use relative/group for hover dropdown
-            className={`relative ${
-              hasSubItems && state !== "expanded" ? "group" : ""
-            }`}
-          >
+          <SidebarMenuItem>
             <SidebarMenuButton
               asChild
               isActive={isParentActive}
+              tooltip={state === "collapsed" ? item.title : undefined}
               className={`hover:bg-gray-300 hover:text-black flex items-center gap-3 
             ${isParentActive ? "bg-white !text-black" : "text-white"}`}
             >
@@ -169,12 +181,10 @@ export function AppSidebar({ role }: AppSidebarProps) {
                     <span className="hidden md:block flex-1 text-left">
                       {item.title}
                     </span>
-                    {/* Add Chevron for toggle when expanded and has sub-items */}
                     {hasSubItems && (
                       <ChevronDown
-                        className={`size-4 shrink-0 transition-transform ${
-                          isDropdownOpen ? "rotate-180" : ""
-                        }`}
+                        className={`size-4 shrink-0 transition-transform ${isExpandedDropdownOpen ? "rotate-180" : ""
+                          }`}
                       />
                     )}
                   </>
@@ -182,8 +192,8 @@ export function AppSidebar({ role }: AppSidebarProps) {
               </Link>
             </SidebarMenuButton>
 
-            {/* Sub-Items for EXPANDED Sidebar (Toggle based on openDropdown state) */}
-            {hasSubItems && isDropdownOpen && state === "expanded" && (
+            {/* Sub-Items for EXPANDED Sidebar */}
+            {hasSubItems && isExpandedDropdownOpen && state === "expanded" && (
               <div className="pl-6 border-l border-blue-600 ml-4 py-1">
                 {item.subItems!.map((subItem) => {
                   const isSubActive = pathname === subItem.url;
@@ -194,10 +204,9 @@ export function AppSidebar({ role }: AppSidebarProps) {
                         asChild
                         isActive={isSubActive}
                         className={`hover:bg-gray-200 hover:text-black flex items-center gap-3 w-full justify-start !text-sm 
-                          ${
-                            isSubActive
-                              ? "bg-white !text-black"
-                              : "text-white"
+                          ${isSubActive
+                            ? "bg-white !text-black"
+                            : "text-white"
                           }`}
                       >
                         <Link to={subItem.url} className="flex gap-3 !py-2">
@@ -205,41 +214,6 @@ export function AppSidebar({ role }: AppSidebarProps) {
                           <span className="hidden md:block">
                             {subItem.title}
                           </span>
-                        </Link>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
-                  );
-                })}
-              </div>
-            )}
-
-            {/* Sub-Items for COLLAPSED Sidebar (Appears on hover) */}
-            {hasSubItems && state !== "expanded" && (
-              <div
-                className="absolute left-full top-0 ml-1 py-1 px-2 z-10 
-                           bg-[#1E40AF] rounded shadow-lg hidden group-hover:block w-56"
-              >
-                <div className="text-white font-semibold py-1 px-3 border-b border-blue-600 mb-1">
-                  {item.title}
-                </div>
-                {item.subItems!.map((subItem) => {
-                  const isSubActive = pathname === subItem.url;
-                  const SubIcon = subItem.icon;
-                  return (
-                    <SidebarMenuItem key={subItem.title} className="!p-0">
-                      <SidebarMenuButton
-                        asChild
-                        isActive={isSubActive}
-                        className={`hover:bg-blue-800 flex items-center gap-3 w-full justify-start !text-sm !py-2 !px-3
-                          ${
-                            isSubActive
-                              ? "bg-white !text-black"
-                              : "text-white"
-                          }`}
-                      >
-                        <Link to={subItem.url} className="flex gap-3 w-full">
-                          <SubIcon className="size-4 shrink-0" />
-                          <span>{subItem.title}</span>
                         </Link>
                       </SidebarMenuButton>
                     </SidebarMenuItem>
@@ -256,11 +230,8 @@ export function AppSidebar({ role }: AppSidebarProps) {
   const handleLogout = async () => {
     setIsLoading(true);
     try {
-      // Assuming authClient.signOut is async and handles the actual sign out
       await authClient.signOut();
-
-      // Added a small delay to make the loading state noticeable
-      await new Promise(resolve => setTimeout(resolve, 500)); 
+      await new Promise((resolve) => setTimeout(resolve, 500));
 
       if (role === "admin") {
         navigate("/admin-signin");
@@ -270,7 +241,7 @@ export function AppSidebar({ role }: AppSidebarProps) {
     } catch (error) {
       toast.error("Error logging out");
       console.error("Error logging out:", error);
-      setIsLoading(false); // Only set to false on error, as navigation happens on success
+      setIsLoading(false);
     }
   };
 
@@ -340,10 +311,10 @@ export function AppSidebar({ role }: AppSidebarProps) {
             <SidebarMenuButton
               className="bg-linear-to-r from-web-dark-red to-web-light-red py-5 cursor-pointer mb-4 text-white hover:bg-red-500 disabled:opacity-50"
               onClick={handleLogout}
-              disabled={isLoading} // Disable button when loading
+              disabled={isLoading}
             >
               {isLoading ? (
-                <Loader2 className="animate-spin size-4" /> // Show spinner when loading
+                <Loader2 className="animate-spin size-4" />
               ) : (
                 <IoMdLogOut />
               )}
@@ -355,5 +326,90 @@ export function AppSidebar({ role }: AppSidebarProps) {
         </SidebarMenu>
       </SidebarFooter>
     </Sidebar>
+  );
+}
+
+// --- Helper Component for Hover Behavior ---
+function HoverableSubMenu({
+  item,
+  pathname,
+  isParentActive,
+}: {
+  item: MenuItem;
+  pathname: string;
+  isParentActive: boolean;
+}) {
+  const [isOpen, setIsOpen] = useState(false);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Open on enter, clear close timer
+  const handleMouseEnter = () => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+    setIsOpen(true);
+  };
+
+  // Close on leave, but with a delay to allow moving to the menu
+  const handleMouseLeave = () => {
+    timeoutRef.current = setTimeout(() => {
+      setIsOpen(false);
+    }, 150); // 150ms delay
+  };
+
+  const Icon = item.icon;
+
+  return (
+    <SidebarMenuItem>
+      <DropdownMenu open={isOpen} onOpenChange={setIsOpen} modal={false}>
+        <DropdownMenuTrigger asChild>
+          <SidebarMenuButton
+            isActive={isParentActive}
+            className={`hover:bg-gray-300 hover:text-black flex items-center justify-center gap-3 
+              ${isParentActive ? "bg-white !text-black" : "text-white"}`}
+            // Apply mouse events to the Trigger
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
+          >
+            <Icon className="size-4 shrink-0" />
+            <span className="sr-only">{item.title}</span>
+          </SidebarMenuButton>
+        </DropdownMenuTrigger>
+
+        <DropdownMenuContent
+          side="right"
+          align="start"
+          sideOffset={5}
+          className="bg-[#1E40AF] border-blue-600 text-white min-w-[200px] z-50 ml-2 shadow-xl"
+          // Apply mouse events to the Content so it stays open when hovered
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
+        >
+          <div className="px-2 py-1.5 text-sm  font-semibold border-b border-blue-600 mb-1">
+            {item.title}
+          </div>
+          {item.subItems!.map((subItem) => {
+            const isSubActive = pathname === subItem.url;
+            const SubIcon = subItem.icon;
+            return (
+              <DropdownMenuItem
+                key={subItem.title}
+                asChild
+                className="focus:bg-blue-800 focus:text-white cursor-pointer"
+              >
+                <Link
+                  to={subItem.url}
+                  className={`flex items-center gap-2 w-full ${isSubActive ? "bg-white/10" : ""
+                    }`}
+                >
+                  <SubIcon className="size-4 shrink-0" />
+                  <span>{subItem.title}</span>
+                </Link>
+              </DropdownMenuItem>
+            );
+          })}
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </SidebarMenuItem>
   );
 }
