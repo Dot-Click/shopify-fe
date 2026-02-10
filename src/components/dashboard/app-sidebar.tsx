@@ -73,10 +73,15 @@ export function AppSidebar({ role }: AppSidebarProps) {
       icon: PackagePlus,
     },
     {
-      title: "Report & Analytics",
+      title: "Reports",
       url: "/admin/report-analysis",
       icon: AlertCircle,
       subItems: [
+        {
+          title: "General Reports",
+          url: "/admin/report-analysis",
+          icon: AlertCircle, // Icon for Wide Network
+        },
         {
           title: "Wide Network Report",
           url: "/admin/wide-network-report",

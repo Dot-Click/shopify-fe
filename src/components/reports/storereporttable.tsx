@@ -13,6 +13,7 @@ import { Box } from "@/components/ui/box";
 import { Button } from "@/components/ui/button";
 import { Download } from "lucide-react";
 import { useFetchStoreActivityReport } from "./storeactivity";
+import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 
 
 export const StoreReportTable = () => {
@@ -48,7 +49,7 @@ export const StoreReportTable = () => {
       lastLoginDate: s.lastLoginDate,
 
     })) ?? [];
-console.log("storeData", storeData)
+  console.log("storeData", storeData)
   const { mutate: generateReport, isPending } = useGenerateReportMutation();
 
   const handleDownloadStoreReport = () => {
@@ -122,6 +123,18 @@ console.log("storeData", storeData)
     {
       accessorKey: "apiKey",
       header: (info) => <SortedHeader header={info.header} label="API Key" />,
+      cell: ({ row }) => (
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <span className="cursor-default truncate block max-w-[120px]">
+              {row.original.apiKey}
+            </span>
+          </TooltipTrigger>
+          <TooltipContent side="top" className=" bg-white text-black p-2 shadow">
+            {row.original.apiKey}
+          </TooltipContent>
+        </Tooltip>
+      ),
     },
     {
       accessorKey: "ordersFlagged", // Key Metric 2 (Part 1)

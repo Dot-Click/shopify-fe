@@ -18,11 +18,13 @@ export default function ReportAnalysis() {
 
   return (
     <Box className="bg-white pt-10 rounded-xl">
-      <header className="flex justify-between px-5">
+      <header className="flex justify-between px-5 mb-4">
         <h1 className="text-2xl font-bold">Report & Analytics</h1>
 
-        <div className="flex">
-          <Button onClick={() => mutate({
+        <div className="flex bg-blue-600 hover:bg-blue-700 text-white  rounded-md">
+          <Button 
+          
+          onClick={() => mutate({
             fileName: `Combined_Report_${new Date().toISOString().split("T")[0]}.pdf`,
             url: "/reports/combined-report",
           })}>
@@ -35,10 +37,10 @@ export default function ReportAnalysis() {
                 <ChevronDown />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent>
-              <DropdownMenuItem>PDF</DropdownMenuItem>
-              <DropdownMenuItem>CSV</DropdownMenuItem>
-              <DropdownMenuItem>Excel</DropdownMenuItem>
+            <DropdownMenuContent className="bg-white text-black border border-gray-200">
+              <DropdownMenuItem className="border-b border-gray-200 hover:bg-gray-300 cursor-pointer">PDF</DropdownMenuItem>
+              <DropdownMenuItem className="border-b border-gray-200 hover:bg-gray-300 cursor-pointer">CSV</DropdownMenuItem>
+              <DropdownMenuItem className="hover:bg-gray-300 cursor-pointer">Excel</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>

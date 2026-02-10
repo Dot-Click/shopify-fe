@@ -18,6 +18,7 @@ import { authClient } from "@/providers/user.provider";
 import { cn } from "@/lib/utils";
 import { useFetchSettings } from "@/hooks/settings/usefetchsettings";
 import { wordsToNumber } from "@/lib/wordtonumber";
+import { AdditionalConfiguration } from "@/components/reports/additionalconfiguration";
 
 type SettingsState = {
   lostParcelThreshold: number;
@@ -394,10 +395,14 @@ function RiskSettings() {
       <Button
         onClick={handleSave}
         disabled={isSaving}
-        className="bg-blue-600 hover:bg-blue-700 text-white w-42"
+        className="bg-blue-600 mb-4 hover:bg-blue-700 text-white w-42"
       >
         {isSaving ? "Saving..." : "Save Settings"}
       </Button>
+
+      {/* Additional Configuration */}
+      <AdditionalConfiguration />
+
     </Box>
   );
 }
