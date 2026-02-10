@@ -161,6 +161,7 @@ function NotificationsPage() {
     isSupported,
   } = usePushNotification();
 
+  console.log("permission", permission);
   if (isLoading) {
     return <Box>Loading...</Box>;
   }

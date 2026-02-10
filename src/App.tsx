@@ -3,9 +3,18 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { NotificationProvider } from "./providers/notification.provider";
 import { Toaster } from "react-hot-toast";
+import { useEffect } from "react";
+import { registerServiceWorker } from "./utils/serviceWorker";
 
 function App() {
   const queryClient = new QueryClient();
+
+  useEffect(() => {
+    // Register service worker early in app lifecycle
+    registerServiceWorker().catch((error) => {
+      console.error("Failed to register service worker:", error);
+    });
+  }, []);
 
   return (
     <>
