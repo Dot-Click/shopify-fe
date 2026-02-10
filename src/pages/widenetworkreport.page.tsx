@@ -125,7 +125,7 @@ const WideNetworkReport: React.FC = () => {
     }
 
     return (
-        <div className="p-8 bg-gray-50 min-h-screen">
+        <div className="p-8 bg-white rounded-xl min-h-screen">
             <h1 className="text-3xl font-bold text-gray-800 border-b pb-4 mb-8">Network Risk Dashboard</h1>
 
             {/* 1. Total Flagged Orders Card */}

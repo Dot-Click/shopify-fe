@@ -188,7 +188,7 @@ export function AppSidebar({ role }: AppSidebarProps) {
                       <SidebarMenuButton
                         asChild
                         isActive={isSubActive}
-                        className={`hover:bg-blue-800 flex items-center gap-3 w-full justify-start !text-sm 
+                        className={`hover:bg-gray-200 hover:text-black flex items-center gap-3 w-full justify-start !text-sm 
                           ${
                             isSubActive
                               ? "bg-white !text-black"

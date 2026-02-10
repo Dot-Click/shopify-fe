@@ -30,6 +30,7 @@ const PlanTable: React.FC<{ data: StorePlanEntry[] }> = ({ data }) => {
                     {data.map((entry) => (
                         <tr key={entry.plan || 'No Plan'} className="hover:bg-gray-50">
                             <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                {/* Plan name is already processed by backend: if plan is "free", package value is used */}
                                 {entry.plan || 'Unassigned/Legacy'}
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
@@ -65,7 +66,7 @@ const OnboardingReport: React.FC = () => {
     const totalStores = reportData.storesByPlan.reduce((sum, entry) => sum + entry.count, 0);
 
     return (
-        <div className="p-8 bg-gray-50 min-h-screen">
+        <div className="p-8 bg-white rounded-xl min-h-screen">
             <h1 className="text-3xl font-bold text-gray-800 border-b pb-4 mb-8">Store Onboarding Report</h1>
 
             {/* KPI Tiles Section */}

@@ -19,6 +19,7 @@ import { format, subDays } from "date-fns"; // Added subDays
 import { Box } from "../ui/box";
 import { useGenerateReportMutation } from "@/hooks/reports/usefetchstoreactivity";
 import { Spinner } from "../ui/spinner";
+import { Calendar1Icon } from "lucide-react";
 
 const chartConfig = {
   count: {
@@ -40,9 +41,9 @@ export function SuspiciousOrdersReport() {
   const { data, isLoading, error } = useFetchSuspiciousOrders(
     dateRange?.from && dateRange?.to
       ? {
-          startDate: dateRange.from.toISOString(),
-          endDate: dateRange.to.toISOString(),
-        }
+        startDate: dateRange.from.toISOString(),
+        endDate: dateRange.to.toISOString(),
+      }
       : undefined
   );
 
@@ -84,13 +85,17 @@ export function SuspiciousOrdersReport() {
       <div className="flex items-center justify-between">
         <h2 className="text-xl font-semibold">Suspicious Orders Report</h2>
         <Box className="space-x-4">
+
           <Popover>
             <PopoverTrigger asChild>
               <Button
                 variant="outline"
                 size="sm"
-                className="border-0 shadow-md min-w-[240px] justify-start text-left font-normal"
+                className="border border-gray-200 min-w-[240px] cursor-pointer  text-left font-normal"
               >
+
+                <Calendar1Icon className="w-4 h-4 " />
+
                 {dateRange?.from ? (
                   dateRange.to ? (
                     <>
@@ -116,6 +121,7 @@ export function SuspiciousOrdersReport() {
               />
             </PopoverContent>
           </Popover>
+
           <Button
             className="bg-web-blue p-4 text-white"
             onClick={handleDownloadReport}
@@ -160,16 +166,16 @@ export function SuspiciousOrdersReport() {
         </CardHeader>
         <CardContent>
           {chartData.length > 0 ? (
-            <ChartContainer config={chartConfig} className="h-64 w-full">
+            <ChartContainer config={chartConfig} className="h-64 w-full !px-0 !mx-0">
               <BarChart data={chartData}>
                 <CartesianGrid vertical={false} />
-                <XAxis 
-                  dataKey="label" 
+                <XAxis
+                  dataKey="label"
                   tickLine={false}
                   tickMargin={10}
                   axisLine={false}
                 />
-                <YAxis 
+                <YAxis
                   tickLine={false}
                   axisLine={false}
                 />
@@ -181,9 +187,9 @@ export function SuspiciousOrdersReport() {
               </BarChart>
             </ChartContainer>
           ) : (
-             <div className="h-64 w-full flex items-center justify-center text-gray-400">
-                No data available for this period.
-             </div>
+            <div className="h-64 w-full flex items-center justify-center text-gray-400">
+              No data available for this period.
+            </div>
           )}
         </CardContent>
       </Card>

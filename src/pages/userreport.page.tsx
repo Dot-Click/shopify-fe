@@ -1,6 +1,7 @@
 import { LossPreventionDashboard } from "@/components/reports/lossprevention";
 import { HighRiskCustomerList } from "@/components/reports/riskycustomer";
 import { SuspiciousOrdersReport } from "@/components/reports/suspiciousorder";
+import { AdditionalConfiguration } from "@/components/reports/additionalconfiguration";
 import { Box } from "@/components/ui/box";
 import { Separator } from "@/components/ui/separator";
 
@@ -16,8 +17,11 @@ function UserReport() {
 
         <Separator className="bg-web-checkbox-grey mb-5" />
 
-
         <HighRiskCustomerList />
+
+        <Separator className="bg-web-checkbox-grey mb-5 mt-8" />
+
+        <AdditionalConfiguration />
       </Box>
     </>
   );

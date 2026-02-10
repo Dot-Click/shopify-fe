@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import { format, subDays } from "date-fns"; // Added subDays
+import { Calendar1Icon } from "lucide-react";
 
 // chart config
 const chartConfig = {
@@ -38,23 +39,24 @@ export function LossPreventionDashboard() {
       {/* Date Range Picker (shared for both) */}
       <Popover>
         <PopoverTrigger asChild>
-          <Button 
-            variant="outline" 
-            size="sm" 
-            className="border-0 shadow-md min-w-[240px] justify-start text-left font-normal"
+          <Button
+            variant="outline"
+            size="sm"
+            className="border border-gray-200 min-w-[240px] cursor-pointer  text-left font-normal"
           >
-             {dateRange?.from ? (
-                  dateRange.to ? (
-                    <>
-                      {format(dateRange.from, "MMM d, yyyy")} -{" "}
-                      {format(dateRange.to, "MMM d, yyyy")}
-                    </>
-                  ) : (
-                    format(dateRange.from, "MMM d, yyyy")
-                  )
-                ) : (
-                  <span>Pick a date</span>
-                )}
+            <Calendar1Icon className="w-4 h-4 " />
+            {dateRange?.from ? (
+              dateRange.to ? (
+                <>
+                  {format(dateRange.from, "MMM d, yyyy")} -{" "}
+                  {format(dateRange.to, "MMM d, yyyy")}
+                </>
+              ) : (
+                format(dateRange.from, "MMM d, yyyy")
+              )
+            ) : (
+              <span>Pick a date</span>
+            )}
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-auto p-0" align="end">
@@ -80,9 +82,9 @@ function LossPreventionKPIs({ dateRange }: { dateRange?: DateRange }) {
   const { data, isLoading } = useFetchLossPrevention(
     dateRange?.from && dateRange?.to
       ? {
-          startDate: dateRange.from.toISOString(),
-          endDate: dateRange.to.toISOString(),
-        }
+        startDate: dateRange.from.toISOString(),
+        endDate: dateRange.to.toISOString(),
+      }
       : undefined
   );
 
@@ -116,9 +118,9 @@ function LossPreventionChart({ dateRange }: { dateRange?: DateRange }) {
   const { data, isLoading, error } = useFetchLossPrevention(
     dateRange?.from && dateRange?.to
       ? {
-          startDate: dateRange.from.toISOString(),
-          endDate: dateRange.to.toISOString(),
-        }
+        startDate: dateRange.from.toISOString(),
+        endDate: dateRange.to.toISOString(),
+      }
       : undefined
   );
 
@@ -144,13 +146,13 @@ function LossPreventionChart({ dateRange }: { dateRange?: DateRange }) {
           <ChartContainer config={chartConfig} className="h-64 w-full">
             <BarChart data={chartData}>
               <CartesianGrid vertical={false} />
-              <XAxis 
-                dataKey="label" 
+              <XAxis
+                dataKey="label"
                 tickLine={false}
                 tickMargin={10}
                 axisLine={false}
               />
-              <YAxis 
+              <YAxis
                 tickLine={false}
                 axisLine={false}
               />
