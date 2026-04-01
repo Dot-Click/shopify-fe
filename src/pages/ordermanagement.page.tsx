@@ -1,5 +1,7 @@
 import { type ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown, Filter as FilterIcon } from "lucide-react";
+import { useMemo } from "react";
+import { useSearchParams } from "react-router-dom";
 
 import { Box } from "../components/ui/box";
 import { Button } from "../components/ui/button";
@@ -75,6 +77,9 @@ function OrderManagement() {
 
   const { data: customers, isLoading: isLoadingCustomers } =
     useFetchAllCustomers();
+  const [searchParams] = useSearchParams();
+  const search = searchParams.get("search")?.toLowerCase() || "";
+  const searchType = searchParams.get("searchType") || "all";
 
   const getRiskColor = (level: number) => {
     if (level > 75) return "bg-red-400";
@@ -93,6 +98,45 @@ function OrderManagement() {
       <span className="text-sm text-slate-600 w-10 text-right">{level}%</span>
     </div>
   );
+
+  const filteredCustomers = useMemo(() => {
+    return (customers || []).filter((c) => {
+      const id = (c.id || "").toLowerCase();
+      const name = (c.name || c.displayName || "").toLowerCase();
+      const email = (c.customerEmail || c.email || "").toLowerCase();
+      const phone = (c.customerPhone || c.phone || "").toLowerCase();
+      const firstName = (c.firstName || "").toLowerCase();
+      const surname = (c.surname || "").toLowerCase();
+      const address = (c.address || "").toLowerCase();
+      const postCode = (c.postCode || "").toLowerCase();
+
+      if (!search) return true;
+
+      if (searchType === "all") {
+        return (
+          id.includes(search) ||
+          name.includes(search) ||
+          email.includes(search) ||
+          phone.includes(search) ||
+          address.includes(search) ||
+          postCode.includes(search)
+        );
+      } else if (searchType === "firstName") {
+        return firstName.includes(search);
+      } else if (searchType === "surname") {
+        return surname.includes(search);
+      } else if (searchType === "address") {
+        return address.includes(search);
+      } else if (searchType === "postCode") {
+        return postCode.includes(search);
+      } else if (searchType === "email") {
+        return email.includes(search);
+      } else if (searchType === "phone") {
+        return phone.includes(search);
+      }
+      return true;
+    });
+  }, [customers, search, searchType]);
 
   const columns: ColumnDef<Customer>[] = [
     // Checkbox column using the helper function
@@ -122,25 +166,6 @@ function OrderManagement() {
       header: "Risk Level",
       cell: ({ row }) => <RiskLevelIndicator level={row.original.riskLevel} />,
     },
-    // Actions column
-    // {
-    //   id: "actions",
-    //   cell: ({ row }) => (
-    //     <Dialog>
-    //       <DialogTrigger asChild>
-    //         <Button
-    //           variant="outline"
-    //           size="sm"
-    //           className="bg-blue-600 text-white hover:bg-blue-700 hover:text-white py-5"
-    //         >
-    //           <Eye className="mr-2 h-4 w-4" /> View Detail
-    //         </Button>
-    //       </DialogTrigger>
-    //       {/* The DialogContent is our custom modal, receiving the user data for this row */}
-    //       <ReportSummaryModal user={row.original} />
-    //     </Dialog>
-    //   ),
-    // },
   ];
 
   return (
@@ -182,7 +207,7 @@ function OrderManagement() {
 
         {/* Table Section */}
         <main className="mt-6">
-          <TableProvider data={customers || []} columns={columns}>
+          <TableProvider data={filteredCustomers} columns={columns}>
             {() => <TableComponent isLoading={isLoadingCustomers} />}
           </TableProvider>
         </main>

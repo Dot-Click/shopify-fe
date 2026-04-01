@@ -1,20 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 import { axios, type ErrorWithMessage } from "../../configs/axios.config";
+import { type Customer } from "./usefetchcustomers";
 
-export type Customer = {
-  id: string;
-  name: string;
-  lastKnownIp?: string | null;
-  email?: string;
-  totalOrders?: number;
-  phone?: string | null;
-  riskLevel: number;
-  refundsFromStores: number;
-  blocked: boolean;
-  flaggedStoresCount: number;
-  storeId: string;
-  createdAt: string;
-};
+export type { Customer };
 
 export const useFetchDashboardCustomers = () => {
   return useQuery<Customer[], ErrorWithMessage>({

@@ -1,7 +1,6 @@
 import * as React from "react";
 import { useState, useMemo } from "react"; // Correctly imported
 import { type ColumnDef } from "@tanstack/react-table";
-import { ArrowUpDown, Filter as FilterIcon } from "lucide-react";
 import { Box } from "../components/ui/box";
 import { Button } from "../components/ui/button";
 import { Checkbox } from "../components/ui/checkbox";
@@ -18,7 +17,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../components/ui/select";
-
 import { TableProvider } from "../providers/table.provider";
 import {
   TableComponent,
@@ -28,6 +26,10 @@ import {
 import { useFetchAllStores } from "../hooks/users/usefetchstore";
 import { useUpdateUserVerification } from "../hooks/users/useupdatestorestatus";
 import { useSearchParams } from "react-router-dom";
+import { StoreSettingsDialog } from "../components/admin/storesettingsdialog";
+import { cn } from "@/lib/utils";
+import { ArrowUpDown, Filter as FilterIcon, MoreVertical, ExternalLink, ShieldCheck, ShieldAlert, Settings as SettingsIcon } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "../components/ui/tooltip";
 
 export type Store = {
   // ... (type is unchanged)
@@ -41,6 +43,27 @@ export type Store = {
   createdAt: string;
 };
 
+const TruncatedCell = ({ value, length = 20 }: { value: string; length?: number }) => {
+    if (!value) return <span>-</span>;
+    const isLong = value.length > length;
+    const displayValue = isLong ? `${value.substring(0, length)}...` : value;
+
+    return (
+        <TooltipProvider delayDuration={200}>
+            <Tooltip>
+                <TooltipTrigger asChild>
+                    <span className="cursor-help whitespace-nowrap overflow-hidden text-ellipsis block max-w-[150px]">
+                        {displayValue}
+                    </span>
+                </TooltipTrigger>
+                <TooltipContent className="bg-slate-900 text-white px-3 py-2 rounded-md shadow-lg border-0 max-w-[300px] break-all">
+                    {value}
+                </TooltipContent>
+            </Tooltip>
+        </TooltipProvider>
+    );
+};
+
 function StoreManagement() {
   const { data: stores, isLoading: isLoadingStores } = useFetchAllStores();
   const { mutate: updateUser, isPending: isUpdating } =
@@ -48,14 +71,17 @@ function StoreManagement() {
   const [searchParams] = useSearchParams();
   const search = searchParams.get("search")?.toLowerCase() || "";
 
-  // State management is correct and remains the same
+  // Dialog State
+  const [selectedStore, setSelectedStore] = useState<Store | null>(null);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+
+  // ... (rest of the processing logic remains the same)
   const [showMoreFilters, setShowMoreFilters] = useState(false);
   const [statusFilter, setStatusFilter] = useState<
     "all" | "approved" | "pending"
   >("all");
   const [sortDate, setSortDate] = useState<"asc" | "desc" | null>(null);
 
-  // Data processing logic is correct and remains the same
   const processedStores = useMemo(() => {
     let result = (stores || []).filter((c) => {
       const id = c.id?.toLowerCase() || "";
@@ -85,7 +111,6 @@ function StoreManagement() {
 
   const columns: ColumnDef<Store>[] = React.useMemo(
     () => [
-      // Column definitions are unchanged
       {
         id: "select",
         header: (info) => <Checkbox {...checkBoxProps(info)} />,
@@ -94,33 +119,42 @@ function StoreManagement() {
         enableHiding: false,
       },
       {
-        accessorKey: "id",
-        header: (info) => <SortedHeader header={info.header} label="ID" />,
-        cell: (info) => (
-          <span>{(info.getValue() as string).substring(0, 6)}</span>
-        ),
-      },
-      {
         accessorKey: "company_name",
         header: (info) => (
           <SortedHeader header={info.header} label="Store Name" />
         ),
+        cell: (info) => <TruncatedCell value={info.getValue() as string} length={18} />,
       },
       {
         accessorKey: "email",
         header: (info) => <SortedHeader header={info.header} label="Email" />,
+        cell: (info) => <span className="text-slate-600 text-sm">{info.getValue() as string}</span>,
       },
       {
         accessorKey: "shopify_api_key",
         header: (info) => (
-          <SortedHeader header={info.header} label="Shopify API Key" />
+          <SortedHeader header={info.header} label="API Key" />
         ),
+        cell: (info) => <TruncatedCell value={info.getValue() as string} length={12} />,
       },
       {
         accessorKey: "shopify_url",
         header: (info) => (
-          <SortedHeader header={info.header} label="Shopify URL" />
+          <SortedHeader header={info.header} label="Domain" />
         ),
+        cell: (info) => {
+            const url = info.getValue() as string;
+            return (
+                <div className="flex items-center gap-1.5">
+                    <TruncatedCell value={url} length={20} />
+                    {url && (
+                        <a href={url.startsWith('http') ? url : `https://${url}`} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:text-blue-700">
+                             <ExternalLink className="h-3 w-3" />
+                        </a>
+                    )}
+                </div>
+            );
+        },
       },
       {
         accessorKey: "createdAt",
@@ -130,22 +164,31 @@ function StoreManagement() {
         cell: (info) => {
           const createdAt = info.getValue() as string;
           return (
-            <span>
-              {(() => {
-                const d = new Date(createdAt);
-                const dayName = d.toLocaleDateString("en-US", {
-                  weekday: "short",
-                }); // “Tue”
-                const monthName = d.toLocaleDateString("en-US", {
+            <span className="text-slate-500 text-sm">
+              {new Date(createdAt).toLocaleDateString("en-US", {
                   month: "short",
-                }); // “Oct”
-                const dayNum = d.getDate(); // e.g. 6
-                const year = d.getFullYear(); // e.g. 2025
-                return `${dayName}, ${monthName} ${dayNum}, ${year}`;
-              })()}
+                  day: "numeric",
+                  year: "numeric",
+              })}
             </span>
           );
         },
+      },
+      {
+        id: "status",
+        header: "Status",
+        cell: ({ row }) => {
+            const store = row.original;
+            return (
+                <div className={cn(
+                    "inline-flex items-center px-2 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider",
+                    store.emailVerified ? "bg-emerald-50 text-emerald-700 border border-emerald-200" : "bg-amber-50 text-amber-700 border border-amber-200"
+                )}>
+                    {store.emailVerified ? <ShieldCheck className="h-3 w-3 mr-1" /> : <ShieldAlert className="h-3 w-3 mr-1" />}
+                    {store.emailVerified ? "Approved" : "Pending"}
+                </div>
+            );
+        }
       },
       {
         id: "actions",
@@ -154,31 +197,44 @@ function StoreManagement() {
           const store = row.original;
           return (
             <DropdownMenu>
-              <DropdownMenuTrigger
-                className={`${
-                  store.emailVerified ? "bg-green-400" : "bg-red-400"
-                } text-[#fff] px-2 py-1 rounded-md`}
-              >
-                {store.emailVerified ? "Approved" : "Pending"}
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="h-8 w-8 p-0 hover:bg-slate-100 rounded-full">
+                   <MoreVertical className="h-4 w-4 text-slate-500" />
+                </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="bg-white border-0">
+              <DropdownMenuContent align="end" className="bg-white border border-slate-200 shadow-lg min-w-[160px] p-1">
                 {store.emailVerified ? (
                   <DropdownMenuItem
+                    className="flex items-center px-3 py-2 text-sm text-red-600 hover:bg-red-50 focus:bg-red-50 cursor-pointer rounded-md transition-colors"
                     onClick={() =>
                       updateUser({ userId: store.id, isVerified: false })
                     }
                   >
-                    Disapprove
+                    <ShieldAlert className="h-4 w-4 mr-2" />
+                    Disapprove Store
                   </DropdownMenuItem>
                 ) : (
                   <DropdownMenuItem
+                    className="flex items-center px-3 py-2 text-sm text-emerald-600 hover:bg-emerald-50 focus:bg-emerald-50 cursor-pointer rounded-md transition-colors"
                     onClick={() =>
                       updateUser({ userId: store.id, isVerified: true })
                     }
                   >
-                    Approve
+                    <ShieldCheck className="h-4 w-4 mr-2" />
+                    Approve Store
                   </DropdownMenuItem>
                 )}
+                <div className="h-px bg-slate-100 my-1" />
+                <DropdownMenuItem
+                  className="flex items-center px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 focus:bg-slate-50 cursor-pointer rounded-md transition-colors"
+                  onClick={() => {
+                    setSelectedStore(store);
+                    setIsSettingsOpen(true);
+                  }}
+                >
+                  <SettingsIcon className="h-4 w-4 mr-2 text-slate-500" />
+                  Edit Risk Settings
+                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           );
@@ -257,11 +313,19 @@ function StoreManagement() {
       )}
 
       {/* Table Section */}
-      <main className="mt-6">
+      <main className="mt-6 pb-6">
         <TableProvider data={processedStores} columns={columns}>
           {() => <TableComponent isLoading={isLoading} />}
         </TableProvider>
       </main>
+
+      {/* Admin Settings Dialog */}
+      <StoreSettingsDialog
+        storeId={selectedStore?.id || null}
+        storeName={selectedStore?.company_name || null}
+        open={isSettingsOpen}
+        onOpenChange={setIsSettingsOpen}
+      />
     </Box>
   );
 }

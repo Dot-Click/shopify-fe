@@ -4,15 +4,26 @@ import { axios, type ErrorWithMessage } from "../../configs/axios.config";
 export type Customer = {
   id: string;
   name: string;
-  createdAt: string;
-  customerEmail: string;
-  customerPhone: string | null;
-  image: {
-    url: string;
-  };
+  displayName?: string;
+  firstName?: string;
+  surname?: string;
+  lastKnownIp?: string | null;
+  email?: string;
+  customerEmail?: string;
+  totalOrders?: number;
+  phone?: string | null;
+  customerPhone?: string | null;
   riskLevel: number;
   refundsFromStores: number;
-  blocked?: boolean;
+  blocked: boolean;
+  flaggedStoresCount: number;
+  storeId: string;
+  createdAt: string;
+  address?: string;
+  postCode?: string;
+  image?: {
+    url: string;
+  };
 };
 
 export const useFetchAllCustomers = () => {

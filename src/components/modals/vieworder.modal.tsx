@@ -22,7 +22,7 @@ import {
   ShieldAlert,
   User,
 } from "lucide-react";
-import { type Customer } from "@/hooks/shopifycustomers/usefetchdashboardcustomer"; // Adjust this import path
+import { type Customer } from "@/hooks/shopifycustomers/usefetchcustomers";
 import { TableProvider } from "@/providers/table.provider";
 import { TableComponent } from "../common/tablecomponent";
 import {

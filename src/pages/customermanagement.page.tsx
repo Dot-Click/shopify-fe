@@ -21,29 +21,13 @@ import {
 } from "../components/common/tablecomponent";
 import { cn } from "../lib/utils";
 
-import { useFetchAllCustomers } from "../hooks/shopifycustomers/usefetchcustomers";
+import { useFetchAllCustomers, type Customer } from "../hooks/shopifycustomers/usefetchcustomers";
 import { ViewOrderModal } from "../components/modals/vieworder.modal";
 import { useSearchParams } from "react-router-dom";
 import { useBlockCustomer } from "@/hooks/shopifycustomers/useblockcustomer";
 import { useState, useMemo } from "react";
 import { useUnBlockCustomer } from "@/hooks/shopifycustomers/useunblockcustomer";
 import { Spinner } from "@/components/ui/spinner";
-
-interface Customer {
-  id: string;
-  name: string;
-  createdAt: string;
-  customerEmail: string;
-  customerPhone: string | null;
-  image: {
-    url: string;
-  };
-  riskLevel: number;
-  blocked: boolean;
-  refundsFromStores: number;
-  flaggedStoresCount: number;
-  storeId: string;
-}
 
 const getRiskColor = (level: number) => {
   if (level > 75) return "bg-red-500";
@@ -87,6 +71,8 @@ function CustomerManagement() {
 
   const [searchParams] = useSearchParams();
   const search = searchParams.get("search")?.toLowerCase() || "";
+  const searchType = searchParams.get("searchType") || "all";
+
   const { mutate: block, isPending: isBlocking } = useBlockCustomer();
   const { mutate: unblock, isPending: isUnblocking } = useUnBlockCustomer();
 
@@ -100,12 +86,40 @@ function CustomerManagement() {
   // Filtering + Sorting
   const filteredCustomers = useMemo(() => {
     let result = (customers || []).filter((c) => {
-      const id = c.id?.toLowerCase() || "";
-      const name = c.name?.toLowerCase() || "";
-      const email = c.customerEmail?.toLowerCase() || "";
+      const id = (c.id || "").toLowerCase();
+      const name = (c.name || "").toLowerCase();
+      const email = (c.customerEmail || c.email || "").toLowerCase();
+      const phone = (c.customerPhone || c.phone || "").toLowerCase();
+      const firstName = (c.firstName || "").toLowerCase();
+      const surname = (c.surname || "").toLowerCase();
+      const address = (c.address || "").toLowerCase();
+      const postCode = (c.postCode || "").toLowerCase();
 
-      const matchesSearch =
-        id.includes(search) || name.includes(search) || email.includes(search);
+      let matchesSearch = false;
+
+      if (!search) {
+        matchesSearch = true;
+      } else if (searchType === "all") {
+        matchesSearch =
+          id.includes(search) ||
+          name.includes(search) ||
+          email.includes(search) ||
+          phone.includes(search) ||
+          address.includes(search) ||
+          postCode.includes(search);
+      } else if (searchType === "firstName") {
+        matchesSearch = firstName.includes(search);
+      } else if (searchType === "surname") {
+        matchesSearch = surname.includes(search);
+      } else if (searchType === "address") {
+        matchesSearch = address.includes(search);
+      } else if (searchType === "postCode") {
+        matchesSearch = postCode.includes(search);
+      } else if (searchType === "email") {
+        matchesSearch = email.includes(search);
+      } else if (searchType === "phone") {
+        matchesSearch = phone.includes(search);
+      }
 
       const matchesBlocked =
         blockedFilter === "all" ||
