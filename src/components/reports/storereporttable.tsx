@@ -137,6 +137,18 @@ export const StoreReportTable = () => {
       ),
     },
     {
+      accessorKey: "searchesPerformed",
+      header: (info) => (
+        <SortedHeader header={info.header} label="Searches Performed" />
+      ),
+      cell: ({ row }) => (
+        <span className="font-semibold text-blue-700 bg-blue-50 px-2.5 py-1 rounded-full text-xs border border-blue-100">
+          {Number(row.original.searchesPerformed || 0).toLocaleString()}
+        </span>
+      ),
+      size: 100,
+    },
+    {
       accessorKey: "ordersFlagged", // Key Metric 2 (Part 1)
       header: (info) => (
         <SortedHeader header={info.header} label="Orders Flagged" />

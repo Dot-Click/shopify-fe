@@ -44,24 +44,24 @@ export type Store = {
 };
 
 const TruncatedCell = ({ value, length = 20 }: { value: string; length?: number }) => {
-    if (!value) return <span>-</span>;
-    const isLong = value.length > length;
-    const displayValue = isLong ? `${value.substring(0, length)}...` : value;
+  if (!value) return <span>-</span>;
+  const isLong = value.length > length;
+  const displayValue = isLong ? `${value.substring(0, length)}...` : value;
 
-    return (
-        <TooltipProvider delayDuration={200}>
-            <Tooltip>
-                <TooltipTrigger asChild>
-                    <span className="cursor-help whitespace-nowrap overflow-hidden text-ellipsis block max-w-[150px]">
-                        {displayValue}
-                    </span>
-                </TooltipTrigger>
-                <TooltipContent className="bg-slate-900 text-white px-3 py-2 rounded-md shadow-lg border-0 max-w-[300px] break-all">
-                    {value}
-                </TooltipContent>
-            </Tooltip>
-        </TooltipProvider>
-    );
+  return (
+    <TooltipProvider delayDuration={200}>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <span className="cursor-help whitespace-nowrap overflow-hidden text-ellipsis block max-w-[150px]">
+            {displayValue}
+          </span>
+        </TooltipTrigger>
+        <TooltipContent className="bg-slate-900 text-white px-3 py-2 rounded-md shadow-lg border-0 max-w-[300px] break-all">
+          {value}
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
+  );
 };
 
 function StoreManagement() {
@@ -143,17 +143,17 @@ function StoreManagement() {
           <SortedHeader header={info.header} label="Domain" />
         ),
         cell: (info) => {
-            const url = info.getValue() as string;
-            return (
-                <div className="flex items-center gap-1.5">
-                    <TruncatedCell value={url} length={20} />
-                    {url && (
-                        <a href={url.startsWith('http') ? url : `https://${url}`} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:text-blue-700">
-                             <ExternalLink className="h-3 w-3" />
-                        </a>
-                    )}
-                </div>
-            );
+          const url = info.getValue() as string;
+          return (
+            <div className="flex items-center gap-1.5">
+              <TruncatedCell value={url} length={20} />
+              {url && (
+                <a href={url.startsWith('http') ? url : `https://${url}`} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:text-blue-700">
+                  <ExternalLink className="h-3 w-3" />
+                </a>
+              )}
+            </div>
+          );
         },
       },
       {
@@ -166,9 +166,9 @@ function StoreManagement() {
           return (
             <span className="text-slate-500 text-sm">
               {new Date(createdAt).toLocaleDateString("en-US", {
-                  month: "short",
-                  day: "numeric",
-                  year: "numeric",
+                month: "short",
+                day: "numeric",
+                year: "numeric",
               })}
             </span>
           );
@@ -178,16 +178,16 @@ function StoreManagement() {
         id: "status",
         header: "Status",
         cell: ({ row }) => {
-            const store = row.original;
-            return (
-                <div className={cn(
-                    "inline-flex items-center px-2 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider",
-                    store.emailVerified ? "bg-emerald-50 text-emerald-700 border border-emerald-200" : "bg-amber-50 text-amber-700 border border-amber-200"
-                )}>
-                    {store.emailVerified ? <ShieldCheck className="h-3 w-3 mr-1" /> : <ShieldAlert className="h-3 w-3 mr-1" />}
-                    {store.emailVerified ? "Approved" : "Pending"}
-                </div>
-            );
+          const store = row.original;
+          return (
+            <div className={cn(
+              "inline-flex items-center px-2 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider",
+              store.emailVerified ? "bg-emerald-50 text-emerald-700 border border-emerald-200" : "bg-amber-50 text-amber-700 border border-amber-200"
+            )}>
+              {store.emailVerified ? <ShieldCheck className="h-3 w-3 mr-1" /> : <ShieldAlert className="h-3 w-3 mr-1" />}
+              {store.emailVerified ? "Approved" : "Pending"}
+            </div>
+          );
         }
       },
       {
@@ -199,7 +199,7 @@ function StoreManagement() {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="h-8 w-8 p-0 hover:bg-slate-100 rounded-full">
-                   <MoreVertical className="h-4 w-4 text-slate-500" />
+                  <MoreVertical className="h-4 w-4 text-slate-500" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="bg-white border border-slate-200 shadow-lg min-w-[160px] p-1">
@@ -269,8 +269,8 @@ function StoreManagement() {
             {sortDate === "desc"
               ? "Newest"
               : sortDate === "asc"
-              ? "Oldest"
-              : "Sort by Date"}
+                ? "Oldest"
+                : "Sort by Date"}
           </Button>
 
           <Button

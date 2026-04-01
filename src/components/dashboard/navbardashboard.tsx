@@ -81,7 +81,7 @@ export const NavbarDashboard = ({ userType }: NavbarDashboardProps) => {
         // Increment search count on the backend if the search value has actually changed and is not empty
         if (searchValue && searchValue !== prevSearchValue.current) {
           try {
-            await axios.put(`${API_URL}/users/increment-searches`, {}, { withCredentials: true });
+            await axios.put(`${API_URL}/user/increment-searches`, {}, { withCredentials: true });
             prevSearchValue.current = searchValue;
           } catch (error) {
             console.error("Failed to increment search count", error);
