@@ -37,6 +37,7 @@ type SettingsState = {
   includeOrderDetails: boolean;
   includeReasonForFlag: boolean;
   includeRecommendedAction: boolean;
+  autoHoldRiskyOrders: boolean;
 };
 
 function RiskSettings() {
@@ -57,6 +58,7 @@ function RiskSettings() {
     includeOrderDetails: true,
     includeReasonForFlag: true,
     includeRecommendedAction: true,
+    autoHoldRiskyOrders: false,
   });
 
   const { mutate: saveSettings, isPending: isSaving } = useCreateSettings();
@@ -92,6 +94,13 @@ function RiskSettings() {
         requirePhoto: f.photoOnDelivery ?? false,
         sendCancellationEmail: f.sendCancellationEmail ?? false,
         includeWavierLink: f.includeWavierLink ?? false,
+        autoHoldRiskyOrders: f.autoHoldRiskyOrders ?? false,
+
+        emailNotificationsEnabled: f.emailNotificationsEnabled ?? true,
+        notificationEmail: f.notificationEmail ?? "info@example.com",
+        includeOrderDetails: f.includeOrderDetails ?? true,
+        includeReasonForFlag: f.includeReasonForFlag ?? true,
+        includeRecommendedAction: f.includeRecommendedAction ?? true,
       }));
     }
   }, [fetchedData]);
@@ -108,6 +117,7 @@ function RiskSettings() {
       photoOnDelivery: settings.requirePhoto,
       sendCancellationEmail: settings.sendCancellationEmail,
       includeWavierLink: settings.includeWavierLink,
+      autoHoldRiskyOrders: settings.autoHoldRiskyOrders,
 
       emailNotificationsEnabled: settings.emailNotificationsEnabled,
       notificationEmail: settings.notificationEmail,
@@ -267,6 +277,14 @@ function RiskSettings() {
                 </SelectItem>
               </SelectContent>
             </Select>
+          </Box>
+
+          <Box className="flex items-center justify-between">
+            <Label>Automatic Fulfilment Hold (on discovery)</Label>
+            <Switch
+              checked={settings.autoHoldRiskyOrders}
+              onCheckedChange={(val) => handleChange("autoHoldRiskyOrders", val)}
+            />
           </Box>
 
           <Box className="flex items-center justify-between">
