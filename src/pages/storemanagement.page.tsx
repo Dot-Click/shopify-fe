@@ -28,8 +28,9 @@ import { useUpdateUserVerification } from "../hooks/users/useupdatestorestatus";
 import { useSearchParams } from "react-router-dom";
 import { StoreSettingsDialog } from "../components/admin/storesettingsdialog";
 import { cn } from "@/lib/utils";
-import { ArrowUpDown, Filter as FilterIcon, MoreVertical, ExternalLink, ShieldCheck, ShieldAlert, Settings as SettingsIcon } from "lucide-react";
+import { ArrowUpDown, Filter as FilterIcon, MoreVertical, ExternalLink, ShieldCheck, ShieldAlert, Settings as SettingsIcon, Key } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "../components/ui/tooltip";
+import { StoreCredentialsDialog } from "../components/admin/storecredentialsdialog";
 
 export type Store = {
   // ... (type is unchanged)
@@ -39,6 +40,7 @@ export type Store = {
   email: string;
   emailVerified: boolean;
   shopify_api_key: string;
+  shopify_access_token: string;
   shopify_url: string;
   createdAt: string;
 };
@@ -71,9 +73,9 @@ function StoreManagement() {
   const [searchParams] = useSearchParams();
   const search = searchParams.get("search")?.toLowerCase() || "";
 
-  // Dialog State
   const [selectedStore, setSelectedStore] = useState<Store | null>(null);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [isCredentialsOpen, setIsCredentialsOpen] = useState(false);
 
   // ... (rest of the processing logic remains the same)
   const [showMoreFilters, setShowMoreFilters] = useState(false);
@@ -235,6 +237,16 @@ function StoreManagement() {
                   <SettingsIcon className="h-4 w-4 mr-2 text-slate-500" />
                   Edit Risk Settings
                 </DropdownMenuItem>
+                <DropdownMenuItem
+                  className="flex items-center px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 focus:bg-slate-50 cursor-pointer rounded-md transition-colors"
+                  onClick={() => {
+                    setSelectedStore(store);
+                    setIsCredentialsOpen(true);
+                  }}
+                >
+                  <Key className="h-4 w-4 mr-2 text-blue-500" />
+                  Edit Credentials
+                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           );
@@ -325,6 +337,15 @@ function StoreManagement() {
         storeName={selectedStore?.company_name || null}
         open={isSettingsOpen}
         onOpenChange={setIsSettingsOpen}
+      />
+
+      <StoreCredentialsDialog 
+        storeId={selectedStore?.id || null}
+        storeName={selectedStore?.company_name || null}
+        initialApiKey={selectedStore?.shopify_api_key}
+        initialAccessToken={selectedStore?.shopify_access_token}
+        open={isCredentialsOpen}
+        onOpenChange={setIsCredentialsOpen}
       />
     </Box>
   );
