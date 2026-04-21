@@ -203,8 +203,8 @@ function UserManagement() {
             {sortRisk === "asc"
               ? "Risk ↑"
               : sortRisk === "desc"
-              ? "Risk ↓"
-              : "Sort by Risk"}
+                ? "Risk ↓"
+                : "Sort by Risk"}
           </Button>
 
           <Button

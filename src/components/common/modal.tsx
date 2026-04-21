@@ -58,11 +58,11 @@ export function ReportSummaryModal({ user }: ReportSummaryModalProps) {
 
   return (
     <DialogContent
-      className="sm:max-w-md bg-white border-2 border-blue-200"
+      className="sm:max-w-md w-[95vw] bg-white border-2 border-blue-200 flex flex-col max-h-[85vh] p-0 overflow-hidden"
       onOpenAutoFocus={() => setOpen(true)}
       onCloseAutoFocus={() => setOpen(false)}
     >
-      <DialogHeader>
+      <DialogHeader className="p-6 pb-2 border-b border-gray-100">
         <DialogTitle className="text-web-dark-grey font-bold ">
           eComProtect Report Summary
         </DialogTitle>
@@ -74,31 +74,14 @@ export function ReportSummaryModal({ user }: ReportSummaryModalProps) {
         </DialogClose>
       </DialogHeader>
 
-      <div className="space-y-6 py-4">
+      <div className="flex-1 overflow-y-auto p-6 space-y-6">
         <section className="space-y-3">
           <h3 className="font-semibold">Refunded Date:</h3>
-          {data?.refunds?.map((item) => (
-            <RefundItem key={item.refundId} date={item.refundDate} />
-          ))}
-
-          {/* <Flex className="gap-x-3">
-            <span className="rounded-full bg-slate-100 px-4 py-2 text-sm font-medium text-slate-800">
-              19 Aug 2024
-            </span>
-            Item Not Receive
-          </Flex>
-          <Flex className="gap-x-3">
-            <span className="rounded-full bg-slate-100 px-4 py-2 text-sm font-medium text-slate-800">
-              12 Mar 2025
-            </span>
-            Refund Abuse
-          </Flex>
-          <Flex className="gap-x-3">
-            <span className="rounded-full bg-slate-100 px-4 py-2 text-sm font-medium text-slate-800">
-              04 Jun 2025
-            </span>
-            Refund Denied
-          </Flex> */}
+          <div className="grid grid-cols-3 gap-3">
+            {data?.refunds?.map((item) => (
+              <RefundItem key={item.refundId} date={item.refundDate} />
+            ))}
+          </div>
         </section>
 
         <Separator />
