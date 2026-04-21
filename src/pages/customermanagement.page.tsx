@@ -172,7 +172,9 @@ function CustomerManagement() {
     },
     {
       accessorKey: "totalRefunds",
-      header: (info) => <SortedHeader header={info.header} label="Refunds" />,
+      header: (info) => (
+        <SortedHeader header={info.header} label="Refunds / Returns" />
+      ),
       cell: ({ row }) => (
         <RefundsBadge
           level={row.original.riskLevel}
