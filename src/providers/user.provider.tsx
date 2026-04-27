@@ -13,7 +13,7 @@ import {
   inferAdditionalFields,
   phoneNumberClient,
 } from "better-auth/client/plugins";
-import { backendDomain } from "../configs/axios.config";
+import { backendOrigin } from "../configs/axios.config";
 
 export const authClient = createAuthClient({
   plugins: [
@@ -49,7 +49,7 @@ export const authClient = createAuthClient({
     phoneNumberClient(),
     emailOTPClient(),
   ],
-  baseURL: backendDomain.development,
+  baseURL: backendOrigin,
 });
 
 type SessionObject = typeof authClient.$Infer.Session;

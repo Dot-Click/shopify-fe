@@ -6,18 +6,19 @@ export interface WithMessage {
   message: string;
 }
 
-const sanitizeDomain = (domain: string) =>
-  domain.charAt(domain.length - 1) === "/"
-    ? domain.slice(0, -1) + "/api"
-    : domain + "/api";
+const trimTrailingSlash = (value: string) => value.replace(/\/+$/, "");
 
-export const backendDomain: Record<"production" | "development", string> = {
-  production: import.meta.env.VITE_FRONTEND_URL,
-  development: import.meta.env.VITE_BACKEND_URL,
+const sanitizeBackendOrigin = (domain: string) => {
+  const normalized = trimTrailingSlash(domain);
+  return normalized.endsWith("/api")
+    ? normalized.slice(0, -"/api".length)
+    : normalized;
 };
 
-const domain = backendDomain.development;
-export const url = sanitizeDomain(domain);
+export const backendOrigin = sanitizeBackendOrigin(
+  import.meta.env.VITE_BACKEND_URL || "http://localhost:3001"
+);
+export const url = `${backendOrigin}/api`;
 
 export const axios = ax.create({
   baseURL: url,

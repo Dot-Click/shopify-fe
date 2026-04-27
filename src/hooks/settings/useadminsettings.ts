@@ -1,17 +1,14 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import axios from "axios";
 import { toast } from "react-hot-toast";
-
-const API_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:3000/api";
+import { axios } from "@/configs/axios.config";
 
 export const useAdminFetchSettings = (storeId: string | null) => {
   return useQuery({
     queryKey: ["admin-settings", storeId],
     queryFn: async () => {
       if (!storeId) return null;
-      const response = await axios.get(`${API_URL}/settings/admin/fetch`, {
+      const response = await axios.get("/settings/admin/fetch", {
         params: { storeId },
-        withCredentials: true,
       });
       return response.data.data;
     },
@@ -24,9 +21,7 @@ export const useAdminUpdateSettings = () => {
 
   return useMutation({
     mutationFn: async (payload: any) => {
-      const response = await axios.post(`${API_URL}/settings/admin/update`, payload, {
-        withCredentials: true,
-      });
+      const response = await axios.post("/settings/admin/update", payload);
       return response.data;
     },
     onSuccess: (_, variables) => {
