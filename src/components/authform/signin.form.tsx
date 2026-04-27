@@ -22,7 +22,7 @@ import toast from "react-hot-toast";
 import { Spinner } from "../ui/spinner";
 
 const formSchema = z.object({
-  email: z.string().email({
+  email: z.string().trim().email({
     message: "Please enter a valid email address.",
   }),
   password: z.string().min(8, {
@@ -36,6 +36,8 @@ const formSchema = z.object({
 });
 
 export const SigninForm = () => {
+  const pendingApprovalMessage =
+    "Your account is still pending approval. An admin needs to verify it before you can sign in.";
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -54,10 +56,11 @@ export const SigninForm = () => {
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     const { data: session } = await authClient.getSession();
+    const email = values.email.trim();
 
     await authClient.signIn.email(
       {
-        email: values.email,
+        email,
         password: values.password,
       },
       {
@@ -70,7 +73,12 @@ export const SigninForm = () => {
           navigate("/user/customer-management");
         },
         onError: (error) => {
-          toast.error(error.error.message || "Sign-in failed.");
+          const apiMessage = error.error.message || "Sign-in failed.";
+          const isPendingApproval =
+            error.error.status === 403 &&
+            apiMessage.toLowerCase().includes("verified users can signin");
+
+          toast.error(isPendingApproval ? pendingApprovalMessage : apiMessage);
           console.error("Sign-in error:", error);
           setLoading(false);
         },

@@ -31,14 +31,14 @@ const formSchema = z
   .object({
     firstName: z.string().min(2, "First name must be at least 2 characters."),
     surname: z.string().min(2, "Surname must be at least 2 characters."),
-    email: z.string().email("Please enter a valid email address."),
+    email: z.string().trim().email("Please enter a valid email address."),
     mobileNumber: z.string(),
     companyName: z.string().min(2, "Company name is required."),
     companyRegistrationNumber: z
       .string()
       .min(1, "Registration number is required."),
     averageOrdersPerMonth: z.string().min(1, "Please select an option."),
-    shopifyUrl: z.string().url("Please enter a valid store URL."),
+    shopifyUrl: z.string().trim().url("Please enter a valid store URL."),
     password: z.string().min(8, "Password must be at least 8 characters."),
     confirmPassword: z.string(),
     shopifyApiKey: z.string().min(1, "Please enter a valid API key."),
@@ -66,8 +66,10 @@ export const SignupForm = () => {
 
   async function onSubmit(values: FormData) {
     const valRegNum = wordsToNumber(values.companyRegistrationNumber);
+    const email = values.email.trim();
+    const shopifyUrl = values.shopifyUrl.trim();
 
-    if (!values.shopifyUrl.includes(".myshopify.com")) {
+    if (!shopifyUrl.includes(".myshopify.com")) {
       toast.error(
         "Invalid Shopify store URL. It must contain '.myshopify.com'"
       );
@@ -77,13 +79,13 @@ export const SignupForm = () => {
     await authClient.signUp.email(
       {
         name: `${values.firstName} ${values.surname}`,
-        email: values.email,
+        email,
         password: values.password,
         company_name: values.companyName,
         mobile_number: values.mobileNumber,
         company_registration_number: String(valRegNum),
         average_orders_per_month: values.averageOrdersPerMonth,
-        shopify_url: values.shopifyUrl,
+        shopify_url: shopifyUrl,
         shopify_api_key: values.shopifyApiKey,
         shopify_access_token: values.shopifyAccessToken,
         role: "admin",
