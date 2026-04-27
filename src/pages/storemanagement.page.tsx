@@ -23,14 +23,16 @@ import {
   SortedHeader,
   checkBoxProps,
 } from "../components/common/tablecomponent";
+import { authClient } from "@/providers/user.provider";
 import { useFetchAllStores } from "../hooks/users/usefetchstore";
 import { useUpdateUserVerification } from "../hooks/users/useupdatestorestatus";
 import { useSearchParams } from "react-router-dom";
 import { StoreSettingsDialog } from "../components/admin/storesettingsdialog";
 import { cn } from "@/lib/utils";
-import { ArrowUpDown, Filter as FilterIcon, MoreVertical, ExternalLink, ShieldCheck, ShieldAlert, Settings as SettingsIcon, Key } from "lucide-react";
+import { ArrowUpDown, Filter as FilterIcon, MoreVertical, ExternalLink, ShieldCheck, ShieldAlert, Settings as SettingsIcon, Key, Trash2 } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "../components/ui/tooltip";
 import { StoreCredentialsDialog } from "../components/admin/storecredentialsdialog";
+import { DeleteStoreDialog } from "../components/admin/deletestoredialog";
 
 export type Store = {
   // ... (type is unchanged)
@@ -39,6 +41,7 @@ export type Store = {
   average_orders_per_month: string;
   email: string;
   emailVerified: boolean;
+  role?: string | null;
   shopify_api_key: string;
   shopify_access_token: string;
   shopify_url: string;
@@ -67,6 +70,7 @@ const TruncatedCell = ({ value, length = 20 }: { value: string; length?: number 
 };
 
 function StoreManagement() {
+  const { data: session } = authClient.useSession();
   const { data: stores, isLoading: isLoadingStores } = useFetchAllStores();
   const { mutate: updateUser, isPending: isUpdating } =
     useUpdateUserVerification();
@@ -76,6 +80,7 @@ function StoreManagement() {
   const [selectedStore, setSelectedStore] = useState<Store | null>(null);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isCredentialsOpen, setIsCredentialsOpen] = useState(false);
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 
   // ... (rest of the processing logic remains the same)
   const [showMoreFilters, setShowMoreFilters] = useState(false);
@@ -197,6 +202,9 @@ function StoreManagement() {
         header: "Actions",
         cell: ({ row }) => {
           const store = row.original;
+          const canDeleteStore =
+            store.role !== "superadmin" && store.id !== session?.user?.id;
+
           return (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -243,17 +251,32 @@ function StoreManagement() {
                     setSelectedStore(store);
                     setIsCredentialsOpen(true);
                   }}
-                >
-                  <Key className="h-4 w-4 mr-2 text-blue-500" />
-                  Edit Credentials
-                </DropdownMenuItem>
+                  >
+                    <Key className="h-4 w-4 mr-2 text-blue-500" />
+                    Edit Credentials
+                  </DropdownMenuItem>
+                {canDeleteStore && (
+                  <>
+                    <div className="h-px bg-slate-100 my-1" />
+                    <DropdownMenuItem
+                      className="flex items-center px-3 py-2 text-sm text-red-600 hover:bg-red-50 focus:bg-red-50 cursor-pointer rounded-md transition-colors"
+                      onClick={() => {
+                        setSelectedStore(store);
+                        setIsDeleteOpen(true);
+                      }}
+                    >
+                      <Trash2 className="h-4 w-4 mr-2" />
+                      Delete Store
+                    </DropdownMenuItem>
+                  </>
+                )}
               </DropdownMenuContent>
             </DropdownMenu>
           );
         },
       },
     ],
-    [updateUser]
+    [session?.user?.id, updateUser]
   );
 
   const isLoading = isLoadingStores || isUpdating;
@@ -346,6 +369,14 @@ function StoreManagement() {
         initialAccessToken={selectedStore?.shopify_access_token}
         open={isCredentialsOpen}
         onOpenChange={setIsCredentialsOpen}
+      />
+
+      <DeleteStoreDialog
+        storeId={selectedStore?.id || null}
+        storeName={selectedStore?.company_name || null}
+        storeEmail={selectedStore?.email || null}
+        open={isDeleteOpen}
+        onOpenChange={setIsDeleteOpen}
       />
     </Box>
   );
